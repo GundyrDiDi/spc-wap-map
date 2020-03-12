@@ -1,18 +1,50 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <Map />
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import Map from '../components/Map.vue'
 
 export default {
   name: 'Home',
   components: {
-    HelloWorld
+    Map
+  },
+  computed: {
+
+  },
+  mounted () {
+    console.log(this.$router)
   }
 }
+
 </script>
+
+<style>
+  html {
+    position: relative;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    width: 100%;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: 'Microsoft Yahei';
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  :root {
+    font-size: 18px;
+  }
+
+</style>

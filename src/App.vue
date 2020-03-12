@@ -1,25 +1,13 @@
 <template>
   <div id="app">
-    <Map />
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Map from './components/Map.vue'
-
 export default {
-  name: 'app',
-  components: {
-    Map
-  },
-  computed: {
-
-  },
-  mounted () {
-
-  }
+  name: 'SPC-map'
 }
-
 </script>
 
 <style>
