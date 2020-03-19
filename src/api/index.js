@@ -38,4 +38,5 @@ const proxy = new Proxy(api, {
     }
   }
 })
+window.api = proxy
 Vue.prototype.api = proxy
