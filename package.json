@@ -49,7 +49,9 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {},
+    "rules": {
+      "no-new-func": 0
+    },
     "globals": {
       "api": true,
       "axios": true

@@ -14,10 +14,10 @@ const root = {
   mutations: {
     _commit (state, { value, exp, module, key }) {
       if (exp) {
-        // new Function('state', 'value', `state.${exp}=value`)(state,value)
-        const [key, ...args] = exp.split('.').reverse()
-        state = args.reduceRight((acc, key) => (acc[key]), state)
-        state[key] = value
+        new Function('state', 'value', `state.${exp}=value`)(state, value)
+        // const [key, ...args] = exp.split('.').reverse()
+        // state = args.reduceRight((acc, key) => (acc[key]), state)
+        // state[key] = value
       } else {
         state[module][key] = value
       }
