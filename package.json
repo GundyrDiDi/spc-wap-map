@@ -49,7 +49,11 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {}
+    "rules": {},
+    "globals": {
+      "api": true,
+      "axios": true
+    }
   },
   "browserslist": [
     "> 1%",
