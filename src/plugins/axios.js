@@ -2,6 +2,7 @@
 
 import Vue from 'vue'
 import axios from 'axios'
+import api from '../api'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
@@ -40,6 +41,7 @@ _axios.interceptors.response.use(
 )
 
 Plugin.install = function (Vue, options) {
+  window.api = api
   Vue.axios = _axios
   window.axios = _axios
   Object.defineProperties(Vue.prototype, {

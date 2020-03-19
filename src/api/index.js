@@ -1,4 +1,3 @@
-import Vue from 'vue'
 class API {
   // constructor (path) {
 
@@ -38,5 +37,4 @@ const proxy = new Proxy(api, {
     }
   }
 })
-window.api = proxy
-Vue.prototype.api = proxy
+export default proxy
