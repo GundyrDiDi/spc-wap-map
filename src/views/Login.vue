@@ -10,7 +10,7 @@
 export default {
   name: 'login',
   mounted () {
-    // console.log(api.getdata)
+    console.log(this.api.getdata)
   }
 }
 </script>

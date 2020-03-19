@@ -4,15 +4,20 @@ import map from './modules/map'
 import login from './modules/login'
 Vue.use(Vuex)
 
-const store = {
+const root = {
   state: {
-
+    self: 'root'
   },
   getters: {
 
   },
   mutations: {
-    _commit (state, { value, exp, module, key }) {
+    _commit (state, {
+      value,
+      exp,
+      module,
+      key
+    }) {
       if (exp) {
         // new Function('state', 'value', `state.${exp}=value`)(state,value)
         const [key, ...args] = exp.split('.').reverse()
@@ -28,34 +33,55 @@ const store = {
   },
   // 加载模块
   modules: {
-    login,
+    login: login,
     map
   }
 }
 //
-export const Store = new Vuex.Store(store)
+export const store = new Vuex.Store(root)
 
-export const vuexData = Vue.extend({
-  computed: {
-    ...mapkeys('state', login),
-    ...mapkeys('state', map)
-  },
-  methods: {
-    ...mapkeys('mutations', map)
-  }
-})
+export const vuexData = mapVuex(root)
 //
-function mapkeys (str, module = store) {
+function mapVuex (root) {
+  const modules = {
+    root,
+    ...root.modules
+  }
+  const map = {
+    computed: ['state', 'getters'],
+    methods: ['mutations', 'actions']
+  }
+  const vuexData = {
+    computed: {},
+    methods: {}
+  }
+  Object.values(modules).forEach(module => {
+    Object.entries(map).forEach(([prop, arr]) => {
+      arr.forEach(str => {
+        if (module[str]) {
+          vuexData[prop] = {
+            ...mapkeys(str, module),
+            ...vuexData[prop]
+          }
+        }
+      })
+    })
+  })
+  return vuexData
+}
+
+function mapkeys (str, module = root) {
+  if (!module[str]) return {}
   let fn = Vuex['map' + str.slice(0, 1).toUpperCase() + str.slice(1)]
   let keys = Object.keys(module[str])
   if (module.name) {
     fn = fn.bind(Vuex, module.name)
   }
   if (module.rootname) {
-    keys = keys.reduce((acc, key) => ({
-      ...acc,
-      [module.name + '_' + key]: key
-    }), {})
+    keys = keys.reduce((acc, key) => {
+      acc[module.name + '_' + key] = key
+      return acc
+    }, {})
   }
   return fn.call(Vuex, keys)
 }

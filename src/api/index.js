@@ -1,3 +1,4 @@
+import Vue from 'vue'
 class API {
   // constructor (path) {
 
@@ -37,4 +38,4 @@ const proxy = new Proxy(api, {
     }
   }
 })
-global.api = proxy
+Vue.prototype.api = proxy

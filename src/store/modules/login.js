@@ -4,7 +4,7 @@ export default {
   state: {
     username: 'szl',
     password: '',
-    isLogin: true
+    isLogin: false
   },
   getters: {
 

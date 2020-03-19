@@ -6,7 +6,7 @@ import App from './App.vue'
 import router from './router'
 // 绑定store里state,getter,mutation,action
 import { vuexData, store } from './store'
-// import './api'
+import './api'
 //
 Vue.config.productionTip = false
 Vue.mixin(vuexData)

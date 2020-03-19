@@ -12,6 +12,7 @@ const routes = [{
   name: 'Home',
   component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue'),
   beforeEnter: (to, from, next) => {
+    console.log(store)
     if (store.state.login.isLogin) {
       next()
     } else {
