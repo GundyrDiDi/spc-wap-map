@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { store } from '../store'
 import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 // lazy load
@@ -6,17 +7,34 @@ import Login from '../views/Login.vue'
 
 Vue.use(VueRouter)
 
-const routes = [
-  {
-    path: '/home',
-    name: 'Home',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue')
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: Login
+const routes = [{
+  path: '/home',
+  name: 'Home',
+  component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue'),
+  beforeEnter: (to, from, next) => {
+    if (store.state.login.isLogin) {
+      next()
+    } else {
+      next({ name: 'Login' })
+    }
   }
+},
+{
+  path: '/',
+  redirect: to => ({ name: 'Home' })
+},
+{
+  path: '/login',
+  name: 'Login',
+  component: Login,
+  beforeEnter: (to, from, next) => {
+    if (!store.state.login.isLogin) {
+      next()
+    } else {
+      next({ name: 'Home' })
+    }
+  }
+}
 ]
 const router = new VueRouter({
   mode: 'history',

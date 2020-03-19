@@ -1,12 +1,16 @@
 import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
 import './plugins/element.js'
 import './plugins/axios'
-
+// import _ from 'lodash'
+import App from './App.vue'
+import router from './router'
+// 绑定store里state,getter,mutation,action
+import { vuexData, store } from './store'
+// import './api'
+//
 Vue.config.productionTip = false
-
+Vue.mixin(vuexData)
+//
 new Vue({
   router,
   store,

@@ -1,6 +1,8 @@
 <template>
   <div id="login">
     login
+    <span @click="_commit({value:'cyd',module:'login',key:'username'})">{{username}}</span>
+    <span @click="_commit({exp:'login.username',value:'cyd'})">{{username}}</span>
   </div>
 </template>
 
@@ -8,7 +10,7 @@
 export default {
   name: 'login',
   mounted () {
-    console.log(Element)
+    // console.log(api.getdata)
   }
 }
 </script>
