@@ -10,8 +10,8 @@
 export default {
   name: 'login',
   mounted () {
-    // console.log(api.getdata)
-    // console.log(axios)
+    console.log(api.getdata)
+    console.log(axios)
     console.log(Element)
   }
 }
