@@ -1,9 +1,6 @@
 import Map from 'ol/Map'
 import View from 'ol/View'
 export default {
-  // 前缀名
-  rootname: true,
-  //
   name: 'map',
   namespaced: true,
   state: {

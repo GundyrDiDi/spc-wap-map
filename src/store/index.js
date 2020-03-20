@@ -5,6 +5,7 @@ import login from './modules/login'
 Vue.use(Vuex)
 
 const root = {
+  name: '',
   state: {
     self: 'root'
   },
@@ -12,16 +13,7 @@ const root = {
 
   },
   mutations: {
-    _commit (state, { value, exp, module, key }) {
-      if (exp) {
-        new Function('state', 'value', `state.${exp}=value`)(state, value)
-        // const [key, ...args] = exp.split('.').reverse()
-        // state = args.reduceRight((acc, key) => (acc[key]), state)
-        // state[key] = value
-      } else {
-        state[module][key] = value
-      }
-    }
+
   },
   actions: {
 
@@ -32,16 +24,53 @@ const root = {
     map
   }
 }
+bindMutations(root, { commit })
 //
 export const store = new Vuex.Store(root)
 
-export const vuexData = mapVuex(root)
+export const vuexData = {
+  ...mapVuex(root),
+  ...createDirectives()
+}
 //
-function mapVuex (root) {
+function createDirectives () {
+  const directives = {}
+  directives.commit = {
+    inserted (el, { value, arg, expression, name }) {
+      if (el.nodeName === 'INPUT') {
+        if (el.type === 'text' || el.type === 'password') {
+          el.value = value
+          el.addEventListener('input', () => {
+            store.commit(arg ? `${arg}/${name}` : name, { value: el.value, key: expression })
+          })
+        } else if (el.type === 'checkbox') {
+
+        } else if (el.type === 'radio') {
+
+        }
+      }
+    },
+    unbind (el) {
+
+    }
+  }
+  return { directives }
+}
+function everyModule (root, fn) {
   const modules = {
     root,
     ...root.modules
   }
+  Object.values(modules).forEach(fn)
+}
+function bindMutations (root, fns) {
+  Object.entries(fns).forEach(([prop, fn]) => {
+    everyModule(root, module => {
+      module.mutations[prop] = fn
+    })
+  })
+}
+function mapVuex (root) {
   const map = {
     computed: ['state', 'getters'],
     methods: ['mutations', 'actions']
@@ -50,7 +79,7 @@ function mapVuex (root) {
     computed: {},
     methods: {}
   }
-  Object.values(modules).forEach(module => {
+  everyModule(root, module => {
     Object.entries(map).forEach(([prop, arr]) => {
       arr.forEach(str => {
         if (module[str]) {
@@ -64,7 +93,6 @@ function mapVuex (root) {
   })
   return vuexData
 }
-
 function mapkeys (str, module = root) {
   if (!module[str]) return {}
   let fn = Vuex['map' + str.slice(0, 1).toUpperCase() + str.slice(1)]
@@ -72,7 +100,7 @@ function mapkeys (str, module = root) {
   if (module.name) {
     fn = fn.bind(Vuex, module.name)
   }
-  if (module.rootname) {
+  if (str === 'mutations' || str === 'actions') {
     keys = keys.reduce((acc, key) => {
       acc[module.name + '_' + key] = key
       return acc
@@ -80,7 +108,13 @@ function mapkeys (str, module = root) {
   }
   return fn.call(Vuex, keys)
 }
-
+function commit (state, { value, key, exp }) {
+  if (exp) {
+    new Function('window', 'state', 'value', `state.${exp}=value`)(null, state, value)
+  } else if (key) {
+    state[key] = value
+  }
+}
 // function camelCase () {
 
 // }
