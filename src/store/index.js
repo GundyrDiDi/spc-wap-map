@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import formMap from './modules/form-map'
 import map from './modules/map'
 import login from './modules/login'
 Vue.use(Vuex)
@@ -7,7 +8,9 @@ Vue.use(Vuex)
 const root = {
   name: '',
   state: {
-    self: 'root'
+    _emitQueue: {},
+    self: 'root',
+    istrue: true
   },
   getters: {
 
@@ -20,48 +23,38 @@ const root = {
   },
   // 加载模块
   modules: {
-    login: login,
+    login,
     map
   }
 }
-bindMutations(root, { commit })
+bindMutations(root, { commit, _emitElement, _listernElement })
 //
 export const store = new Vuex.Store(root)
 
 export const vuexData = {
   ...mapVuex(root),
-  ...createDirectives()
+  ...createDirectives(store, formMap, modify)
 }
 //
-function createDirectives () {
+function createDirectives (store, formMap, modify) {
   const directives = {}
   directives.commit = {
-    inserted (el, { value, arg, expression, name }) {
+    inserted (el, { value, arg, expression, name, modifiers }) {
       if (el.nodeName === 'INPUT') {
-        if (el.type === 'text' || el.type === 'password') {
-          el.value = value
-          el.addEventListener('input', () => {
-            store.commit(arg ? `${arg}/${name}` : name, { value: el.value, key: expression })
-          })
-        } else if (el.type === 'checkbox') {
-
-        } else if (el.type === 'radio') {
-
-        }
+        const { prop, event } = formMap[el.type]
+        const temp = modify.bind(null, modifiers)
+        el[prop] = temp(value)
+        store.commit('_listernElement', { key: `${arg}_${expression}`, el, prop })
+        el.addEventListener(event, () => {
+          store.commit(arg ? `${arg}/${name}` : name, { value: temp(el[prop]), key: expression, event: true })
+        })
       }
-    },
-    unbind (el) {
-
     }
   }
   return { directives }
 }
 function everyModule (root, fn) {
-  const modules = {
-    root,
-    ...root.modules
-  }
-  Object.values(modules).forEach(fn)
+  Object.values({ root, ...root.modules }).forEach(fn)
 }
 function bindMutations (root, fns) {
   Object.entries(fns).forEach(([prop, fn]) => {
@@ -108,12 +101,36 @@ function mapkeys (str, module = root) {
   }
   return fn.call(Vuex, keys)
 }
-function commit (state, { value, key, exp }) {
+function commit (state, { value, key, exp, event }) {
   if (exp) {
     new Function('window', 'state', 'value', `state.${exp}=value`)(null, state, value)
   } else if (key) {
     state[key] = value
   }
+  if (!event) {
+    store.commit('_emitElement', exp)
+  }
+}
+function _emitElement (state, key) {
+  const wk = state._emitQueue
+  console.log(wk)
+}
+function _listernElement (state, { key, el, prop }) {
+  let wk = state._emitQueue[key]
+  if (!wk) {
+    wk = state._emitQueue[key] = new WeakMap()
+  }
+  wk.set(el, prop)
+  console.log(wk)
+}
+function modify (modifiers, value) {
+  if (modifiers.trim && typeof value === 'string') {
+    value = value.trim()
+  }
+  if (modifiers.number && typeof value === 'string') {
+    value = parseFloat(value)
+  }
+  return value
 }
 // function camelCase () {
 

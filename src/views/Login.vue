@@ -1,10 +1,10 @@
 <template>
   <div id="login">
-    login
     <span @click="login_commit({value:'fwc',key:'username'})">{{username}}</span>
     <span @click="_commit({exp:'login.username',value:'cyd'})">{{username}}</span>
-    <input type="text" v-commit:login="username"/>
-    <input type="text" v-commit="self"/>{{self}}
+    <input type="text" v-commit:login.lazy="username"/>
+    <input type="text" v-commit.number="self"/>{{self}}
+    <input type="checkbox" v-commit="istrue"/>{{istrue}}
   </div>
 </template>
 
