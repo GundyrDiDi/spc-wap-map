@@ -16,7 +16,8 @@ const root = {
 
   },
   mutations: {
-
+    _emitElement,
+    _listenElement
   },
   actions: {
 
@@ -27,7 +28,7 @@ const root = {
     map
   }
 }
-bindMutations(root, { commit, _emitElement, _listernElement })
+bindMutations(root, { commit })
 //
 export const store = new Vuex.Store(root)
 
@@ -39,19 +40,30 @@ export const vuexData = {
 function createDirectives (store, formMap, modify) {
   const directives = {}
   directives.commit = {
-    inserted (el, { value, arg, expression, name, modifiers }) {
+    inserted (el, { value, arg, expression: chain, name, modifiers }) {
+      console.log(value)
       if (el.nodeName === 'INPUT') {
         const { prop, event } = formMap[el.type]
+        const rootChain = `${arg ? arg + '.' : ''}${chain}`
         const temp = modify.bind(null, modifiers)
         el[prop] = temp(value)
-        store.commit('_listernElement', { key: `${arg}_${expression}`, el, prop })
         el.addEventListener(event, () => {
-          store.commit(arg ? `${arg}/${name}` : name, { value: temp(el[prop]), key: expression, event: true })
+          store.commit(arg ? `${arg}/${name}` : name, { value: temp(el[prop]), chain, event: true })
         })
+        store.commit('_listenElement', { chain: rootChain, el, prop })
       }
     }
   }
   return { directives }
+}
+function modify (modifiers, value) {
+  if (modifiers.trim && typeof value === 'string') {
+    value = value.trim()
+  }
+  if (modifiers.number && typeof value === 'string') {
+    value = value.replace(/\D/g, '')
+  }
+  return value
 }
 function everyModule (root, fn) {
   Object.values({ root, ...root.modules }).forEach(fn)
@@ -101,37 +113,30 @@ function mapkeys (str, module = root) {
   }
   return fn.call(Vuex, keys)
 }
-function commit (state, { value, key, exp, event }) {
-  if (exp) {
-    new Function('window', 'state', 'value', `state.${exp}=value`)(null, state, value)
-  } else if (key) {
-    state[key] = value
-  }
+function commit (state, { value, chain, event }, root) {
+  // 要限制exp的内容
+  // new Function('window', 'state', 'value', `state.${exp}=value`)(null, state, value)
+  chain.split('.').forEach((key, i, arr) => {
+    if (i !== arr.length - 1) {
+      state = state[key]
+    } else {
+      state[key] = value
+    }
+  })
   if (!event) {
-    store.commit('_emitElement', exp)
+    store.commit('_emitElement', { key: chain, value })
   }
 }
-function _emitElement (state, key) {
-  const wk = state._emitQueue
-  console.log(wk)
+function _emitElement (state, { key, value }) {
+  const wk = state._emitQueue[key]
+  wk.forEach(([el, prop]) => {
+    el[prop] = value
+  })
 }
-function _listernElement (state, { key, el, prop }) {
-  let wk = state._emitQueue[key]
+function _listenElement (state, { chain, el, prop }) {
+  let wk = state._emitQueue[chain]
   if (!wk) {
-    wk = state._emitQueue[key] = new WeakMap()
+    wk = state._emitQueue[chain] = []
   }
-  wk.set(el, prop)
-  console.log(wk)
+  wk.push([el, prop])
 }
-function modify (modifiers, value) {
-  if (modifiers.trim && typeof value === 'string') {
-    value = value.trim()
-  }
-  if (modifiers.number && typeof value === 'string') {
-    value = parseFloat(value)
-  }
-  return value
-}
-// function camelCase () {
-
-// }
