@@ -4,7 +4,7 @@ export default {
   name: 'map',
   namespaced: true,
   state: {
-    map: 'undefined',
+    mymap: 'undefined',
     el: undefined,
     view: undefined,
     layers: []
@@ -18,7 +18,7 @@ export default {
         center: [-6655.5402445057125, 6709968.258934638],
         zoom: 13
       })
-      state.map = new Map({
+      state.mymap = new Map({
         layers: [],
         target: state.el,
         view: state.view

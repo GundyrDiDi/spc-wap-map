@@ -3,7 +3,7 @@ export default {
   namespaced: true,
   state: {
     username: 'szl',
-    password: '',
+    password: 'szl',
     isLogin: false
   },
   getters: {
@@ -11,5 +11,13 @@ export default {
   },
   mutations: {
 
+  },
+  actions: {
+    async submit (store, payload) {
+      console.log(store)
+      console.log(payload)
+      console.log(store.state)
+      console.log(axios)
+    }
   }
 }

@@ -9,7 +9,6 @@ import { vuexData, store } from './store'
 
 Vue.config.productionTip = false
 Vue.mixin(vuexData)
-
 new Vue({
   router,
   store,

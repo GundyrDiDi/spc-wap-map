@@ -10,9 +10,11 @@
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
+    "echarts": "^4.7.0",
     "element-ui": "^2.13.0",
     "lodash": "^4.17.15",
     "ol": "^6.2.1",
+    "swiper": "^5.3.6",
     "vue": "^2.6.11",
     "vue-router": "^3.1.5",
     "vuex": "^3.1.2"
@@ -30,6 +32,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^6.1.2",
+    "jest-mock": "^25.1.0",
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
     "lint-staged": "^9.5.0",

@@ -17,7 +17,8 @@ const root = {
   },
   mutations: {
     _emitElement,
-    _listenElement
+    _listenElement,
+    _unbindElement
   },
   actions: {
 
@@ -40,18 +41,20 @@ export const vuexData = {
 function createDirectives (store, formMap, modify) {
   const directives = {}
   directives.commit = {
-    inserted (el, { value, arg, expression: chain, name, modifiers }) {
-      console.log(value)
+    bind (el, { value, expression: chain, name, modifiers }) {
       if (el.nodeName === 'INPUT') {
         const { prop, event } = formMap[el.type]
-        const rootChain = `${arg ? arg + '.' : ''}${chain}`
+        // const rootChain = `${arg ? arg + '.' : ''}${chain}`
         const temp = modify.bind(null, modifiers)
         el[prop] = temp(value)
         el.addEventListener(event, () => {
-          store.commit(arg ? `${arg}/${name}` : name, { value: temp(el[prop]), chain, event: true })
+          store.commit(name, { value: temp(el[prop]), chain, event: true })
         })
-        store.commit('_listenElement', { chain: rootChain, el, prop })
+        store.commit('_listenElement', { chain, el, prop })
       }
+    },
+    unbind (el, { expression: chain }) {
+      store.commit('_unbindElement', { chain, el })
     }
   }
   return { directives }
@@ -113,7 +116,8 @@ function mapkeys (str, module = root) {
   }
   return fn.call(Vuex, keys)
 }
-function commit (state, { value, chain, event }, root) {
+function commit (state, { value, chain, event }) {
+  console.log(value)
   // 要限制exp的内容
   // new Function('window', 'state', 'value', `state.${exp}=value`)(null, state, value)
   chain.split('.').forEach((key, i, arr) => {
@@ -129,9 +133,11 @@ function commit (state, { value, chain, event }, root) {
 }
 function _emitElement (state, { key, value }) {
   const wk = state._emitQueue[key]
-  wk.forEach(([el, prop]) => {
-    el[prop] = value
-  })
+  if (wk) {
+    wk.forEach(([el, prop]) => {
+      el[prop] = value
+    })
+  }
 }
 function _listenElement (state, { chain, el, prop }) {
   let wk = state._emitQueue[chain]
@@ -139,4 +145,15 @@ function _listenElement (state, { chain, el, prop }) {
     wk = state._emitQueue[chain] = []
   }
   wk.push([el, prop])
+}
+function _unbindElement (state, { chain, el }) {
+  const wk = state._emitQueue[chain]
+  if (wk) {
+    wk.some(([elm, prop], i, arr) => {
+      if (elm === el) {
+        arr.splice(i, 1)
+        return true
+      }
+    })
+  }
 }
