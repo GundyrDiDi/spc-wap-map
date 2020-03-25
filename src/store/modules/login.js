@@ -2,8 +2,8 @@ export default {
   name: 'login',
   namespaced: true,
   state: {
-    username: 'szl',
-    password: 'szl',
+    username: '13914702847',
+    password: '13914702847',
     isLogin: false
   },
   getters: {

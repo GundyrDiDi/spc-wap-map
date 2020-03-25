@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <Map />
+    <ol-map />
   </div>
 </template>
 
 <script>
-import Map from '../components/Map.vue'
+import olMap from '../components/olMap.vue'
 
 export default {
   name: 'Home',
   components: {
-    Map
+    olMap
   },
   computed: {
 

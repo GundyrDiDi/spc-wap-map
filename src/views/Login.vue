@@ -1,5 +1,5 @@
 <template>
-  <div id="login">
+  <div id="login" ref="login">
     <div id="getlogin"
       :class="{expand:isCollapse}"
       @click="isCollapse=!isCollapse">
@@ -11,7 +11,8 @@
           <el-form :model="login" :rules="rules" ref="ruleForm">
             <el-form-item prop="username">
               <el-input
-                placeholder="UserName"
+                clearable
+                placeholder="用户名"
                 :value="username"
                 @input="_commit({chain:'login.username',value:$event})"
               >
@@ -20,8 +21,9 @@
             </el-form-item>
             <el-form-item prop="password">
               <el-input
-                show-password
-                placeholder="Password"
+                clearable
+                type="password"
+                placeholder="密码"
                 :value="password"
                 @input="_commit({chain:'login.password',value:$event})"
               >
@@ -30,16 +32,8 @@
             </el-form-item>
             <div></div>
           </el-form>
-          <!-- <div class="el-grid">
-            <div>
-              <i class="el-icon-user"></i>
-            </div>
-            <div>
-              <input type="text" v-commit="login.username" class="el-input__inner">
-            </div>
-          </div> -->
         </el-main>
-        <el-footer height="3.2rem">
+        <el-footer>
           <span @click="submit">进入地图</span>
           <i class="el-icon-d-arrow-right"></i>
         </el-footer>
@@ -69,7 +63,16 @@ export default {
     }
   },
   mounted () {
+    // 防止软键盘破坏布局，必须写死高度
+    // console.log(this.$refs.login.style.height=window.innerHeight+'px');
     console.log(this.isCollapse)
+    // const h = document.body.scrollHeight  // 用onresize事件监控窗口或框架被调整大小，先把一开始的高度记录下来
+    // window.onresize = function () { // 如果当前窗口小于一开始记录的窗口高度，那就让当前窗口等于一开始窗口的高度
+    //   if (document.body.scrollHeight < h) {
+    //     console.log(h);
+    //     document.body.style.height = h+'px'
+    //   }
+    // }
   },
   methods: {
     async submit () {
@@ -85,23 +88,28 @@ export default {
 
 <style lang="less">
   #login {
-    width: inherit;
-    height: inherit;
-    background: url('../assets/bg1.jpg');
+    bottom:0;
+    left:0;
+    top:0;
+    right:0;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: url('../assets/bg2.jpg');
     background-size: cover;
     background-position: center;
   }
   #form {
     width:inherit;
-    height:20rem;
+    height:12rem;
     background:#fff;
     position:absolute;
     bottom:0;
     box-shadow:0 0 2px 1px rgba(0,0,0,.2)
   }
   #getlogin{
-    width:80%;
-    margin-left:10%;
+    width:60%;
+    margin-left:20%;
     font-size:1rem;
     position:absolute;
     bottom:4rem;
@@ -113,24 +121,24 @@ export default {
     border-color: #409EFF;
     text-align: center;
     box-shadow:0 2px 2px 0px rgba(0,0,0,.2);
-    transition:all .3s linear;
+    transition:all .17s linear;
     z-index:1;
   }
   #getlogin.expand{
-    transition:all .28s linear .12s;
+    transition:all .21s linear .09s;
     margin:0;
     width:100%;
     border-radius: 0;
-    bottom:20rem;
-    background:rgb(98, 208, 252);
+    bottom:12rem;
+    background:rgb(4, 153, 212);
     box-shadow:0 0 2px 1px rgba(0,0,0,.2);
   }
 
   .slideUp{
-    animation: slidelogin .4s linear;
+    animation: slidelogin .3s linear;
   }
   .slideDown{
-    animation: slidelogin .4s linear reverse;
+    animation: slidelogin .3s ease-in reverse;
   }
   @keyframes slidelogin {
     0%{
@@ -144,11 +152,12 @@ export default {
     background-color: rgb(4, 153, 212);
     color: #fff;
     text-align: center;
-    line-height: 3.2rem;
+    line-height: 3rem;
+    height:3rem !important;
     box-shadow:0 1px 2px 0px inset rgba(0,0,0,.2);
   }
   .el-icon-d-arrow-right{
-    line-height: 3.2rem;
+    line-height: 3rem;
     position: absolute;
     right: 1rem;
   }
@@ -160,14 +169,14 @@ export default {
     border-bottom: 1px solid #DCDFE6;
   }
   .el-input--prefix .el-input__inner{
-    padding-left: 3rem;
+    padding-left: 2rem;
   }
   .el-input--suffix .el-input__inner{
-    padding-right: 3rem;
+    padding-right: 2rem;
   }
   .el-input__icon{
     line-height: 2.6rem;
-    font-size:2rem;
+    font-size:1.2rem;
     color:rgb(15, 3, 121);
   }
   .el-input .el-input__clear{

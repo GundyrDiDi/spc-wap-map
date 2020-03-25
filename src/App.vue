@@ -35,12 +35,13 @@ export default {
     font-family: 'Microsoft Yahei';
     /* 设计稿width:375px */
     font-size: 18px;
+    letter-spacing: .1rem;
   }
 
   #app{
-    position:fixed;
-    width:100vw;
-    height:100vh;
+    position: absolute;
+    width:100%;
+    height:100%;
   }
   div{
     box-sizing: border-box;

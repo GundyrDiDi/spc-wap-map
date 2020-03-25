@@ -17,6 +17,7 @@ const config = {
 
 const _axios = axios.create(config)
 
+// 请求拦截器
 _axios.interceptors.request.use(
   function (config) {
     // Do something before request is sent
@@ -28,6 +29,7 @@ _axios.interceptors.request.use(
   }
 )
 
+// 返回响应拦截器
 // Add a response interceptor
 _axios.interceptors.response.use(
   function (response) {
