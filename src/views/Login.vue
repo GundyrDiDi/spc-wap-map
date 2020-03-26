@@ -1,5 +1,5 @@
 <template>
-  <div id="login" ref="login">
+  <div id="login" ref="login" v-loading="loading">
     <div id="getlogin"
       :class="{expand:isCollapse}"
       @click="isCollapse=!isCollapse">
@@ -8,7 +8,7 @@
     <transition enter-active-class="slideUp" leave-active-class="slideDown">
       <el-container id="form" v-show="isCollapse">
         <el-main>
-          <el-form :model="login" :rules="rules" ref="ruleForm">
+          <el-form :model="login" :rules="rules" ref="ruleform">
             <el-form-item prop="username">
               <el-input
                 clearable
@@ -33,9 +33,9 @@
             <div></div>
           </el-form>
         </el-main>
-        <el-footer>
-          <span @click="submit">进入地图</span>
-          <i class="el-icon-d-arrow-right"></i>
+        <el-footer @click.native="submit">
+          <span>进入地图</span>
+          <i v-for="v in 3" :key="v" class="el-icon-arrow-right" ></i>
         </el-footer>
       </el-container>
     </transition>
@@ -65,7 +65,8 @@ export default {
   mounted () {
     // 防止软键盘破坏布局，必须写死高度
     // console.log(this.$refs.login.style.height=window.innerHeight+'px');
-    console.log(this.isCollapse)
+    // 或者控制body固定高度，其他元素根据body适应
+    // document.body.style.height=window.innerHeight+'px';
     // const h = document.body.scrollHeight  // 用onresize事件监控窗口或框架被调整大小，先把一开始的高度记录下来
     // window.onresize = function () { // 如果当前窗口小于一开始记录的窗口高度，那就让当前窗口等于一开始窗口的高度
     //   if (document.body.scrollHeight < h) {
@@ -76,9 +77,9 @@ export default {
   },
   methods: {
     async submit () {
-      const vail = await this.login_submit()
-      if (vail) {
-        this.router.go('home')
+      const v = await this.$refs.ruleform.validate().catch(v => v)
+      if (v && await this.login_submit()) {
+        this.$router.push('home')
       }
     }
   }
@@ -88,13 +89,9 @@ export default {
 
 <style lang="less">
   #login {
-    bottom:0;
-    left:0;
-    top:0;
-    right:0;
-    position: fixed;
-    width: 100%;
-    height: 100%;
+    position: relative;
+    width: inherit;
+    height: inherit;
     background: url('../assets/bg2.jpg');
     background-size: cover;
     background-position: center;
@@ -156,10 +153,49 @@ export default {
     height:3rem !important;
     box-shadow:0 1px 2px 0px inset rgba(0,0,0,.2);
   }
-  .el-icon-d-arrow-right{
+  .el-icon-arrow-right{
     line-height: 3rem;
     position: absolute;
+    animation:flash .8s linear infinite;
+  }
+  .el-icon-arrow-right:nth-child(2){
     right: 1rem;
+    animation:flashlast .8s linear infinite;
+  }
+  .el-icon-arrow-right:nth-child(3){
+    right: 1.3rem;
+  }
+  .el-icon-arrow-right:nth-child(4){
+    right: 1.6rem;
+    animation:flashfirst .8s linear infinite;
+  }
+  @keyframes flash{
+    0%{
+      transform: translate(0,0);
+    }
+    100%{
+      transform: translate(.3rem,0);
+    }
+  }
+  @keyframes flashfirst{
+    0%{
+      opacity: 0;
+      transform: translate(0,0);
+    }
+    100%{
+      opacity: 1;
+      transform: translate(.3rem,0);
+    }
+  }
+  @keyframes flashlast{
+    0%{
+      opacity: 1;
+      transform: translate(0,0);
+    }
+    100%{
+      opacity: 0;
+      transform: translate(.3rem,0);
+    }
   }
   .el-input__inner {
     height: 2.6rem;
@@ -177,7 +213,7 @@ export default {
   .el-input__icon{
     line-height: 2.6rem;
     font-size:1.2rem;
-    color:rgb(15, 3, 121);
+    color:rgb(4, 153, 212);
   }
   .el-input .el-input__clear{
     line-height: 2.6rem;

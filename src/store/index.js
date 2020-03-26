@@ -1,24 +1,29 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import formMap from './modules/form-map'
 import map from './modules/map'
 import login from './modules/login'
+import commit from './plugins/directives'
 Vue.use(Vuex)
 
 const root = {
   name: '',
   state: {
-    _emitQueue: {},
-    self: 'root',
-    istrue: true
+    loading: false
   },
   getters: {
 
   },
   mutations: {
-    _emitElement,
-    _listenElement,
-    _unbindElement
+    ...new Proxy({ loading: false }, {
+      get (target, propKey, receiver) {
+        return (state, payload) => {
+          console.log(propKey)
+          if (propKey in state) {
+            state[propKey] = payload
+          }
+        }
+      }
+    })
   },
   actions: {
 
@@ -33,41 +38,11 @@ bindMutations(root, { commit })
 //
 export const store = new Vuex.Store(root)
 
+commit(store)
 export const vuexData = {
-  ...mapVuex(root),
-  ...createDirectives(store, formMap, modify)
+  ...mapVuex(root)
 }
 //
-function createDirectives (store, formMap, modify) {
-  const directives = {}
-  directives.commit = {
-    bind (el, { value, expression: chain, name, modifiers }) {
-      if (el.nodeName === 'INPUT') {
-        const { prop, event } = formMap[el.type]
-        // const rootChain = `${arg ? arg + '.' : ''}${chain}`
-        const temp = modify.bind(null, modifiers)
-        el[prop] = temp(value)
-        el.addEventListener(event, () => {
-          store.commit(name, { value: temp(el[prop]), chain, event: true })
-        })
-        store.commit('_listenElement', { chain, el, prop })
-      }
-    },
-    unbind (el, { expression: chain }) {
-      store.commit('_unbindElement', { chain, el })
-    }
-  }
-  return { directives }
-}
-function modify (modifiers, value) {
-  if (modifiers.trim && typeof value === 'string') {
-    value = value.trim()
-  }
-  if (modifiers.number && typeof value === 'string') {
-    value = value.replace(/\D/g, '')
-  }
-  return value
-}
 function everyModule (root, fn) {
   Object.values({ root, ...root.modules }).forEach(fn)
 }
@@ -110,50 +85,26 @@ function mapkeys (str, module = root) {
   }
   if (str === 'mutations' || str === 'actions') {
     keys = keys.reduce((acc, key) => {
-      acc[module.name + '_' + key] = key
+      if (!key.includes('_')) {
+        acc[module.name + '_' + key] = key
+      }
       return acc
     }, {})
   }
   return fn.call(Vuex, keys)
 }
-function commit (state, { value, chain, event }) {
-  console.log(value)
-  // 要限制exp的内容
-  // new Function('window', 'state', 'value', `state.${exp}=value`)(null, state, value)
-  chain.split('.').forEach((key, i, arr) => {
-    if (i !== arr.length - 1) {
-      state = state[key]
-    } else {
-      state[key] = value
-    }
-  })
-  if (!event) {
-    store.commit('_emitElement', { key: chain, value })
-  }
-}
-function _emitElement (state, { key, value }) {
-  const wk = state._emitQueue[key]
-  if (wk) {
-    wk.forEach(([el, prop]) => {
-      el[prop] = value
-    })
-  }
-}
-function _listenElement (state, { chain, el, prop }) {
-  let wk = state._emitQueue[chain]
-  if (!wk) {
-    wk = state._emitQueue[chain] = []
-  }
-  wk.push([el, prop])
-}
-function _unbindElement (state, { chain, el }) {
-  const wk = state._emitQueue[chain]
-  if (wk) {
-    wk.some(([elm, prop], i, arr) => {
-      if (elm === el) {
-        arr.splice(i, 1)
-        return true
-      }
-    })
-  }
-}
+// function commit (state, { value, chain, event }) {
+//   console.log(value)
+//   // 要限制exp的内容
+//   // new Function('window', 'state', 'value', `state.${exp}=value`)(null, state, value)
+//   chain.split('.').forEach((key, i, arr) => {
+//     if (i !== arr.length - 1) {
+//       state = state[key]
+//     } else {
+//       state[key] = value
+//     }
+//   })
+//   if (!event) {
+//     store.commit('_emitElement', { key: chain, value })
+//   }
+// }
