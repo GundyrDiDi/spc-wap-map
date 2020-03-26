@@ -46,13 +46,12 @@ _axios.interceptors.response.use(
     console.log(error.response.status)
     // Do something with response error
     // return Promise.reject(error)
-    // const p = new Promise((res, rej) => {
-    //   setTimeout(() => {
-    //     store.commit('commit', { chain: 'loading', value: false })
-    //     res(true)
-    //   }, 3000)
-    // })
-    return Promise.resolve(true)
+    return new Promise(resolve => {
+      setTimeout(() => {
+        store.commit('commit', { chain: 'loading', value: false })
+        resolve(true)
+      }, 3000)
+    })
   }
 )
 
