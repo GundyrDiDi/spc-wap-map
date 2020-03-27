@@ -2,8 +2,8 @@ export default {
   name: 'login',
   namespaced: true,
   state: {
-    username: '13914702847',
-    password: '13914702847',
+    username: 'username',
+    password: 'password',
     isLogin: false,
     token: undefined
   },
@@ -17,7 +17,7 @@ export default {
     }
   },
   actions: {
-    async submit (store) {
+    async _submit (store) {
       const res = await axios.post('./getdata')
       if (res) {
         store.commit('success')

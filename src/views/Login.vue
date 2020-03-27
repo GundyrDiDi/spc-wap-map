@@ -14,7 +14,7 @@
                 clearable
                 placeholder="用户名"
                 :value="username"
-                @input="_commit({chain:'login.username',value:$event})"
+                @input="$store.commit('login/username',$event)"
               >
                 <i slot="prefix" class="el-input__icon el-icon-user"></i>
               </el-input>
@@ -25,7 +25,7 @@
                 type="password"
                 placeholder="密码"
                 :value="password"
-                @input="_commit({chain:'login.password',value:$event})"
+                @input="_commit({type:'login/password',value:$event})"
               >
                 <i slot="prefix" class="el-input__icon el-icon-lock"></i>
               </el-input>

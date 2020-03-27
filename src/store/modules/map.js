@@ -10,7 +10,7 @@ export default {
     layers: []
   },
   mutations: {
-    init (state, {
+    _init (state, {
       el
     }) {
       state.el = el

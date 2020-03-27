@@ -2,9 +2,9 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import map from './modules/map'
 import login from './modules/login'
-import commit from './plugins/directives'
-Vue.use(Vuex)
+import { commitAction, commitPlugin, commitDrt } from './plugins/commit'
 
+Vue.use(Vuex)
 const root = {
   name: '',
   state: {
@@ -14,43 +14,62 @@ const root = {
 
   },
   mutations: {
-    ...new Proxy({ loading: false }, {
-      get (target, propKey, receiver) {
-        return (state, payload) => {
-          console.log(propKey)
-          if (propKey in state) {
-            state[propKey] = payload
-          }
-        }
-      }
-    })
-  },
-  actions: {
 
   },
-  // 加载模块
+  actions: {
+    ...commitAction
+  },
   modules: {
     login,
     map
-  }
+  },
+  plugins: [
+    commitPlugin
+  ]
 }
-bindMutations(root, { commit })
-//
+// 每一个module里的state数据通过mutations改变
+bindMutations(root)
+
 export const store = new Vuex.Store(root)
 
-commit(store)
 export const vuexData = {
-  ...mapVuex(root)
+  ...mapVuex(root),
+  directives: {
+    commit: commitDrt
+  }
 }
+console.log(store)
 //
 function everyModule (root, fn) {
+  // let tree={root};
+  // function foreach(modules,name){
+  //   Object.entries(modules).forEach(([prop,module])=>{
+  //     tree[`${name}${prop}`]=module;
+  //     if(module.modules){
+  //       foreach(module.modules,`${name}${prop}_`)
+  //     }
+  //   })
+  // }
+  // foreach(root.modules,'');
+  // console.log(tree);
   Object.values({ root, ...root.modules }).forEach(fn)
 }
-function bindMutations (root, fns) {
-  Object.entries(fns).forEach(([prop, fn]) => {
-    everyModule(root, module => {
-      module.mutations[prop] = fn
-    })
+function bindMutations (root) {
+  everyModule(root, module => {
+    module.mutations = {
+      ...module.mutations,
+      ...new Proxy(module.state, {
+        get (target, propKey, receiver) {
+          return (state, payload) => {
+            state[propKey] = payload
+          }
+        },
+        // 过滤 前缀_表示内部数据
+        ownKeys (target) {
+          return Object.keys(target).filter(key => key[0] !== '_')
+        }
+      })
+    }
   })
 }
 function mapVuex (root) {
@@ -85,26 +104,11 @@ function mapkeys (str, module = root) {
   }
   if (str === 'mutations' || str === 'actions') {
     keys = keys.reduce((acc, key) => {
-      if (!key.includes('_')) {
-        acc[module.name + '_' + key] = key
+      if (key.includes('_')) {
+        acc[module.name + key] = key
       }
       return acc
     }, {})
   }
   return fn.call(Vuex, keys)
 }
-// function commit (state, { value, chain, event }) {
-//   console.log(value)
-//   // 要限制exp的内容
-//   // new Function('window', 'state', 'value', `state.${exp}=value`)(null, state, value)
-//   chain.split('.').forEach((key, i, arr) => {
-//     if (i !== arr.length - 1) {
-//       state = state[key]
-//     } else {
-//       state[key] = value
-//     }
-//   })
-//   if (!event) {
-//     store.commit('_emitElement', { key: chain, value })
-//   }
-// }

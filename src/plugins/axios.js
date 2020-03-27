@@ -48,9 +48,9 @@ _axios.interceptors.response.use(
     // return Promise.reject(error)
     return new Promise(resolve => {
       setTimeout(() => {
-        store.commit('commit', { chain: 'loading', value: false })
+        store.commit('loading', false)
         resolve(true)
-      }, 3000)
+      }, 1000)
     })
   }
 )
