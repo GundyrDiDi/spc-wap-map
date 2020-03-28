@@ -1,7 +1,6 @@
 import Map from 'ol/Map'
 import View from 'ol/View'
 export default {
-  name: 'map',
   namespaced: true,
   state: {
     mymap: 'undefined',
@@ -10,9 +9,7 @@ export default {
     layers: []
   },
   mutations: {
-    _init (state, {
-      el
-    }) {
+    _init (state, { el }) {
       state.el = el
       state.view = new View({
         center: [-6655.5402445057125, 6709968.258934638],
@@ -26,5 +23,7 @@ export default {
     }
 
   },
-  actions: {}
+  actions: {
+
+  }
 }

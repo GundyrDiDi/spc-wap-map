@@ -5,11 +5,9 @@
 
 <script>
 import 'ol/ol.css'
-// import Map from 'ol/Map'
-// import View from 'ol/View'
 
 export default {
-  name: 'Map',
+  name: 'olMap',
   mounted () {
     this.map_init({ el: this.$refs.el })
   }
@@ -18,7 +16,11 @@ export default {
 
 <style scoped>
   #map {
-    height: 100px;
-    background: red;
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#000;
   }
 </style>

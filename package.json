@@ -53,7 +53,8 @@
       "parser": "babel-eslint"
     },
     "rules": {
-      "no-new-func": 0
+      "no-new-func": 0,
+      "accessor-pairs":0
     },
     "globals": {
       "api": true,

@@ -30,9 +30,9 @@
                 <i slot="prefix" class="el-input__icon el-icon-lock"></i>
               </el-input>
             </el-form-item>
-            <div></div>
           </el-form>
         </el-main>
+              <input type="text" v-commit="login.username">
         <el-footer @click.native="submit">
           <span>进入地图</span>
           <i v-for="v in 3" :key="v" class="el-icon-arrow-right" ></i>
@@ -63,6 +63,7 @@ export default {
     }
   },
   mounted () {
+
     // 防止软键盘破坏布局，必须写死高度
     // console.log(this.$refs.login.style.height=window.innerHeight+'px');
     // 或者控制body固定高度，其他元素根据body适应
@@ -118,11 +119,11 @@ export default {
     border-color: #409EFF;
     text-align: center;
     box-shadow:0 2px 2px 0px rgba(0,0,0,.2);
-    transition:all .17s linear;
+    transition:all .22s ease-in;
     z-index:1;
   }
   #getlogin.expand{
-    transition:all .21s linear .09s;
+    transition:all .22s ease-out .08s;
     margin:0;
     width:100%;
     border-radius: 0;
@@ -132,10 +133,11 @@ export default {
   }
 
   .slideUp{
-    animation: slidelogin .3s linear;
+    animation: slidelogin .3s ease-out;
   }
   .slideDown{
-    animation: slidelogin .3s ease-in reverse;
+    //ease-out reverse 其实是ease-in
+    animation: slidelogin .3s ease-out reverse;
   }
   @keyframes slidelogin {
     0%{
@@ -156,7 +158,6 @@ export default {
   .el-icon-arrow-right{
     line-height: 3rem;
     position: absolute;
-    animation:flash .8s linear infinite;
   }
   .el-icon-arrow-right:nth-child(2){
     right: 1rem;
@@ -164,6 +165,7 @@ export default {
   }
   .el-icon-arrow-right:nth-child(3){
     right: 1.3rem;
+    animation:flash .8s linear infinite;
   }
   .el-icon-arrow-right:nth-child(4){
     right: 1.6rem;

@@ -1,10 +1,9 @@
 export default {
-  name: 'login',
   namespaced: true,
   state: {
     username: 'username',
     password: 'password',
-    isLogin: false,
+    isLogin: true,
     token: undefined
   },
   getters: {
@@ -24,5 +23,8 @@ export default {
         return true
       }
     }
+  },
+  modules: {
+
   }
 }
