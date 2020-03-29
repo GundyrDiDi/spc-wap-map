@@ -49,8 +49,8 @@ _axios.interceptors.response.use(
     return new Promise(resolve => {
       setTimeout(() => {
         store.commit('loading', false)
-        resolve(true)
-      }, 1000)
+        resolve(false)
+      }, 3000)
     })
   }
 )

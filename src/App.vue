@@ -6,7 +6,29 @@
 
 <script>
 export default {
-  name: 'SPC-map'
+  name: 'SPC-map',
+  mounted () {
+    // 防止软键盘破坏布局，必须写死高度
+    // 控制body固定高度，其他元素根据body适应
+    const h = window.innerHeight
+    document.body.style.height = h + 'px'
+    window.addEventListener('resize', () => { // 用onresize事件监控窗口或框架被调整大小，先把一开始的高度记录下来
+      if (document.body.scrollHeight < h) { // 如果当前窗口小于一开始记录的窗口高度，那就让当前窗口等于一开始窗口的高度
+        document.body.style.height = h + 'px'
+      }
+    })
+    // 自适应手机尺寸
+    const docEl = document.documentElement
+    const resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize'
+    const recalc = function () {
+      const clientWidth = docEl.clientWidth
+      if (!clientWidth) return
+      docEl.style.fontSize = 18 * (clientWidth / 375) + 'px'
+    }
+    window.addEventListener(resizeEvt, recalc, false)
+    window.addEventListener('pageshow', recalc, false)
+    document.addEventListener('DOMContentLoaded', recalc, false)
+  }
 }
 </script>
 

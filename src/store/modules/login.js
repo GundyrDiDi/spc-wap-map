@@ -3,7 +3,7 @@ export default {
   state: {
     username: 'username',
     password: 'password',
-    isLogin: true,
+    isLogin: false,
     token: undefined
   },
   getters: {

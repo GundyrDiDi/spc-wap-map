@@ -1,18 +1,21 @@
 <template>
-  <div id="login" ref="login" v-loading="loading">
-    <div id="getlogin"
-      :class="{expand:isCollapse}"
-      @click="isCollapse=!isCollapse">
-      登录
-    </div>
+  <div id="login" ref="login">
+    <transition appear name="el-zoom-in-center">
+      <div id="getlogin"
+        :class="{expand:isCollapse}"
+        @click="isCollapse=!isCollapse">
+        登录
+      </div>
+    </transition>
     <transition enter-active-class="slideUp" leave-active-class="slideDown">
       <el-container id="form" v-show="isCollapse">
+        <el-header height="2rem"></el-header>
         <el-main>
           <el-form :model="login" :rules="rules" ref="ruleform">
             <el-form-item prop="username">
               <el-input
                 clearable
-                placeholder="用户名"
+                placeholder="员工账号"
                 :value="username"
                 @input="$store.commit('login/username',$event)"
               >
@@ -29,20 +32,28 @@
               >
                 <i slot="prefix" class="el-input__icon el-icon-lock"></i>
               </el-input>
+              <!-- <span>
+                忘记密码？
+              </span> -->
             </el-form-item>
           </el-form>
         </el-main>
-              <input type="text" v-commit="login.username">
         <el-footer @click.native="submit">
-          <span>进入地图</span>
-          <i v-for="v in 3" :key="v" class="el-icon-arrow-right" ></i>
+          <template v-show="!loading">
+            <span>进入地图</span>
+            <i v-for="v in 3" :key="v" class="el-icon-arrow-right" ></i>
+          </template>
+          <lottie-loading class="lottie" v-show="loading"></lottie-loading>
         </el-footer>
+        <div class="line"></div>
       </el-container>
     </transition>
   </div>
 </template>
 
 <script>
+import lottieLoading from '../components/lottie-loading.vue'
+
 export default {
   name: 'login',
   data () {
@@ -51,7 +62,7 @@ export default {
       rules: {
         username: {
           required: true,
-          message: '请输入用户名',
+          message: '请输入员工账号',
           trigger: 'blur'
         },
         password: {
@@ -62,19 +73,11 @@ export default {
       }
     }
   },
+  components: {
+    lottieLoading
+  },
   mounted () {
 
-    // 防止软键盘破坏布局，必须写死高度
-    // console.log(this.$refs.login.style.height=window.innerHeight+'px');
-    // 或者控制body固定高度，其他元素根据body适应
-    // document.body.style.height=window.innerHeight+'px';
-    // const h = document.body.scrollHeight  // 用onresize事件监控窗口或框架被调整大小，先把一开始的高度记录下来
-    // window.onresize = function () { // 如果当前窗口小于一开始记录的窗口高度，那就让当前窗口等于一开始窗口的高度
-    //   if (document.body.scrollHeight < h) {
-    //     console.log(h);
-    //     document.body.style.height = h+'px'
-    //   }
-    // }
   },
   methods: {
     async submit () {
@@ -93,45 +96,49 @@ export default {
     position: relative;
     width: inherit;
     height: inherit;
-    background: url('../assets/bg2.jpg');
+    // background: url('../assets/bg2.jpg');
     background-size: cover;
     background-position: center;
   }
-  #form {
-    width:inherit;
-    height:12rem;
-    background:#fff;
-    position:absolute;
-    bottom:0;
-    box-shadow:0 0 2px 1px rgba(0,0,0,.2)
-  }
   #getlogin{
+    height:3rem;
+    line-height:3rem;
+    left:20%;
     width:60%;
-    margin-left:20%;
-    font-size:1rem;
+    font-size:.9rem;
     position:absolute;
-    bottom:4rem;
+    bottom:3rem;
     border-radius: 20px;
-    padding: 12px 23px;
     color: #FFF;
     display: inline-block;
     background-color: #409EFF;
     border-color: #409EFF;
     text-align: center;
-    box-shadow:0 2px 2px 0px rgba(0,0,0,.2);
-    transition:all .22s ease-in;
+    box-shadow:0 2px 1px 0px rgba(0,0,0,.2);
+    transition:all .24s ease-in;
     z-index:1;
   }
   #getlogin.expand{
-    transition:all .22s ease-out .08s;
-    margin:0;
-    width:100%;
+    transition:all .24s ease-out .06s;
+    left:10%;
+    width:80%;
     border-radius: 0;
-    bottom:12rem;
+    bottom:29rem;
     background:rgb(4, 153, 212);
-    box-shadow:0 0 2px 1px rgba(0,0,0,.2);
+    border-radius:8px 8px 0 0;
+    letter-spacing: 4px;
+    box-shadow:0 0px 2px 1px rgba(0,0,0,.2);
   }
-
+  #form {
+    left:10%;
+    width:80%;
+    height:14rem;
+    background:#fff;
+    position:absolute;
+    bottom:18rem;
+    box-shadow:0 2px 2px 1px rgba(0,0,0,.2);
+    border-radius:8px;
+  }
   .slideUp{
     animation: slidelogin .3s ease-out;
   }
@@ -141,19 +148,25 @@ export default {
   }
   @keyframes slidelogin {
     0%{
-      transform:translate(0,100%);
+      bottom:-12rem;
+      box-shadow:none
+    }
+    50%{
+      box-shadow:none
     }
     100%{
-      transform: translate(0,0);
+      bottom:18rem;
     }
   }
   .el-footer {
+    font-size:.9rem;
     background-color: rgb(4, 153, 212);
     color: #fff;
     text-align: center;
     line-height: 3rem;
     height:3rem !important;
     box-shadow:0 1px 2px 0px inset rgba(0,0,0,.2);
+    border-radius:0 0 8px 8px;
   }
   .el-icon-arrow-right{
     line-height: 3rem;
@@ -203,8 +216,11 @@ export default {
     height: 2.6rem;
     line-height: 2.6rem;
     font-size:1rem;
-    border: 1px solid transparent;
+    border-top: 1px solid transparent !important;
+    border-left: 1px solid transparent !important;
+    border-right: 1px solid transparent !important;
     border-bottom: 1px solid #DCDFE6;
+    border-radius:1px;
   }
   .el-input--prefix .el-input__inner{
     padding-left: 2rem;
@@ -220,5 +236,16 @@ export default {
   .el-input .el-input__clear{
     line-height: 2.6rem;
     font-size:1.2rem;
+  }
+  .line{
+    position:absolute;
+    width:104%;
+    margin-left:-2%;
+    border-top:1px solid #ddd;
+    bottom:-2rem;
+  }
+  .lottie{
+    height:inherit;
+    width:inherit;
   }
 </style>
