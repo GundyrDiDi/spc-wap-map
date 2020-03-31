@@ -18,11 +18,13 @@ const config = {
 }
 
 const _axios = axios.create(config)
+let time
 // 请求拦截器
 _axios.interceptors.request.use(
   function (config) {
     // 控制一般普通的请求的store.loading
     store.commit('loading', true)
+    time = Date.now()
     // store.commit('commit',{chain:'loading',value:true});
     // Do something before request is sent
     // console.log(config);
@@ -44,13 +46,14 @@ _axios.interceptors.response.use(
   function (error) {
     // 错误返回对象
     console.log(error.response.status)
+    console.log(Date.now() - time)
     // Do something with response error
     // return Promise.reject(error)
     return new Promise(resolve => {
+      // 模拟网络延迟
       setTimeout(() => {
-        store.commit('loading', false)
-        resolve(false)
-      }, 3000)
+        resolve(true)
+      }, 50)
     })
   }
 )

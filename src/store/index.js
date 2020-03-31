@@ -9,7 +9,9 @@ const root = {
   // everyStore中命名modules
   name: '',
   state: {
-    loading: false
+    loading: false,
+    enterclass: '',
+    leaveclass: ''
   },
   getters: {
 
@@ -20,6 +22,10 @@ const root = {
   actions: {
     _commit (store, { type, value }) {
       store.commit(type, value)
+    },
+    _nameclass (store, [enter, leave]) {
+      store.commit('enterclass', enter)
+      store.commit('leaveclass', leave)
     }
   },
   modules: {

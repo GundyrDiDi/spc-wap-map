@@ -14,13 +14,79 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
   #map {
     position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:#000;
+    width:120vh;
+    height:120vh;
+    background:rgb(4, 153, 212);
   }
+  .ol-zoom {
+    top: .3em;
+    left: .3em;
+    display: none;
+}
+  .ol-control button {
+            display: block;
+            background: #fff;
+            color:#333;
+            padding: 0;
+            font-size: 1.14em;
+            font-weight: 700;
+            text-decoration: none;
+            text-align: center;
+            height: 1.375em;
+            width: 1.375em;
+            line-height: .4em;
+            border: none;
+            border-radius: 2px;
+        }
+        .ol-zoom.ol-control{
+            right: 3%;bottom: 3%;
+            box-shadow:0 2px 5px 2px rgba(0,0,0,.2);
+            background:#eee;
+            padding:0;
+            transition:all .3s ease-in-out;
+        }
+        .ol-zoom.ol-control.collapse{
+            bottom:16%;
+        }
+        .ol-zoom.ol-control.collapse.muchup{
+            bottom:29%;
+        }
+        .ol-rotate.ol-control.collapse{
+            bottom: 20%;
+        }
+        .ol-rotate.ol-control{
+            bottom: 7%;
+            left: 3%;
+            box-shadow:0 2px 5px 2px rgba(0,0,0,.2);
+            background:#eee;
+            padding:0;
+            transition:all .3s ease-in-out;
+        }
+        .ol-zoom.ol-control>button{
+            color:#333;
+            background:#eee;
+            margin:0;
+        }
+        .ol-zoom.ol-control>button:first-child{
+            border-radius:4px 4px 0 0;
+        }
+        .ol-zoom.ol-control>button:last-child{
+            border-radius:0 0 4px 4px;
+        }
+        .ol-zoom.ol-control>button:hover{
+            background:#aaa;
+        }
+        .ol-scale-line.ol-unselectable{
+            bottom: 2px;
+            left: 2px;
+            background: none;
+        }
+        .ol-scale-line-inner{
+            border:2px solid #333;
+            border-top:none;
+            color:#333;
+        }
 </style>

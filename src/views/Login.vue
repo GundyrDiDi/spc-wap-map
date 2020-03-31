@@ -2,20 +2,21 @@
   <div id="login" ref="login">
     <transition appear name="el-zoom-in-center">
       <div id="getlogin"
-        :class="{expand:isCollapse}"
+        :class="[{expand:isCollapse},failClass]"
         @click="isCollapse=!isCollapse">
         登录
       </div>
     </transition>
     <transition enter-active-class="slideUp" leave-active-class="slideDown">
-      <el-container id="form" v-show="isCollapse">
-        <el-header height="2rem"></el-header>
+      <el-container id="form" v-show="isCollapse" :class="failClass">
+        <el-header height="3rem"></el-header>
         <el-main>
           <el-form :model="login" :rules="rules" ref="ruleform">
             <el-form-item prop="username">
               <el-input
                 clearable
                 placeholder="员工账号"
+                :disabled="loading"
                 :value="username"
                 @input="$store.commit('login/username',$event)"
               >
@@ -27,6 +28,7 @@
                 clearable
                 type="password"
                 placeholder="密码"
+                :disabled="loading"
                 :value="password"
                 @input="_commit({type:'login/password',value:$event})"
               >
@@ -38,14 +40,21 @@
             </el-form-item>
           </el-form>
         </el-main>
-        <el-footer @click.native="submit">
-          <template v-show="!loading">
-            <span>进入地图</span>
-            <i v-for="v in 3" :key="v" class="el-icon-arrow-right" ></i>
-          </template>
-          <lottie-loading class="lottie" v-show="loading"></lottie-loading>
+        <el-footer :class="failTipClass">
+          <transition name="fade" mode="out-in">
+            <div ref="submit" v-if="!loading" @click="submit" key="off">
+              <transition name="fade" mode="out-in" :duration="300">
+                <span v-if="failTipClass">重新登录</span>
+                <span v-else>进入地图</span>
+              </transition>
+              <i v-for="v in 3" :key="v" class="el-icon-arrow-right" ></i>
+            </div>
+            <lottie-loading v-else class="lottie" key="on"></lottie-loading>
+          </transition>
         </el-footer>
-        <div class="line"></div>
+        <div class="line">
+          上海石化地理信息平台
+        </div>
       </el-container>
     </transition>
   </div>
@@ -58,6 +67,10 @@ export default {
   name: 'login',
   data () {
     return {
+      loadingDuration: 2000,
+      loadingDelay: 200,
+      failClass: '',
+      failTipClass: '',
       isCollapse: true,
       rules: {
         username: {
@@ -77,14 +90,46 @@ export default {
     lottieLoading
   },
   mounted () {
-
+    this._nameclass(['', 'slow'])
   },
   methods: {
-    async submit () {
+    async submit (e) {
       const v = await this.$refs.ruleform.validate().catch(v => v)
-      if (v && await this.login_submit()) {
-        this.$router.push('home')
+      if (v) {
+        const oy = this.getOY()
+        const delay = await Promise.all([
+          new Promise(resolve => {
+            setTimeout(() => {
+              resolve(true)
+            }, this.loadingDuration + this.loadingDelay)
+          }), await this.login_submit().then(t => {
+            setTimeout(() => {
+              t && this.$router.push({
+                name: 'Home',
+                params: { oy, delay: this.loadingDuration }
+              })
+            }, this.loadingDelay)
+            return t
+          })])
+        this.$store.commit('loading', false)
+        if (!delay[1]) {
+          this.fail()
+        }
       }
+    },
+    fail () {
+      this.failClass = 'animated shake'
+      this.failTipClass = 'failtip'
+      setTimeout(() => {
+        this.failClass = ''
+        setTimeout(() => {
+          this.failTipClass = ''
+        }, 500)
+      }, 500)
+    },
+    getOY () {
+      const { y, height } = this.$refs.submit.getBoundingClientRect()
+      return window.innerHeight / 2 - (height / 2 + y)
     }
   }
 }
@@ -107,7 +152,7 @@ export default {
     width:60%;
     font-size:.9rem;
     position:absolute;
-    bottom:3rem;
+    bottom:4rem;
     border-radius: 20px;
     color: #FFF;
     display: inline-block;
@@ -127,7 +172,7 @@ export default {
     background:rgb(4, 153, 212);
     border-radius:8px 8px 0 0;
     letter-spacing: 4px;
-    box-shadow:0 0px 2px 1px rgba(0,0,0,.2);
+    box-shadow:0 1px 1px 1px rgba(0,0,0,.2);
   }
   #form {
     left:10%;
@@ -158,6 +203,9 @@ export default {
       bottom:18rem;
     }
   }
+  .el-main{
+    padding:10px 20px;
+  }
   .el-footer {
     font-size:.9rem;
     background-color: rgb(4, 153, 212);
@@ -167,6 +215,17 @@ export default {
     height:3rem !important;
     box-shadow:0 1px 2px 0px inset rgba(0,0,0,.2);
     border-radius:0 0 8px 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all .5s linear;
+  }
+  .el-footer.failtip{
+    transition:all .5s ease-out;
+    background:rgb(250, 0, 0);
+  }
+  .el-footer>div{
+    width:100%;
   }
   .el-icon-arrow-right{
     line-height: 3rem;
@@ -241,11 +300,29 @@ export default {
     position:absolute;
     width:104%;
     margin-left:-2%;
-    border-top:1px solid #ddd;
-    bottom:-2rem;
+    border-top:.5px solid #ddd;
+    bottom:-2.2rem;
+    text-align: center;
+    font-size:.6rem;
+    padding-top:.2rem;
+    color:#0499d4;
   }
-  .lottie{
-    height:inherit;
-    width:inherit;
+  .lottie,.lottie>div{
+    height:3rem;
+    width:3rem;
+  }
+  .fade-enter-active{
+    animation:fadeInOut .2s
+  }
+  .fade-leave-active{
+    animation: fadeInOut .2s reverse;
+  }
+  @keyframes fadeInOut {
+    from{
+      opacity:0
+    }
+    to{
+      opacity:1
+    }
   }
 </style>

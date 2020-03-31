@@ -5,6 +5,7 @@ export default {
     password: 'password',
     isLogin: false,
     token: undefined
+
   },
   getters: {
 

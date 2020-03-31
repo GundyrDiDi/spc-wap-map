@@ -1,6 +1,11 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <transition
+      :leave-active-class="leaveclass"
+      :enter-active-class="enterclass"
+    >
+        <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -64,8 +69,14 @@ export default {
     position: relative;
     width:100%;
     height:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   div{
     box-sizing: border-box;
+  }
+  #app .slow{
+    animation-duration: 4s;
   }
 </style>

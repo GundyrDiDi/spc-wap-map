@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import './plugins/element.js'
 import './plugins/axios'
+import './assets/animate.css'
 // import _ from 'lodash'
 import App from './App.vue'
 import router from './router'
