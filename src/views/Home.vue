@@ -66,7 +66,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content:center;
-    box-shadow:0 0px 2px 2px rgba(0,0,0,.2);
+    box-shadow:0 0px 2px 1px rgba(0,0,0,.2);
   }
   #home.zoom{
     border-radius:50%;

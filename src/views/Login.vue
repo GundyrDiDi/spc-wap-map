@@ -1,74 +1,76 @@
 <template>
-  <div id="login" ref="login" class="flex-center">
-    <transition appear enter-active-class="animated slideInDown">
-      <div class="logo flex-center" :class="{expand:isCollapse}">
-        <div>
-          <img src="../assets/user.png" alt="">
+  <div id="login" ref="login" class="flex-center swiper-container">
+    <div class="swiper-wrapper flex-center">
+      <transition appear enter-active-class="animated slideInDown">
+        <div class="logo flex-center" :class="{expand:isCollapse}">
+          <div>
+            <img src="../assets/user.png" alt="">
+          </div>
         </div>
-      </div>
-    </transition>
+      </transition>
+      <transition appear name="el-zoom-in-center">
+        <div id="getlogin"
+          :class="[{expand:isCollapse},failClass]"
+          @click="isCollapse=!isCollapse">
+          登录
+        </div>
+      </transition>
+      <transition enter-active-class="slideUp" leave-active-class="slideDown">
+        <el-container id="form" v-show="isCollapse" :class="failClass">
+          <el-header height="3rem"></el-header>
+          <el-main>
+            <el-form :model="login" :rules="rules" ref="ruleform">
+              <el-form-item prop="username">
+                <el-input
+                  clearable
+                  placeholder="员工账号"
+                  :disabled="loading"
+                  :value="username"
+                  @input="$store.commit('login/username',$event)"
+                >
+                  <i slot="prefix" class="el-input__icon el-icon-user"></i>
+                </el-input>
+              </el-form-item>
+              <el-form-item prop="password">
+                <el-input
+                  clearable
+                  type="password"
+                  placeholder="密码"
+                  :disabled="loading"
+                  :value="password"
+                  @input="_commit({type:'login/password',value:$event})"
+                >
+                  <i slot="prefix" class="el-input__icon el-icon-lock"></i>
+                </el-input>
+                <!-- <span>
+                  忘记密码？
+                </span> -->
+              </el-form-item>
+            </el-form>
+          </el-main>
+          <el-footer ref="submit" :class="failTipClass" class="flex-center">
+            <transition name="fade" mode="out-in">
+              <div v-if="!loading" @click="submit" key="off">
+                <transition name="fade" mode="out-in" :duration="300">
+                  <span v-if="failTipClass">重新登录</span>
+                  <span v-else>进入地图</span>
+                </transition>
+                <move-arrow class="right-arrows"></move-arrow>
+              </div>
+              <lottie-loading v-else class="lottie" key="on"></lottie-loading>
+            </transition>
+          </el-footer>
+          <div class="line">
+            上海石化地理信息平台
+          </div>
+        </el-container>
+      </transition>
+    </div>
     <move-arrow
-      v-show="!isCollapse"
-      class="up-arrows"
-      :config="{num:2,direct:'up',duration:1600}"
+        v-show="!isCollapse"
+        class="up-arrows"
+        :config="{num:2,direct:'up',duration:1600}"
     ></move-arrow>
-    <transition appear name="el-zoom-in-center">
-      <div id="getlogin"
-        :class="[{expand:isCollapse},failClass]"
-        @click="isCollapse=!isCollapse">
-        登录
-      </div>
-    </transition>
-    <transition enter-active-class="slideUp" leave-active-class="slideDown">
-      <el-container id="form" v-show="isCollapse" :class="failClass">
-        <el-header height="3rem"></el-header>
-        <el-main>
-          <el-form :model="login" :rules="rules" ref="ruleform">
-            <el-form-item prop="username">
-              <el-input
-                clearable
-                placeholder="员工账号"
-                :disabled="loading"
-                :value="username"
-                @input="$store.commit('login/username',$event)"
-              >
-                <i slot="prefix" class="el-input__icon el-icon-user"></i>
-              </el-input>
-            </el-form-item>
-            <el-form-item prop="password">
-              <el-input
-                clearable
-                type="password"
-                placeholder="密码"
-                :disabled="loading"
-                :value="password"
-                @input="_commit({type:'login/password',value:$event})"
-              >
-                <i slot="prefix" class="el-input__icon el-icon-lock"></i>
-              </el-input>
-              <!-- <span>
-                忘记密码？
-              </span> -->
-            </el-form-item>
-          </el-form>
-        </el-main>
-        <el-footer ref="submit" :class="failTipClass" class="flex-center">
-          <transition name="fade" mode="out-in">
-            <div v-if="!loading" @click="submit" key="off">
-              <transition name="fade" mode="out-in" :duration="300">
-                <span v-if="failTipClass">重新登录</span>
-                <span v-else>进入地图</span>
-              </transition>
-              <move-arrow class="right-arrows"></move-arrow>
-            </div>
-            <lottie-loading v-else class="lottie" key="on"></lottie-loading>
-          </transition>
-        </el-footer>
-        <div class="line">
-          上海石化地理信息平台
-        </div>
-      </el-container>
-    </transition>
   </div>
 </template>
 
@@ -105,6 +107,12 @@ export default {
   },
   mounted () {
     this._nameclass(['', 'slow'])
+    const Swiper = this.Swiper
+    Swiper(this.$el, {
+      direction: 'vertical'
+    })
+    this.swiper = this.$el.swiper
+    console.log(this.swiper)
   },
   methods: {
     async submit (e) {
@@ -162,8 +170,8 @@ export default {
   .logo{
     background:#409EFF;
     position:absolute;
-    top:0;
-    height:10rem;
+    top:-2rem;
+    height:12rem;
     width:120vw;
     border-radius:0 0 50% 50%;
     box-shadow:0 2px 2px 1px rgba(0,0,0,.2);
@@ -171,9 +179,10 @@ export default {
     transition:all .3s ease-out;
   }
   .logo.expand{
-    transform: translate(0,-12rem);
+    transform: translate(0,-14rem);
   }
   .logo>div{
+    margin-top:1rem;
     height:5rem;
     width:5rem;
     border-radius:50%;
@@ -188,7 +197,6 @@ export default {
     height:3rem;
     line-height:3rem;
     width:60%;
-    font-size:.9rem;
     position:absolute;
     bottom:27rem;
     border-radius: 20px;
@@ -197,7 +205,7 @@ export default {
     background-color: #409EFF;
     border-color: #409EFF;
     text-align: center;
-    box-shadow:0 2px 1px 0px rgba(0,0,0,.2);
+    box-shadow:0 2px 3px 1px rgba(0,0,0,.2);
     transition:all .34s ease-in;
     z-index:1;
     transform:translateY(22rem);
@@ -247,7 +255,6 @@ export default {
     box-shadow:0 1px 2px 1px rgba(0,0,0,.2);
   }
   .el-footer {
-    font-size:.9rem;
     background-color: #0499d4;
     color: #fff;
     text-align: center;
@@ -330,7 +337,7 @@ export default {
     position:absolute;
     bottom:2rem;
     width:5rem;
-    height:1rem;
-    opacity: .5;
+    height:.8rem;
+    opacity: .7;
   }
 </style>

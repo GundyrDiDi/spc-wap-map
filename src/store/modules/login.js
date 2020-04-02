@@ -19,7 +19,7 @@ export default {
     async _submit (store) {
       const res = await axios.post('/login', store.state)
       console.log(res)
-      if (res) {
+      if (res.data) {
         store.commit('success')
         return true
       } else {

@@ -38,21 +38,21 @@ const proxy = new Proxy(api, {
   }
 })
 export default proxy
+// mock
+const url = 'http://api/'
+const mockdata = {
+  login (obj) {
+    const { username } = JSON.parse(obj.body)
+    return {
+      data: username === 'username'
+    }
+  },
+  getlayers: {
 
-const path = 'http://api/'
-api.setOrigin(path).add([
-  'login',
-  'getusers'
-])
-console.log(api)
-Mock.mock(`${path}login`, {
+  }
 
+}
+Object.entries(mockdata).forEach(([api, redata]) => {
+  Mock.mock(url + api, redata)
 })
-Mock.mock(`${path}getusers`, {
-  'user|5-10': [{
-    name: '@cname',
-    'age|1-100': 100,
-    birthday: '@date("yyyy-MM-dd")',
-    city: '@city(true)'
-  }]
-})
+api.setOrigin(url).add(Object.keys(mockdata))
