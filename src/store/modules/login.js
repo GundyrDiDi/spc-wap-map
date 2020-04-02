@@ -22,6 +22,8 @@ export default {
       if (res) {
         store.commit('success')
         return true
+      } else {
+        return false
       }
     }
   },

@@ -3,9 +3,8 @@
     <ol-map ref="map"></ol-map>
     <div id="viewport" ref="viewport">
       <transition name="el-zoom-in-top">
-        <search-box></search-box>
+        <component :is="searchbox"></component>
       </transition>
-
       <router-view></router-view>
     </div>
   </div>

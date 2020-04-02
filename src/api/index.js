@@ -1,3 +1,6 @@
+// import mock from 'mock'
+
+// console.log(mock);
 class API {
   // constructor (path) {
 

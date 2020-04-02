@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 // lazy load
 import Home from '../views/Home.vue'
+import HomeChildren from './home/children'
 
 Vue.use(VueRouter)
 
@@ -20,13 +21,11 @@ const routes = [{
     }
   },
   // 嵌套路由
-  children: [
-
-  ]
+  children: HomeChildren
 },
 {
   path: '/',
-  redirect: to => ({ name: 'Home' })
+  redirect: to => ({ name: 'Login' })
 },
 {
   path: '/login',

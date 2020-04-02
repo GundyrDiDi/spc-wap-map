@@ -2,6 +2,7 @@ import Vue from 'vue'
 import './plugins/element.js'
 import './plugins/axios'
 import './assets/animate.css'
+import './assets/common.css'
 // import _ from 'lodash'
 import App from './App.vue'
 import router from './router'
@@ -10,8 +11,13 @@ import { vuexData, store } from './store'
 
 Vue.config.productionTip = false
 Vue.mixin(vuexData)
-new Vue({
+const app = new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
+if (window.plus) {
+  console.log(window.plus)
+  console.log(app)
+}
+console.log(window.navigator)
