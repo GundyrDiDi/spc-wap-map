@@ -9,12 +9,18 @@ import { store } from '../store'
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-axios.defaults.timeout = 20000
+axios.defaults.timeout = 10000
 
 const config = {
   // baseURL: process.env.baseURL || process.env.apiUrl || ""
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
+  // adapter 允许自定义处理请求，以使测试更轻松
+  // adapter(config){
+  //   console.log(config);
+  //   return config
+  // }
+  // responseType: 'json'
 }
 
 const _axios = axios.create(config)
@@ -22,12 +28,12 @@ let time
 // 请求拦截器
 _axios.interceptors.request.use(
   function (config) {
-    // 控制一般普通的请求的store.loading
+    // 控制一般请求的store.loading
     store.commit('loading', true)
     time = Date.now()
-    // store.commit('commit',{chain:'loading',value:true});
+    // 获得api的url
+    config.url = api[config.url]
     // Do something before request is sent
-    // console.log(config);
     return config
   },
   function (error) {
@@ -41,20 +47,19 @@ _axios.interceptors.request.use(
 _axios.interceptors.response.use(
   function (response) {
     // Do something with response data
-    return response
+    console.log(Date.now() - time)
+    return new Promise(resolve => {
+      // 模拟网络延迟
+      setTimeout(() => {
+        resolve(response.data)
+      }, 20)
+    })
   },
   function (error) {
     // 错误返回对象
     console.log(error.response.status)
-    console.log(Date.now() - time)
     // Do something with response error
-    // return Promise.reject(error)
-    return new Promise(resolve => {
-      // 模拟网络延迟
-      setTimeout(() => {
-        resolve(true)
-      }, 50)
-    })
+    return Promise.reject(error)
   }
 )
 

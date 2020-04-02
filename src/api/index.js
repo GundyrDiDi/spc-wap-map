@@ -1,21 +1,20 @@
-// import mock from 'mock'
-
-// console.log(mock);
+import Mock from 'mockjs'
 class API {
-  // constructor (path) {
-
-  // }
+  constructor (path) {
+    this.__path = path
+  }
 
   setOrigin (path) {
     API.prototype.originPath = path
+    return this
   }
 
   // 添加同源API
   add (apis) {
     apis.forEach(api => {
-      Object.defineProperty(API.prototype, api, {
-        value: api,
-        writable: true,
+      Object.defineProperty(this, api.name || api, {
+        value: api.url || api,
+        writable: false,
         enumerable: false,
         configurable: false
       })
@@ -28,11 +27,9 @@ class API {
   }
 }
 const api = new API()
-api.setOrigin('./')
-api.add(['getdata'])
-
 const proxy = new Proxy(api, {
   get (target, key, receiver) {
+    key = key.split('/').pop()
     if (key in target && !key.includes('__')) {
       return `${target.originPath}${target[key]}`
     } else {
@@ -41,3 +38,21 @@ const proxy = new Proxy(api, {
   }
 })
 export default proxy
+
+const path = 'http://api/'
+api.setOrigin(path).add([
+  'login',
+  'getusers'
+])
+console.log(api)
+Mock.mock(`${path}login`, {
+
+})
+Mock.mock(`${path}getusers`, {
+  'user|5-10': [{
+    name: '@cname',
+    'age|1-100': 100,
+    birthday: '@date("yyyy-MM-dd")',
+    city: '@city(true)'
+  }]
+})

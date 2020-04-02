@@ -7,6 +7,11 @@
         </div>
       </div>
     </transition>
+    <move-arrow
+      v-show="!isCollapse"
+      class="up-arrows"
+      :config="{num:2,direct:'up',duration:1600}"
+    ></move-arrow>
     <transition appear name="el-zoom-in-center">
       <div id="getlogin"
         :class="[{expand:isCollapse},failClass]"
@@ -54,8 +59,7 @@
                 <span v-if="failTipClass">重新登录</span>
                 <span v-else>进入地图</span>
               </transition>
-              <!-- <i v-for="v in 3" :key="v" class="el-icon-arrow-right"></i> -->
-              <move-arrow class="move-arrow" :config="arrows"></move-arrow>
+              <move-arrow class="right-arrows"></move-arrow>
             </div>
             <lottie-loading v-else class="lottie" key="on"></lottie-loading>
           </transition>
@@ -92,9 +96,6 @@ export default {
           message: '请输入密码',
           trigger: 'blur'
         }
-      },
-      arrows: {
-        bgcolor: '#0499d4'
       }
     }
   },
@@ -209,14 +210,13 @@ export default {
     background:#0499d4;
     border-radius:8px 8px 0 0;
     letter-spacing: 4px;
-    box-shadow:0 1px 1px 1px rgba(0,0,0,.2);
+    box-shadow:0 1px 2px 1px rgba(0,0,0,.2);
   }
   #form {
     width:80%;
     height:14rem;
     position:absolute;
     bottom:16rem;
-    box-shadow:0 2px 2px 1px rgba(0,0,0,.2);
     border-radius:8px;
   }
   .slideUp{
@@ -244,6 +244,7 @@ export default {
   .el-main{
     padding:10px 20px;
     background: #fff;
+    box-shadow:0 1px 2px 1px rgba(0,0,0,.2);
   }
   .el-footer {
     font-size:.9rem;
@@ -252,7 +253,7 @@ export default {
     text-align: center;
     line-height: 3rem;
     height:3rem !important;
-    box-shadow:0 1px 2px 0px inset rgba(0,0,0,.2);
+    box-shadow:0 2px 2px 1px rgba(0,0,0,.2);
     border-radius:0 0 8px 8px;
     transition: all .5s linear;
   }
@@ -263,56 +264,12 @@ export default {
   .el-footer>div{
     width:100%;
   }
-  .move-arrow{
+  .right-arrows{
     position:absolute;
     height:3rem;
-    width:1.2rem;
+    width:.9rem;
     bottom:0;
-    right:1rem;
-  }
-  .el-icon-arrow-right{
-    line-height: 3rem;
-    position: absolute;
-  }
-  .el-icon-arrow-right:nth-child(2){
-    right: 1rem;
-    animation:flashlast .8s linear infinite;
-  }
-  .el-icon-arrow-right:nth-child(3){
-    right: 1.3rem;
-    animation:flash .8s linear infinite;
-  }
-  .el-icon-arrow-right:nth-child(4){
-    right: 1.6rem;
-    animation:flashfirst .8s linear infinite;
-  }
-  @keyframes flash{
-    0%{
-      transform: translate(0,0);
-    }
-    100%{
-      transform: translate(.3rem,0);
-    }
-  }
-  @keyframes flashfirst{
-    0%{
-      opacity: 0;
-      transform: translate(0,0);
-    }
-    100%{
-      opacity: 1;
-      transform: translate(.3rem,0);
-    }
-  }
-  @keyframes flashlast{
-    0%{
-      opacity: 1;
-      transform: translate(0,0);
-    }
-    100%{
-      opacity: 0;
-      transform: translate(.3rem,0);
-    }
+    right:1.6rem;
   }
   .el-input__inner {
     height: 2.6rem;
@@ -367,5 +324,13 @@ export default {
     to{
       opacity:1
     }
+  }
+  .up-arrows{
+    color:#fff;
+    position:absolute;
+    bottom:2rem;
+    width:5rem;
+    height:1rem;
+    opacity: .5;
   }
 </style>

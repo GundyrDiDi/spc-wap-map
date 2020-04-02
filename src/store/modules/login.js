@@ -3,22 +3,22 @@ export default {
   state: {
     username: 'username',
     password: 'password',
-    isLogin: false,
-    token: undefined
-
+    isLogin: false
   },
   getters: {
-
+    token () {
+      return (Math.random() * Math.pow(10, 17)).toString(16)
+    }
   },
   mutations: {
     success (state) {
       state.isLogin = true
-      state.token = (Math.random() * Math.pow(10, 17)).toString(16)
     }
   },
   actions: {
     async _submit (store) {
-      const res = await axios.post('./getdata')
+      const res = await axios.post('/login', store.state)
+      console.log(res)
       if (res) {
         store.commit('success')
         return true
