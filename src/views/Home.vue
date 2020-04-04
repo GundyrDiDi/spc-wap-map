@@ -1,10 +1,19 @@
 <template>
-  <div id="home" ref="home" :class="appear">
+  <div id="home" :class="appear">
     <ol-map ref="map"></ol-map>
     <div id="viewport" ref="viewport">
-      <transition name="el-zoom-in-top">
-        <component :is="searchbox"></component>
-      </transition>
+      <div v-if="enter" class="right-top flex-column">
+        <transition appear enter-active-class="animated zoomIn" leave-active-class="animated rotateOut">
+          <el-button circle key="msg" class="shadow">
+            <img src="../assets/funimg/m3.png" alt="">
+          </el-button>
+        </transition>
+        <transition appear enter-active-class="animated zoomIn" leave-active-class="animated rotateOut">
+          <el-button circle key="tiles" class="shadow">
+            <img src="../assets/funimg/l2.png" alt="">
+          </el-button>
+        </transition>
+      </div>
       <router-view></router-view>
     </div>
   </div>
@@ -12,20 +21,19 @@
 
 <script>
 import olMap from '../components/ol-map.vue'
-import searchBox from '../components/search-box.vue'
 
 export default {
   name: 'Home',
   data () {
     return {
+      enter: false,
       appear: '',
-      appearDuration: 2000,
+      appearDuration: 1300,
       searchbox: ''
     }
   },
   components: {
-    olMap,
-    searchBox
+    olMap
   },
   computed: {
 
@@ -34,15 +42,17 @@ export default {
     const { delay, oy } = this.$route.params
     if (oy && delay) {
       await new Promise(resolve => {
-        this.$refs.home.style.marginTop = `${-oy}px`
+        this.$el.style.marginTop = `${-oy}px`
         this.$refs.map.$el.style.marginTop = `${oy}px`
         setTimeout(() => {
           this.appear = 'zoom'
+          this.$el.style.animation = `enterAnim ${this.appearDuration / 1000}s ease-in-out`
           setTimeout(() => {
             this.$refs.map.$el.style.marginTop = 0
-            this.$refs.home.style.marginTop = 0
-            this.$refs.home.style.height = '100vh'
-            this.$refs.home.style.width = '100vw'
+            this.$el.style.marginTop = 0
+            this.$el.style.height = '100vh'
+            this.$el.style.width = '100vw'
+            this.$el.style.animation = ''
             resolve(true)
           }, this.appearDuration)
         }, this.$route.params.delay)
@@ -50,6 +60,7 @@ export default {
     }
     this.appear = 'static'
     this.searchbox = 'searchBox'
+    this.enter = true
   }
 }
 
@@ -70,10 +81,9 @@ export default {
   }
   #home.zoom{
     border-radius:50%;
-    animation:zoomIn 2s ease-in-out;
     opacity: 1;
   }
-  @keyframes zoomIn{
+  @keyframes enterAnim{
     from{
       height:.5rem;
       width:.5rem;
@@ -87,6 +97,7 @@ export default {
     opacity: 1;
   }
   #viewport{
+    /* margin-top:2vh; */
     z-index:1;
     position: absolute;
     height:100vh;
@@ -95,5 +106,16 @@ export default {
   }
   #viewport>*{
     pointer-events: auto;
+  }
+  #viewport .right-top{
+    display: flex;
+    flex-direction: column;
+  }
+  #viewport .right-top>button{
+    margin:.3rem;
+  }
+  #viewport .right-top img{
+    width:1.4rem;
+    height:1.4rem;
   }
 </style>

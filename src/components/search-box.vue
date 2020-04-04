@@ -1,6 +1,6 @@
 <template>
   <div @click="back">
-    111111111
+    <el-button type="primary">主要按钮</el-button>
   </div>
 </template>
 

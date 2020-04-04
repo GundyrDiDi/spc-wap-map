@@ -2,21 +2,23 @@
   <div id="login" ref="login" class="flex-center swiper-container">
     <div class="swiper-wrapper flex-center">
       <transition appear enter-active-class="animated slideInDown">
-        <div class="logo flex-center" :class="{expand:isCollapse}">
-          <div>
-            <img src="../assets/user.png" alt="">
+        <div class="logo flex-center" :class="{expand:isExtend}">
+          <div class="wrapper">
+            <div class="patch">
+              <img src="../assets/user.png" alt="">
+            </div>
           </div>
         </div>
       </transition>
       <transition appear name="el-zoom-in-center">
         <div id="getlogin"
-          :class="[{expand:isCollapse},failClass]"
-          @click="isCollapse=!isCollapse">
+          :class="[{expand:isExtend},failClass]"
+          @click="isExtend=!isExtend">
           登录
         </div>
       </transition>
       <transition enter-active-class="slideUp" leave-active-class="slideDown">
-        <el-container id="form" v-show="isCollapse" :class="failClass">
+        <el-container id="form" v-show="isExtend" :class="failClass">
           <el-header height="3rem"></el-header>
           <el-main>
             <el-form :model="login" :rules="rules" ref="ruleform">
@@ -24,7 +26,7 @@
                 <el-input
                   clearable
                   placeholder="员工账号"
-                  :disabled="loading"
+                  :disabled="isloading"
                   :value="username"
                   @input="$store.commit('login/username',$event)"
                 >
@@ -36,7 +38,7 @@
                   clearable
                   type="password"
                   placeholder="密码"
-                  :disabled="loading"
+                  :disabled="isloading"
                   :value="password"
                   @input="_commit({type:'login/password',value:$event})"
                 >
@@ -50,13 +52,13 @@
           </el-main>
           <el-footer ref="submit" :class="failTipClass" class="flex-center">
             <transition name="fade" mode="out-in">
-              <div v-if="!loading" @click="submit" key="off">
+              <el-button type="primary" v-if="!isloading" @click="submit" key="off">
                 <transition name="fade" mode="out-in" :duration="300">
                   <span v-if="failTipClass">重新登录</span>
                   <span v-else>进入地图</span>
                 </transition>
                 <move-arrow class="right-arrows"></move-arrow>
-              </div>
+              </el-button>
               <lottie-loading v-else class="lottie" key="on"></lottie-loading>
             </transition>
           </el-footer>
@@ -67,7 +69,7 @@
       </transition>
     </div>
     <move-arrow
-        v-show="!isCollapse"
+        v-show="!isExtend"
         class="up-arrows"
         :config="{num:2,direct:'up',duration:1600}"
     ></move-arrow>
@@ -86,7 +88,7 @@ export default {
       loadingDelay: 200,
       failClass: '',
       failTipClass: '',
-      isCollapse: true,
+      isExtend: false,
       rules: {
         username: {
           required: true,
@@ -107,12 +109,18 @@ export default {
   },
   mounted () {
     this._nameclass(['', 'slow'])
-    const Swiper = this.Swiper
-    Swiper(this.$el, {
-      direction: 'vertical'
+    this.swiper = this.$swiper(this.$el, {
+      direction: 'vertical',
+      allowSlidePrev: false
     })
-    this.swiper = this.$el.swiper
-    console.log(this.swiper)
+    this.swiper.on('touchEnd', (e) => {
+      if (Math.abs(this.swiper.translate) > this.triver) {
+        this.isExtend = !this.isExtend
+      }
+    })
+  },
+  beforeDestroy () {
+    this.swiper.destroy()
   },
   methods: {
     async submit (e) {
@@ -133,7 +141,7 @@ export default {
             }, this.loadingDelay)
             return t
           })])
-        this.$store.commit('loading', false)
+        this.$store.commit('isloading', false)
         if (!delay[1]) {
           this.fail()
         }
@@ -153,6 +161,17 @@ export default {
       const { y, height } = this.$refs.submit.$el.getBoundingClientRect()
       return window.innerHeight / 2 - (height / 2 + y)
     }
+  },
+  watch: {
+    isExtend (is) {
+      if (is) {
+        this.swiper.allowSlidePrev = true
+        this.swiper.allowSlideNext = false
+      } else {
+        this.swiper.allowSlidePrev = false
+        this.swiper.allowSlideNext = true
+      }
+    }
   }
 }
 
@@ -168,27 +187,38 @@ export default {
     background-position: center;
   }
   .logo{
-    background:#409EFF;
     position:absolute;
     top:-2rem;
     height:12rem;
     width:120vw;
     border-radius:0 0 50% 50%;
-    box-shadow:0 2px 2px 1px rgba(0,0,0,.2);
     transform: translate(0,0);
     transition:all .3s ease-out;
+  }
+  .wrapper{
+    background:#409EFF;
+    box-shadow:0 2px 2px 1px rgba(0,0,0,.2);
+    animation: breath 1.2s ease-in-out infinite alternate;
+  }
+  @keyframes breath {
+    from{
+      transform: translateY(-.2rem);
+    }
+    to{
+      transform: translateY(0.2rem);
+    }
   }
   .logo.expand{
     transform: translate(0,-14rem);
   }
-  .logo>div{
+  .patch{
     margin-top:1rem;
     height:5rem;
     width:5rem;
     border-radius:50%;
     background:#fff;
   }
-  .logo img{
+  .patch>img{
     margin-top:.6rem;
     height:100%;
     width:100%;
@@ -205,7 +235,7 @@ export default {
     background-color: #409EFF;
     border-color: #409EFF;
     text-align: center;
-    box-shadow:0 2px 3px 1px rgba(0,0,0,.2);
+    box-shadow:0 2px 3px 1px rgba(0,0,0,.2),0 -1px 6px 3px rgba(0,0,0,.1);
     transition:all .34s ease-in;
     z-index:1;
     transform:translateY(22rem);
@@ -263,13 +293,17 @@ export default {
     box-shadow:0 2px 2px 1px rgba(0,0,0,.2);
     border-radius:0 0 8px 8px;
     transition: all .5s linear;
+    padding:0;
   }
   .el-footer.failtip{
     transition:all .5s ease-out;
     background:rgb(250, 0, 0);
   }
-  .el-footer>div{
+  .el-footer>button{
     width:100%;
+    height: 100%;
+    background-color: #0499d4;
+    border-color: #0499d4;
   }
   .right-arrows{
     position:absolute;

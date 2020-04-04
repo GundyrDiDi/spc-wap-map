@@ -12,7 +12,9 @@ export default {
     el: undefined,
     mymap: 'undefined',
     view: undefined,
-    layers: []
+    layers: [],
+    onlyMap: false
+
   },
   mutations: {
     _init (state, { el }) {

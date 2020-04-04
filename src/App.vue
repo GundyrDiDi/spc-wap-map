@@ -16,6 +16,8 @@ export default {
     // 防止软键盘破坏布局，必须写死高度
     // 控制body固定高度，其他元素根据body适应
     const h = window.innerHeight
+    this.$store.commit('deviceHeight', h)
+    this.$store.commit('deviceWidth', window.innerWidth)
     document.body.style.height = h + 'px'
     window.addEventListener('resize', () => { // 用onresize事件监控窗口或框架被调整大小，先把一开始的高度记录下来
       if (document.body.scrollHeight < h) { // 如果当前窗口小于一开始记录的窗口高度，那就让当前窗口等于一开始窗口的高度
@@ -77,6 +79,6 @@ export default {
     box-sizing: border-box;
   }
   #app .slow{
-    animation-duration: 4s;
+    animation-duration: 3.3s;
   }
 </style>

@@ -9,12 +9,20 @@ const root = {
   // everyStore中命名modules
   name: '',
   state: {
-    loading: false,
+    isloading: false,
     enterclass: '',
-    leaveclass: ''
+    leaveclass: '',
+    deviceHeight: '',
+    deviceWidth: '',
+    _records: []
   },
   getters: {
-
+    trihor (state) {
+      return state.deviceWidth / 30
+    },
+    triver (state) {
+      return state.deviceHeight / 30
+    }
   },
   mutations: {
 
@@ -26,6 +34,20 @@ const root = {
     _nameclass (store, [enter, leave]) {
       store.commit('enterclass', enter)
       store.commit('leaveclass', leave)
+    },
+    _record (store, { type, value }) {
+      const state = store.state
+      const oldValue = store.commit(type)
+      state._records.push([type, oldValue])
+      store.commit(type, value)
+    },
+    _goback (store) {
+      const records = store.state._records
+      if (records.length) {
+        return store.commit(...records.pop())
+      } else {
+        return true
+      }
     }
   },
   modules: {
@@ -106,7 +128,12 @@ function bindMutations (module) {
     ...new Proxy(module.state, {
       get (target, propKey) {
         return (state, payload) => {
-          state[propKey] = payload
+          if (payload !== undefined) {
+            state[propKey] = payload
+            return true
+          } else {
+            return state[propKey]
+          }
         }
       },
       // 过滤 前缀_表示内部数据

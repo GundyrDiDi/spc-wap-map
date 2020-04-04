@@ -29,7 +29,7 @@ let time
 _axios.interceptors.request.use(
   function (config) {
     // 控制一般请求的store.loading
-    store.commit('loading', true)
+    store.commit('isloading', true)
     time = Date.now()
     // 获得api的url
     config.url = api[config.url]

@@ -6,7 +6,40 @@
     justify-content: center;
     align-items: center;
 }
+.flex-column{
+  display: flex;
+  flex-direction: column;
+}
 .swiper-wrapper{
   height:100%;
   width:100%;
+}
+.wrapper{
+  height:100%;
+  width:100%;
+  display: inherit;
+  justify-content: inherit;
+  align-items: inherit;
+  flex-direction: inherit;
+  flex-wrap: inherit;
+  background: inherit;
+  border:inherit;
+  border-radius:inherit;
+}
+.liti-button{
+  box-shadow:0 2px 3px 1px rgba(0,0,0,.2),0 -1px 6px 3px rgba(0,0,0,.1);
+}
+.el-button{
+  font-size:1rem;
+}
+.right-top{
+  position: absolute;
+  right:0;
+  top:0;
+}
+.shadow{
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
+}
+img{
+  vertical-align: bottom;
 }
