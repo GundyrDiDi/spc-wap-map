@@ -1,5 +1,5 @@
 <template>
-  <div id="map" ref="el">
+  <div id="map">
   </div>
 </template>
 
@@ -10,7 +10,7 @@ export default {
   name: 'Map',
   mounted () {
     this.map_init({
-      el: this.$refs.el
+      el: this.$el
     })
   }
 }
@@ -25,11 +25,10 @@ export default {
     background: rgb(4, 153, 212);
   }
 
-  .ol-zoom {
-    top: .3em;
-    left: .3em;
-    display: none;
-  }
+  /* .ol-zoom {
+    top: 15vh;
+    left: 33vh;
+  } */
 
   .ol-control button {
     display: block;
@@ -48,8 +47,6 @@ export default {
   }
 
   .ol-zoom.ol-control {
-    right: 3%;
-    bottom: 3%;
     box-shadow: 0 2px 5px 2px rgba(0, 0, 0, .2);
     background: #eee;
     padding: 0;
@@ -106,5 +103,8 @@ export default {
     border-top: none;
     color: #333;
   }
-
+  /* 3d */
+  /* canvas{
+    transform: rotateX(64deg) rotateZ(50deg);
+  } */
 </style>

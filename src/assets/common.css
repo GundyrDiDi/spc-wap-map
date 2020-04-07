@@ -10,10 +10,6 @@
   display: flex;
   flex-direction: column;
 }
-.swiper-wrapper{
-  height:100%;
-  width:100%;
-}
 .wrapper{
   height:100%;
   width:100%;
@@ -26,16 +22,34 @@
   border:inherit;
   border-radius:inherit;
 }
+.right-top{
+  position: absolute;
+  right:0;
+  top:0;
+}
+.right-bottom{
+  position: absolute;
+  right:0;
+  bottom:0;
+}
+.center-bottom{
+  position: absolute;
+  bottom:0;
+}
+.transparent>*{
+  opacity:0;
+  transition: opacity .8s;
+}
+/*插件类*/
+.swiper-wrapper{
+  height:100%;
+  width:100%;
+}
 .liti-button{
   box-shadow:0 2px 3px 1px rgba(0,0,0,.2),0 -1px 6px 3px rgba(0,0,0,.1);
 }
 .el-button{
   font-size:1rem;
-}
-.right-top{
-  position: absolute;
-  right:0;
-  top:0;
 }
 .shadow{
   box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)

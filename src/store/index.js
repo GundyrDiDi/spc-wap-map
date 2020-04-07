@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import map from './modules/map'
 import login from './modules/login'
+import menu from './modules/menu'
 import commitDrt from './plugins/commit'
 
 Vue.use(Vuex)
@@ -14,7 +15,9 @@ const root = {
     leaveclass: '',
     deviceHeight: '',
     deviceWidth: '',
-    _records: []
+    rightdrawer: false,
+    _records: [],
+    rtlDrawer: false
   },
   getters: {
     trihor (state) {
@@ -52,7 +55,8 @@ const root = {
   },
   modules: {
     login,
-    map
+    map,
+    menu
   },
   plugins: [
     commitDrt

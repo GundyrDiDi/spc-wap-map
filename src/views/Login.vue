@@ -132,7 +132,7 @@ export default {
               resolve(true)
             }, this.loadingDuration + this.loadingDelay)
           }), await this.login_submit().then(t => {
-            setTimeout(async () => {
+            setTimeout(() => {
               const oy = this.getOY()
               t && this.$router.push({
                 name: 'Home',
@@ -177,7 +177,7 @@ export default {
 
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   #login {
     position: relative;
     width: inherit;
@@ -237,7 +237,7 @@ export default {
     text-align: center;
     box-shadow:0 2px 3px 1px rgba(0,0,0,.2),0 -1px 6px 3px rgba(0,0,0,.1);
     transition:all .34s ease-in;
-    z-index:1;
+    // z-index:1;
     transform:translateY(22rem);
   }
   #getlogin.expand{
@@ -312,31 +312,6 @@ export default {
     bottom:0;
     right:1.6rem;
   }
-  .el-input__inner {
-    height: 2.6rem;
-    line-height: 2.6rem;
-    font-size:1rem;
-    border-top: 1px solid transparent !important;
-    border-left: 1px solid transparent !important;
-    border-right: 1px solid transparent !important;
-    border-bottom: 1px solid #DCDFE6;
-    border-radius:1px;
-  }
-  .el-input--prefix .el-input__inner{
-    padding-left: 2rem;
-  }
-  .el-input--suffix .el-input__inner{
-    padding-right: 2rem;
-  }
-  .el-input__icon{
-    line-height: 2.6rem;
-    font-size:1.2rem;
-    color:#0499d4;
-  }
-  .el-input .el-input__clear{
-    line-height: 2.6rem;
-    font-size:1.2rem;
-  }
   .line{
     position:absolute;
     width:104%;
@@ -373,5 +348,32 @@ export default {
     width:5rem;
     height:.8rem;
     opacity: .7;
+  }
+</style>
+<style>
+  .el-input__inner {
+    height: 2.6rem;
+    line-height: 2.6rem;
+    font-size:1rem;
+    border-top: 1px solid transparent !important;
+    border-left: 1px solid transparent !important;
+    border-right: 1px solid transparent !important;
+    border-bottom: 1px solid #DCDFE6;
+    border-radius:1px;
+  }
+  .el-input--prefix .el-input__inner{
+    padding-left: 2rem;
+  }
+  .el-input--suffix .el-input__inner{
+    padding-right: 2rem;
+  }
+  .el-input__icon{
+    line-height: 2.6rem;
+    font-size:1.2rem;
+    color:#0499d4;
+  }
+  .el-input .el-input__clear{
+    line-height: 2.6rem;
+    font-size:1.2rem;
   }
 </style>
