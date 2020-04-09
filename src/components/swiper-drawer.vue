@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     handleClose () {
-      this.$emit('update:visible', false)
+      this.visible && this.$emit('update:visible', false)
     }
   },
   watch: {
@@ -46,7 +46,6 @@ export default {
           requestAnimationFrame(() => {
             const _ = this
             this.swiper = this.$swiper(this.$refs.swc, {
-              // allowSlideNext: false,
               resistanceRatio: 0,
               initialSlide: 1,
               on: {

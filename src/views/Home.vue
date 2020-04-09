@@ -16,29 +16,28 @@
             </el-button>
           </transition>
         </div>
-        <transition appear enter-active-class="animated fast slideInUp" leave-active-class="animated fast slideOutDown">
-          <div class="center-bottom" v-show="!fullMap">
-            <div class="right-top">
-              <transition appear enter-active-class="animated fast rotateIn" leave-active-class="animated fast rotateOut">
-                <el-button circle class="shadow" v-show="!fullMap">
-                  <img src="../assets/funimg/r2.png" alt="">
-                </el-button>
-              </transition>
-              <transition appear enter-active-class="animated fast  rotateIn" leave-active-class="animated fadeOutDown">
-                <el-button circle class="shadow">
-                  <img src="../assets/funimg/d1.png" alt="">
-                </el-button>
-              </transition>
-            </div>
-            <topic-menu></topic-menu>
-          </div>
-        </transition>
         <transition enter-active-class="aaa">
           <div class="right-bottom" v-show="fullMap">
             <el-button circle class="shadow">
               <img src="../assets/funimg/d1.png" alt="">
             </el-button>
           </div>
+        </transition>
+        <transition appear enter-active-class="animated fast slideInUp" leave-active-class="animated fast slideOutDown">
+          <topic-menu v-show="!fullMap">
+            <div class="right-top">
+              <transition appear enter-active-class="animated fast rotateIn" leave-active-class="animated fast rotateOut">
+                <el-button circle class="shadow" v-show="!fullMap">
+                  <img src="../assets/funimg/r2.png" alt="">
+                </el-button>
+              </transition>
+              <transition appear enter-active-class="animated fast  rotateIn">
+                <el-button circle class="shadow">
+                  <img src="../assets/funimg/d1.png" alt="">
+                </el-button>
+              </transition>
+            </div>
+          </topic-menu>
         </transition>
       </div>
     </div>

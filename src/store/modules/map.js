@@ -3,7 +3,6 @@ import View from 'ol/View'
 import TileLayer from 'ol/layer/Tile'
 import OSM from 'ol/source/OSM'
 import { fromLonLat } from 'ol/proj'
-
 import { defaults, ScaleLine } from 'ol/control'
 
 export default {
@@ -35,17 +34,21 @@ export default {
         ])
       })
       //
+      let isdb = true
       map.on('click', e => {
-        // console.log(e);
+        isdb = !isdb
         const pixel = e.pixel.map(function (v) {
           return v - 5
         })
         const f = map.forEachFeatureAtPixel(pixel, function (feature) {
           return feature
         })
-        if (!f) {
-          state.fullMap = !state.fullMap
-        }
+        setTimeout(() => {
+          if (!f && !isdb) {
+            state.fullMap = !state.fullMap
+            isdb = true
+          }
+        }, 250)
       })
       // view.on('change', ({ target: view }) => {
       //   console.log(view.getZoom())

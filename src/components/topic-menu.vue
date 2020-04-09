@@ -1,20 +1,21 @@
 <template>
-  <div id="topic-menu">
-    <div class="swiper-container">
-      <div class="swiper-wrapper">
-        <el-container>
-          <el-main>
-            <input type="text">
-          </el-main>
-          <el-footer>
-            <div>
-              <div>首页</div>
-              <div>应用</div>
-              <div>我的</div>
-            </div>
-          </el-footer>
-        </el-container>
-      </div>
+  <div id="topic-menu" class="swiper-container center-bottom">
+    <div class="swiper-wrapper vertical">
+        <slot></slot>
+        <div class="swiper-slide">
+          slide1
+        </div>
+        <div class="swiper-slide">
+          slide2
+        </div>
+        <div class="swiper-slide">
+          slide3
+        </div>
+    </div>
+    <div>
+      <div>首页</div>
+      <div>应用</div>
+      <div>我的</div>
     </div>
   </div>
 </template>
@@ -25,8 +26,10 @@ export default {
   data () {
     return {}
   },
-  mounted () {
-
+  async mounted () {
+    this.swiper = this.$swiper('.swiper-container', {
+      direction: 'vertical'
+    })
   }
 }
 </script>
@@ -34,8 +37,14 @@ export default {
 <style scoped>
   #topic-menu{
     width:100%;
+    height:200px;
+    overflow: hidden;
+    background:#fff;
   }
-  .el-container{
+  /* .swiper-wrapper{
+  } */
+  .swiper-slide{
+    height:100px;
     background:#fff;
   }
 </style>

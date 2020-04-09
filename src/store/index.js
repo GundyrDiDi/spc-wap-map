@@ -27,6 +27,9 @@ const root = {
     },
     triver (state) {
       return state.deviceHeight / 30
+    },
+    hasRecord (state) {
+      return state._records.length !== 0
     }
   },
   mutations: {
@@ -54,7 +57,7 @@ const root = {
       if (records.length) {
         return store.commit(...records.pop())
       } else {
-        callback()
+        callback && callback()
       }
     }
   },

@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import handlerNative from './plugins/native'
+
 export default {
   name: 'SPC-map',
   mounted () {
@@ -36,21 +38,7 @@ export default {
     window.addEventListener('pageshow', recalc, false)
     document.addEventListener('DOMContentLoaded', recalc, false)
     // 原生native
-    document.addEventListener('plusready', () => {
-      // this.$store.commit('native',plus);
-      var ms = (/Html5Plus\/.+\s\(.*(Immersed\/(\d+\.?\d*).*)\)/gi).exec(navigator.userAgent)
-      if (ms && ms.length >= 3) {
-        this.$store.commit('stateBar', parseFloat(ms[2]))
-      }
-      console.log(plus)
-      console.log(plus.key)
-      plus.key.addEventListener('backbutton', () => {
-        console.log('BackButton Key pressed!')
-        this._goback(() => {
-          this.$router.back()
-        })
-      })
-    })
+    document.addEventListener('plusready', handlerNative)
   }
 }
 </script>
