@@ -62,7 +62,8 @@
     },
     "globals": {
       "api": true,
-      "axios": true
+      "axios": true,
+      "plus": true
     }
   },
   "browserslist": [

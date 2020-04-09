@@ -7,19 +7,17 @@ import './assets/common.css'
 // import _ from 'lodash'
 import App from './App.vue'
 import router from './router'
+import VConsole from 'vconsole'
 // 绑定store里state,getter,mutation,action
 import { vuexData, store } from './store'
 Vue.mixin(vuexData)
 Vue.config.productionTip = false
 
-const app = new Vue({
+new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
 //
-if (window.plus) {
-  console.log(window.plus)
-  console.log(app)
-}
-console.log(window.navigator)
+const v = new VConsole()
+window.v = v

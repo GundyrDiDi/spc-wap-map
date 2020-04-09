@@ -11,6 +11,7 @@
 </template>
 
 <script>
+// 默认需要引用ElememtUi
 export default {
   name: 'move-arrow',
   data () {

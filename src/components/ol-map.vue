@@ -1,5 +1,5 @@
 <template>
-  <div id="map">
+  <div id="map" :style="containerStyle">
   </div>
 </template>
 
@@ -8,20 +8,31 @@ import 'ol/ol.css'
 
 export default {
   name: 'Map',
-  mounted () {
-    this.map_init({
-      el: this.$el
+  data () {
+    return {}
+  },
+  computed: {
+    containerStyle () {
+      return {
+        height: 1.2 * this.deviceHeight + 'px',
+        width: 1.2 * this.deviceHeight + 'px'
+      }
+    }
+  },
+  async mounted () {
+    requestAnimationFrame(() => {
+      this.map_init({
+        el: this.$el
+      })
     })
   }
 }
 
 </script>
 
-<style>
+<style scoped>
   #map {
     position: absolute;
-    width: 120vh;
-    height: 120vh;
     background: rgb(4, 153, 212);
   }
 

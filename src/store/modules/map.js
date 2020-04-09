@@ -47,9 +47,9 @@ export default {
           state.fullMap = !state.fullMap
         }
       })
-      view.on('change', ({ target: view1 }) => {
-        console.log(view1.getZoom())
-      })
+      // view.on('change', ({ target: view }) => {
+      //   console.log(view.getZoom())
+      // })
       //
       state.el = el
       state.mymap = map

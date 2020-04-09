@@ -38,6 +38,11 @@ const routes = [{
       console.log('返回主页面，进入后台!')
     }
   }
+},
+{
+  path: '/test',
+  name: 'Test',
+  component: () => import('../components/test.vue')
 }
 ]
 const router = new VueRouter({

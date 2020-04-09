@@ -1,61 +1,65 @@
 <template>
-  <div id="home" :class="appear">
+  <div id="home" :class="appear" class="flex-center">
     <ol-map ref="map"></ol-map>
-    <div v-if="enter" id="viewport" ref="viewport">
-      <div class="right-top">
-        <transition appear enter-active-class="animated fast  zoomIn" leave-active-class="animated fast fadeOutUp">
-          <el-button circle class="shadow" v-show="!fullMap">
-            <img src="../assets/funimg/m1.png" alt="" style="transform:scale(1.2)">
-          </el-button>
+    <div v-if="enter" id="viewport">
+      <div id="subport" :style="subportStyle">
+        <div class="right-top">
+          <transition appear enter-active-class="animated fast  zoomIn" leave-active-class="animated fast fadeOutUp">
+            <el-button circle class="shadow" v-show="!fullMap">
+              <img src="../assets/funimg/m1.png" alt="" style="transform:scale(1.2)">
+            </el-button>
+          </transition>
+          <transition appear enter-active-class="animated fast zoomIn" leave-active-class="animated fast fadeOutUp">
+            <el-button circle class="shadow" v-show="!fullMap"
+              @click="_rtlDrawer=true">
+              <img src="../assets/funimg/l2.png" alt="">
+            </el-button>
+          </transition>
+        </div>
+        <transition appear enter-active-class="animated fast slideInUp" leave-active-class="animated fast slideOutDown">
+          <div class="center-bottom" v-show="!fullMap">
+            <div class="right-top">
+              <transition appear enter-active-class="animated fast rotateIn" leave-active-class="animated fast rotateOut">
+                <el-button circle class="shadow" v-show="!fullMap">
+                  <img src="../assets/funimg/r2.png" alt="">
+                </el-button>
+              </transition>
+              <transition appear enter-active-class="animated fast  rotateIn" leave-active-class="animated fadeOutDown">
+                <el-button circle class="shadow">
+                  <img src="../assets/funimg/d1.png" alt="">
+                </el-button>
+              </transition>
+            </div>
+            <topic-menu></topic-menu>
+          </div>
         </transition>
-        <transition appear enter-active-class="animated fast zoomIn" leave-active-class="animated fast fadeOutUp">
-          <el-button circle class="shadow" v-show="!fullMap"
-            @click="$store.commit('rtlDrawer',true)">
-            <img src="../assets/funimg/l2.png" alt="">
-          </el-button>
+        <transition enter-active-class="aaa">
+          <div class="right-bottom" v-show="fullMap">
+            <el-button circle class="shadow">
+              <img src="../assets/funimg/d1.png" alt="">
+            </el-button>
+          </div>
         </transition>
       </div>
-      <transition appear enter-active-class="animated fast slideInUp" leave-active-class="animated fast slideOutDown">
-        <div class="center-bottom" v-show="!fullMap">
-          <div class="right-top">
-            <transition appear enter-active-class="animated fast rotateIn" leave-active-class="animated fast rotateOut">
-              <el-button circle class="shadow" v-show="!fullMap">
-                <img src="../assets/funimg/r2.png" alt="">
-              </el-button>
-            </transition>
-            <transition appear enter-active-class="animated fast  rotateIn" leave-active-class="animated fadeOutDown">
-              <el-button circle class="shadow">
-                <img src="../assets/funimg/d1.png" alt="">
-              </el-button>
-            </transition>
-          </div>
-          <topic-menu></topic-menu>
-        </div>
-      </transition>
-      <transition enter-active-class="aaa">
-        <div class="right-bottom" v-show="fullMap">
-          <el-button circle class="shadow">
-            <img src="../assets/funimg/d1.png" alt="">
-          </el-button>
-        </div>
-      </transition>
     </div>
-    <el-drawer
+    <swiper-drawer
       :visible.sync="_rtlDrawer"
+      :show-close="false"
+      :with-header="false"
       direction="rtl"
+      size="70%"
     >
-    <el-container>
-      <el-main>
-
-      </el-main>
-    </el-container>
-  </el-drawer>
+      <div>
+            1111111
+      </div>
+    </swiper-drawer>
   </div>
 </template>
 
 <script>
 import olMap from '../components/ol-map.vue'
 import topicMenu from '../components/topic-menu.vue'
+import swiperDrawer from '../components/swiper-drawer.vue'
 
 export default {
   name: 'Home',
@@ -73,13 +77,25 @@ export default {
         return this.rtlDrawer
       },
       set (value) {
-        this.$store.commit('rtlDrawer', value)
+        if (value) {
+          this._record({ type: 'rtlDrawer', value })
+        } else {
+          this._goback()
+        }
+      }
+    },
+    subportStyle () {
+      return {
+        height: this.deviceHeight - this.stateBar + 'px',
+        marginTop: this.stateBar + 'px',
+        borderTop: '2px solid red'
       }
     }
   },
   components: {
     olMap,
-    topicMenu
+    topicMenu,
+    swiperDrawer
   },
   async mounted () {
     const {
@@ -96,8 +112,6 @@ export default {
           setTimeout(() => {
             this.$refs.map.$el.style.marginTop = 0
             this.$el.style.marginTop = 0
-            this.$el.style.height = '100vh'
-            this.$el.style.width = '100vw'
             this.$el.style.animation = ''
             resolve(true)
           }, this.appearDuration)
@@ -107,6 +121,9 @@ export default {
     this.appear = 'static'
     this.searchbox = 'searchBox'
     this.enter = true
+  },
+  watch: {
+
   }
 }
 
@@ -133,9 +150,6 @@ export default {
     height: 120vh;
     overflow: hidden;
     opacity: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     box-shadow: 0 0px 2px 1px rgba(0, 0, 0, .2);
   }
 
@@ -147,22 +161,24 @@ export default {
 
   #home.static {
     opacity: 1;
+    height:inherit;
+    width:inherit;
   }
 
   #viewport {
-    margin-top: 3vh;
     z-index: 1;
     position: absolute;
-    height: 97vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     pointer-events: none;
   }
 
-  .wrapper {
-    pointer-events: none;
+  #subport{
+    position:absolute;
+    width:100%;
+    overflow: hidden;
   }
-
-  #viewport>* {
+  #subport>* {
     pointer-events: auto;
   }
 
@@ -188,14 +204,14 @@ export default {
   }
   .center-bottom .right-top{
     transform: translateY(-100%);
-    top:-3vh;
+    top:-10px;
   }
   .center-bottom .right-top img, .right-bottom img{
     width: 1.5rem;
     height: 1.5rem;
   }
   .right-bottom>button{
-    transform: translateY(-3vh);
+    transform: translateY(-10px);
   }
   .aaa{
     opacity: 0;

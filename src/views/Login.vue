@@ -1,5 +1,5 @@
 <template>
-  <div id="login" ref="login" class="flex-center swiper-container">
+  <div id="login" class="flex-center swiper-container">
     <div class="swiper-wrapper flex-center">
       <transition appear enter-active-class="animated slideInDown">
         <div class="logo flex-center" :class="{expand:isExtend}">
@@ -8,13 +8,6 @@
               <img src="../assets/user.png" alt="">
             </div>
           </div>
-        </div>
-      </transition>
-      <transition appear name="el-zoom-in-center">
-        <div id="getlogin"
-          :class="[{expand:isExtend},failClass]"
-          @click="isExtend=!isExtend">
-          登录
         </div>
       </transition>
       <transition enter-active-class="slideUp" leave-active-class="slideDown">
@@ -53,10 +46,7 @@
           <el-footer ref="submit" :class="failTipClass" class="flex-center">
             <transition name="fade" mode="out-in">
               <el-button type="primary" v-if="!isloading" @click="submit" key="off">
-                <transition name="fade" mode="out-in" :duration="300">
-                  <span v-if="failTipClass">重新登录</span>
-                  <span v-else>进入地图</span>
-                </transition>
+                  <span>进入地图</span>
                 <move-arrow class="right-arrows"></move-arrow>
               </el-button>
               <lottie-loading v-else class="lottie" key="on"></lottie-loading>
@@ -66,6 +56,13 @@
             上海石化地理信息平台
           </div>
         </el-container>
+      </transition>
+      <transition appear name="el-zoom-in-center">
+        <div id="getlogin"
+          :class="[{expand:isExtend},failClass]"
+          @click="isExtend=!isExtend">
+          登录
+        </div>
       </transition>
     </div>
     <move-arrow

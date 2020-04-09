@@ -15,6 +15,8 @@ const root = {
     leaveclass: '',
     deviceHeight: '',
     deviceWidth: '',
+    stateBar: 0,
+    native: undefined,
     rightdrawer: false,
     _records: [],
     rtlDrawer: false
@@ -40,16 +42,19 @@ const root = {
     },
     _record (store, { type, value }) {
       const state = store.state
-      const oldValue = store.commit(type)
+      let oldValue = state
+      type.split('/').forEach(prop => {
+        oldValue = oldValue[prop]
+      })
       state._records.push([type, oldValue])
       store.commit(type, value)
     },
-    _goback (store) {
+    _goback (store, callback) {
       const records = store.state._records
       if (records.length) {
         return store.commit(...records.pop())
       } else {
-        return true
+        callback()
       }
     }
   },
@@ -134,9 +139,6 @@ function bindMutations (module) {
         return (state, payload) => {
           if (payload !== undefined) {
             state[propKey] = payload
-            return true
-          } else {
-            return state[propKey]
           }
         }
       },
