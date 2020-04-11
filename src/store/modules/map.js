@@ -12,8 +12,8 @@ export default {
     mymap: 'undefined',
     view: undefined,
     layers: [],
-    fullMap: false
-
+    fullMap: false,
+    deviceCoord: {}
   },
   mutations: {
     _init (state, { el }) {
@@ -23,7 +23,7 @@ export default {
       }))
       const view = new View({
         center: fromLonLat([121.3183, 30.7149]),
-        zoom: 11
+        zoom: 8
       })
       const map = new Map({
         layers: layers,
@@ -65,3 +65,6 @@ export default {
 
   }
 }
+// function wtms () {
+
+// }

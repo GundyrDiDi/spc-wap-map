@@ -28,7 +28,7 @@ let time
 // 请求拦截器
 _axios.interceptors.request.use(
   function (config) {
-    // 控制一般请求的store.loading
+    // 控制一般请求的store.isloading
     store.commit('isloading', true)
     time = Date.now()
     // 获得api的url

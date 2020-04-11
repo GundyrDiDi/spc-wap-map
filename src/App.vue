@@ -15,26 +15,22 @@ import handlerNative from './plugins/native'
 export default {
   name: 'SPC-map',
   mounted () {
-    // 防止软键盘破坏布局，必须写死高度
-    // 控制body固定高度，其他元素根据body适应
     this.$store.commit('deviceHeight', window.innerHeight)
     this.$store.commit('deviceWidth', window.innerWidth)
-    const h = this.deviceHeight
-    document.body.style.height = h + 'px'
+    // 控制body固定高度，其他元素根据body适应
+    // 防止软键盘破坏布局，必须写死高度
+    document.body.style.height = this.deviceHeight + 'px'
     window.addEventListener('resize', () => { // 用onresize事件监控窗口或框架被调整大小，先把一开始的高度记录下来
-      if (document.body.scrollHeight < h) { // 如果当前窗口小于一开始记录的窗口高度，那就让当前窗口等于一开始窗口的高度
-        document.body.style.height = h + 'px'
+      if (document.body.scrollHeight < this.deviceHeight) { // 如果当前窗口小于一开始记录的窗口高度，那就让当前窗口等于一开始窗口的高度
+        document.body.style.height = this.deviceHeight + 'px'
       }
     })
     // 自适应手机尺寸
-    const docEl = document.documentElement
-    const resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize'
-    const recalc = function () {
-      const clientWidth = docEl.clientWidth
-      if (!clientWidth) return
-      docEl.style.fontSize = 18 * (clientWidth / 375) + 'px'
+    const recalc = () => {
+      const docEl = document.documentElement.style
+      docEl.fontSize = 18 * (this.deviceWidth / 375) + 'px'
     }
-    window.addEventListener(resizeEvt, recalc, false)
+    window.addEventListener('orientationchange', recalc, false)
     window.addEventListener('pageshow', recalc, false)
     document.addEventListener('DOMContentLoaded', recalc, false)
     // 原生native
@@ -67,8 +63,9 @@ export default {
   :root {
     font-family: 'Microsoft Yahei';
     /* 设计稿width:375px */
-    font-size: 18px;
+    /* font-size: 18px; */
     letter-spacing: .1rem;
+    color:#444;
   }
 
   #app{

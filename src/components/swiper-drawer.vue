@@ -49,7 +49,7 @@ export default {
               resistanceRatio: 0,
               initialSlide: 1,
               on: {
-                slideChangeTransitionStart: function (e) {
+                slideChangeTransitionStart (e) {
                   if (this.activeIndex === 0) {
                     _.handleClose()
                     this.slideNext()

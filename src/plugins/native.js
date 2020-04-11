@@ -9,6 +9,7 @@ export default function () {
   // 地理位置
   plus.geolocation.getCurrentPosition(p => {
     console.log(p)
+    store.commit('map/deviceCoord', p)
   })
   // 返回按钮事件
   plus.key.addEventListener('backbutton', () => {

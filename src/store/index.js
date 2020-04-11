@@ -15,11 +15,12 @@ const root = {
     leaveclass: '',
     deviceHeight: '',
     deviceWidth: '',
-    stateBar: 0,
-    native: undefined,
+    stateBar: 20,
+    bottomHeight: 40,
     rightdrawer: false,
     _records: [],
-    rtlDrawer: false
+    rtlDrawer: false,
+    searchWord: ''
   },
   getters: {
     trihor (state) {
@@ -30,6 +31,9 @@ const root = {
     },
     hasRecord (state) {
       return state._records.length !== 0
+    },
+    vpHeight (state) {
+      return state.deviceHeight - state.stateBar
     }
   },
   mutations: {

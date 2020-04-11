@@ -23,9 +23,12 @@
             </el-button>
           </div>
         </transition>
-        <transition appear enter-active-class="animated fast slideInUp" leave-active-class="animated fast slideOutDown">
+        <transition appear
+        enter-active-class="animated fast slideInUpCustom"
+        leave-active-class="animated fast slideOutDownCustom">
           <topic-menu v-show="!fullMap">
-            <div class="right-top">
+            <template v-slot:default="{slides}">
+            <div class="right-top" :style="slides[3]">
               <transition appear enter-active-class="animated fast rotateIn" leave-active-class="animated fast rotateOut">
                 <el-button circle class="shadow" v-show="!fullMap">
                   <img src="../assets/funimg/r2.png" alt="">
@@ -37,6 +40,7 @@
                 </el-button>
               </transition>
             </div>
+            </template>
           </topic-menu>
         </transition>
       </div>
@@ -85,7 +89,7 @@ export default {
     },
     subportStyle () {
       return {
-        height: this.deviceHeight - this.stateBar + 'px',
+        height: this.vpHeight + 'px',
         marginTop: this.stateBar + 'px',
         borderTop: '2px solid red'
       }
@@ -203,7 +207,6 @@ export default {
   }
   .center-bottom .right-top{
     transform: translateY(-100%);
-    top:-10px;
   }
   .center-bottom .right-top img, .right-bottom img{
     width: 1.5rem;
@@ -216,5 +219,35 @@ export default {
     opacity: 0;
     animation-delay: .75s;
   }
+  @keyframes slideInUpCustom {
+    from {
+      transform: translate3d(0, 110px, 0);
+      visibility: visible;
+    }
 
+    to {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .slideInUpCustom {
+    -webkit-animation-name: slideInUpCustom;
+    animation-name: slideInUpCustom;
+  }
+  .slideOutDownCustom {
+    -webkit-animation-name: slideOutDownCustom;
+    animation-name: slideOutDownCustom;
+  }
+  @keyframes slideOutDownCustom {
+    from {
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+
+    to {
+      visibility: hidden;
+      transform: translate3d(0, 110px, 0);
+    }
+  }
 </style>
