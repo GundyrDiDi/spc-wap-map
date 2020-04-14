@@ -348,7 +348,7 @@ export default {
   }
 </style>
 <style>
-  .el-input__inner {
+  #login .el-input__inner {
     height: 2.6rem;
     line-height: 2.6rem;
     font-size:1rem;

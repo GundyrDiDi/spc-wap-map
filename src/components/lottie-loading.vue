@@ -1,8 +1,6 @@
 <template>
 <div id="overlay">
-  <transition name="el-fade-in">
-    <lottie :options="defaultOptions"></lottie>
-  </transition>
+  <lottie :options="defaultOptions"></lottie>
 </div>
 </template>
 

@@ -2,8 +2,9 @@
   <div id="home" :class="appear" class="flex-center">
     <ol-map ref="map"></ol-map>
     <div v-if="enter" id="viewport">
+      <router-view></router-view>
       <div id="subport" :style="subportStyle">
-        <div class="right-top">
+        <div class="right-top" :style="[{opacity:btnopacity}]">
           <transition appear enter-active-class="animated fast  zoomIn" leave-active-class="animated fast fadeOutUp">
             <el-button circle class="shadow" v-show="!fullMap">
               <img src="../assets/funimg/m1.png" alt="" style="transform:scale(1.2)">
@@ -27,19 +28,19 @@
         enter-active-class="animated fast slideInUpCustom"
         leave-active-class="animated fast slideOutDownCustom">
           <topic-menu v-show="!fullMap">
-            <template v-slot:default="{slides}">
-            <div class="right-top" :style="slides[3]">
-              <transition appear enter-active-class="animated fast rotateIn" leave-active-class="animated fast rotateOut">
-                <el-button circle class="shadow" v-show="!fullMap">
-                  <img src="../assets/funimg/r2.png" alt="">
-                </el-button>
-              </transition>
-              <transition appear enter-active-class="animated fast  rotateIn">
-                <el-button circle class="shadow">
-                  <img src="../assets/funimg/d1.png" alt="">
-                </el-button>
-              </transition>
-            </div>
+            <template #default="{position}">
+              <div class="right-top swiper-no-swiping" :style="[position,{opacity:btnopacity}]">
+                <transition appear enter-active-class="animated fast fadeIn" leave-active-class="animated fast rotateOut">
+                  <el-button circle class="shadow" v-show="!fullMap">
+                    <img src="../assets/funimg/r2.png" alt="">
+                  </el-button>
+                </transition>
+                <transition appear enter-active-class="animated fast  rotateIn">
+                  <el-button circle class="shadow">
+                    <img src="../assets/funimg/d1.png" alt="">
+                  </el-button>
+                </transition>
+              </div>
             </template>
           </topic-menu>
         </transition>
@@ -70,8 +71,7 @@ export default {
     return {
       enter: false,
       appear: '',
-      appearDuration: 1300,
-      searchbox: ''
+      appearDuration: 1300
     }
   },
   computed: {
@@ -90,8 +90,7 @@ export default {
     subportStyle () {
       return {
         height: this.vpHeight + 'px',
-        marginTop: this.stateBar + 'px',
-        borderTop: '2px solid red'
+        marginTop: this.stateBar + 'px'
       }
     }
   },
@@ -122,11 +121,12 @@ export default {
       })
     }
     this.appear = 'static'
-    this.searchbox = 'searchBox'
     this.enter = true
   },
   watch: {
-
+    activeMenu (route) {
+      // this.$router.push(route);
+    }
   }
 }
 
@@ -221,7 +221,7 @@ export default {
   }
   @keyframes slideInUpCustom {
     from {
-      transform: translate3d(0, 110px, 0);
+      transform: translate3d(0, 125px, 0);
       visibility: visible;
     }
 
@@ -247,7 +247,7 @@ export default {
 
     to {
       visibility: hidden;
-      transform: translate3d(0, 110px, 0);
+      transform: translate3d(0, 125px, 0);
     }
   }
 </style>

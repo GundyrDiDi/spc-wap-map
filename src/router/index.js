@@ -13,7 +13,6 @@ const routes = [{
   name: 'Home',
   component: Home,
   beforeEnter: (to, from, next) => {
-    console.log(store)
     if (store.state.login.isLogin) {
       next()
     } else {

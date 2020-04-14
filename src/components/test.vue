@@ -1,25 +1,7 @@
 <template>
-<div>
-  <div class="swiper-container" id="swiper-container1">
-    <div class="swiper-wrapper vertical">
-      <div class="swiper-slide">Slide 1</div>
-      <div class="swiper-slide swiper-slide2" style="position:relative">
-          <div class="swiper-container" id="swiper-container2">
-            <div class="swiper-wrapper vertical">
-              <div class="swiper-slide">
-                <h4>一段很长的内容</h4>
-                <p style="opacity:0.99;">一<br>段<br>很<br>长<br>的<br>内<br>容</p>
-                <p style="opacity:0.98;">一<br>段<br>很<br>长<br>的<br>内<br>容</p>
-                <p style="opacity:0.97;">一<br>段<br>很<br>长<br>的<br>内<br>容</p>
-               </div>
-            </div>
-            <div class="swiper-scrollbar"></div>
-          </div>
-      </div>
-    </div>
-    <!-- Add Pagination -->
-    <div class="swiper-pagination"></div>
-  </div>
+<div style="width:200px;position:relative">
+  <div>test</div>
+  <slot></slot>
 </div>
 </template>
 
@@ -30,9 +12,42 @@ export default {
     return {}
   },
   mounted () {
+    console.log(this.$slots)
   }
 }
 </script>
 
 <style scoped>
+  .a{
+    font-size:80px;
+    animation: a 4s linear;
+    overflow:hidden;
+    color:var(--color);
+    position: absolute;
+    top:0;
+    left:0;
+    /* background:red; */
+  }
+  .aa{
+    animation:aa 4s linear;
+    transform:translateX(-5px) translateY(-3px);
+  }
+  @keyframes a {
+    from{
+      width:0;
+      left:100%;
+    }
+    to{
+      width:100%;
+      left:0;
+    }
+  }
+  @keyframes aa {
+    from{
+      transform:translateX(-205px) translateY(-3px)
+    }
+    to{
+      transform:translateX(-5px) translateY(-3px)
+    }
+  }
 </style>

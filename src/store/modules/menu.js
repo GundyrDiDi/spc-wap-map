@@ -1,14 +1,19 @@
 export default {
   namespaced: true,
   state: {
-    _MAP: 'map',
-    _USER: 'user',
-    activeMenu: {
-      name: 'map'
-    }
+    menus: [
+      { name: '地图', route: '' },
+      { name: '应用', route: 'apply' },
+      { name: '我的', route: 'user' }
+    ],
+    menuIndex: 0,
+    totop: false,
+    tofocus: false
   },
   getters: {
-
+    activeMenu (state) {
+      return state.menus[state.menuIndex]
+    }
   },
   mutations: {
 

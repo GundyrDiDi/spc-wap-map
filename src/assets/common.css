@@ -1,5 +1,11 @@
+:root{
+  --color:#0499d4;
+}
 div{
   box-sizing: border-box;
+}
+img{
+  vertical-align: bottom;
 }
 .flex{
     display:flex;
@@ -46,8 +52,8 @@ div{
 .shadow-top{
   box-shadow: 0 -2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
 }
-img{
-  vertical-align: bottom;
+.font-color{
+  color:var(--color)
 }
 /* swiper */
 .swiper-container{
@@ -73,3 +79,4 @@ img{
 .el-button{
   font-size:1rem;
 }
+

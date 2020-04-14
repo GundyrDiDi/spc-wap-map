@@ -15,8 +15,9 @@ const root = {
     leaveclass: '',
     deviceHeight: '',
     deviceWidth: '',
-    stateBar: 20,
-    bottomHeight: 40,
+    bottomHeight: 50,
+    stateBar: 4,
+    btnopacity: 1,
     rightdrawer: false,
     _records: [],
     rtlDrawer: false,
@@ -28,9 +29,6 @@ const root = {
     },
     triver (state) {
       return state.deviceHeight / 30
-    },
-    hasRecord (state) {
-      return state._records.length !== 0
     },
     vpHeight (state) {
       return state.deviceHeight - state.stateBar
@@ -48,20 +46,21 @@ const root = {
       store.commit('leaveclass', leave)
     },
     _record (store, { type, value }) {
+      console.log(type)
       const state = store.state
       let oldValue = state
       type.split('/').forEach(prop => {
         oldValue = oldValue[prop]
       })
-      state._records.push([type, oldValue])
-      store.commit(type, value)
+      if (oldValue !== value) {
+        state._records.push([type, oldValue])
+        store.commit(type, value)
+      }
     },
-    _goback (store, callback) {
+    _goback (store) {
       const records = store.state._records
       if (records.length) {
         return store.commit(...records.pop())
-      } else {
-        callback && callback()
       }
     }
   },
