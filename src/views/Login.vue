@@ -11,7 +11,7 @@
         </div>
       </transition>
       <transition enter-active-class="slideUp" leave-active-class="slideDown">
-        <el-container id="form" v-show="isExtend" :class="failClass">
+        <el-container id="form" v-if="isExtend" :class="failClass">
           <el-header height="3rem"></el-header>
           <el-main>
             <el-form :model="login" :rules="rules" ref="ruleform">
@@ -111,7 +111,7 @@ export default {
       allowSlidePrev: false
     })
     this.swiper.on('touchEnd', (e) => {
-      if (Math.abs(this.swiper.translate) > this.triver) {
+      if (Math.abs(this.swiper.translate) > this.deviceHeight / 30) {
         this.isExtend = !this.isExtend
       }
     })
@@ -161,13 +161,8 @@ export default {
   },
   watch: {
     isExtend (is) {
-      if (is) {
-        this.swiper.allowSlidePrev = true
-        this.swiper.allowSlideNext = false
-      } else {
-        this.swiper.allowSlidePrev = false
-        this.swiper.allowSlideNext = true
-      }
+      this.swiper.allowSlidePrev = is
+      this.swiper.allowSlideNext = !is
     }
   }
 }

@@ -205,9 +205,9 @@ export default {
     content: '';
     clear: both;
   }
-  .center-bottom .right-top{
+  /* .center-bottom .right-top{
     transform: translateY(-100%);
-  }
+  } */
   .center-bottom .right-top img, .right-bottom img{
     width: 1.5rem;
     height: 1.5rem;

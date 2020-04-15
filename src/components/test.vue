@@ -1,7 +1,12 @@
 <template>
 <div style="width:200px;position:relative">
-  <div>test</div>
-  <slot></slot>
+  <div class="swiper-container" style="height:600px">
+    <div class="swiper-wrapper vertical">
+      <div class="swiper-slide" style="height:100px">1</div>
+      <div class="swiper-slide" style="height:200px">2</div>
+      <div class="swiper-slide" style="height:300px">3</div>
+    </div>
+  </div>
 </div>
 </template>
 
@@ -12,42 +17,18 @@ export default {
     return {}
   },
   mounted () {
-    console.log(this.$slots)
+    this.s = this.$swiper('.swiper-container', {
+      init: false,
+      direction: 'vertical',
+      slidesPerView: 'auto'
+    })
+    setTimeout(() => {
+      this.s.init()
+    }, 111)
   }
 }
 </script>
 
 <style scoped>
-  .a{
-    font-size:80px;
-    animation: a 4s linear;
-    overflow:hidden;
-    color:var(--color);
-    position: absolute;
-    top:0;
-    left:0;
-    /* background:red; */
-  }
-  .aa{
-    animation:aa 4s linear;
-    transform:translateX(-5px) translateY(-3px);
-  }
-  @keyframes a {
-    from{
-      width:0;
-      left:100%;
-    }
-    to{
-      width:100%;
-      left:0;
-    }
-  }
-  @keyframes aa {
-    from{
-      transform:translateX(-205px) translateY(-3px)
-    }
-    to{
-      transform:translateX(-5px) translateY(-3px)
-    }
-  }
+
 </style>

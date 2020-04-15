@@ -24,12 +24,6 @@ const root = {
     searchWord: ''
   },
   getters: {
-    trihor (state) {
-      return state.deviceWidth / 30
-    },
-    triver (state) {
-      return state.deviceHeight / 30
-    },
     vpHeight (state) {
       return state.deviceHeight - state.stateBar
     }
@@ -46,7 +40,6 @@ const root = {
       store.commit('leaveclass', leave)
     },
     _record (store, { type, value }) {
-      console.log(type)
       const state = store.state
       let oldValue = state
       type.split('/').forEach(prop => {
@@ -63,6 +56,12 @@ const root = {
         return store.commit(...records.pop())
       }
     }
+    // _manualback(store){
+    //   const records = store.state._records
+    //   if (records.length) {
+    //     records.pop();
+    //   }
+    // }
   },
   modules: {
     login,

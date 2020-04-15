@@ -29,8 +29,6 @@ export default function () {
   document.addEventListener('keyboardchange', e => {
     console.log(e)
     console.log('键盘显示')
-    console.log(document.body)
-    console.log(document.body.style)
   }, false)
   //
   console.log(plus)

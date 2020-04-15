@@ -23,7 +23,6 @@ export default {
     const docEl = document.documentElement.style
     document.body.style.height = this.deviceHeight + 'px'
     window.addEventListener('resize', () => { // 用onresize事件监控窗口或框架被调整大小，先把一开始的高度记录下来
-      console.log('resize!!!!!')
       if (document.body.scrollHeight < this.deviceHeight) { // 如果当前窗口小于一开始记录的窗口高度，那就让当前窗口等于一开始窗口的高度
         document.body.style.height = this.deviceHeight + 'px'
       }
@@ -64,7 +63,7 @@ export default {
   :root {
     font-family: 'Microsoft Yahei';
     /* 设计稿width:375px */
-    /* font-size: 18px; */
+    font-size: 18px;
     letter-spacing: .1rem;
     color:#666;
   }

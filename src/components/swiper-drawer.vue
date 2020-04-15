@@ -3,7 +3,7 @@
     <div class="swiper-container" ref="swc">
       <div class="swiper-wrapper">
         <div class="swiper-slide"></div>
-        <div class="swiper-slide a2" :style="{paddingTop:barHeight+'px'}">
+        <div class="swiper-slide a2 swiper-slide-active" :style="{paddingTop:barHeight+'px'}">
           <slot></slot>
         </div>
       </div>
