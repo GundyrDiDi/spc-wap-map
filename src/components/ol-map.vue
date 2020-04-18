@@ -19,6 +19,16 @@ export default {
       }
     }
   },
+  watch: {
+    deviceCoord: {
+      handler (c) {
+        setTimeout(() => {
+          this.map_setCurLocation(c)
+        }, 500)
+      },
+      immediate: true
+    }
+  },
   async mounted () {
     requestAnimationFrame(() => {
       this.map_init({

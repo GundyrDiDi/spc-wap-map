@@ -9,6 +9,7 @@ export default {
     menuIndex: 0,
     totop: false,
     tofocus: false
+
   },
   getters: {
     activeMenu (state) {
@@ -19,6 +20,8 @@ export default {
 
   },
   actions: {
-
+    _getElements () {
+      return axios.post('/getElements')
+    }
   }
 }

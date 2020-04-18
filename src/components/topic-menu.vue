@@ -5,22 +5,22 @@
         <slot v-bind:position="slides[3]"></slot>
         <div class="swiper-wrapper vertical">
           <div class="swiper-slide shadow-top" :style="slides[1]">
-            <div :style="slides[6]" class="search-box flex-center" @click="slideUp">
-              <i class="badge el-icon-arrow-up"></i>
-              <el-input :disabled="true">
-                <i slot="prefix" class="el-input__icon el-icon-search"></i>
-                <i @click.stop="1+1" slot="suffix" class="el-input__icon el-icon-camera"></i>
-              </el-input>
+            <div :style="slides[6]" class="search-box flex-center">
+              <div class="badge" @click="controlSlide">
+                <img :src="arrowIcon" alt="" :class="totop?'':'rotate-reverse'">
+              </div>
+              <div class="wrapper" @click="slideUp">
+                <el-input :disabled="true" value="查找地点">
+                  <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                  <i @click.stop="1+1" slot="suffix" class="el-input__icon el-icon-camera"></i>
+                </el-input>
+              </div>
             </div>
           </div>
           <div class="swiper-slide" :style="slides[2]">
-            <div class="swiper-container" ref="child">
-              <div class="swiper-wrapper">
-                <div class="swiper-slide" style="height:1500px;">
-  123
-                </div>
-              </div>
-            </div>
+            <flexible-container :allow="allowchild">
+              <tool-list v-bind="slides[8]"></tool-list>
+            </flexible-container>
           </div>
         </div>
       </div>
@@ -29,7 +29,10 @@
       <div class="focus-container swiper-container" :style="slides[7]" v-show="tofocus">
         <div class="swiper-wrapper vertical">
           <div class="swiper-slide shadow-top" :style="slides[1]">
-            <div :style="slides[6]" class="search-box">
+            <div :style="slides[6]" class="search-box flex-center">
+              <div class="badge" @click="back2step()">
+                <img :src="arrowIcon" alt="" :class="totop?'':'rotate-reverse'">
+              </div>
               <el-input clearable
                 :value="searchWord"
                 @input="$store.commit('searchWord',$event)"
@@ -40,13 +43,7 @@
             </div>
           </div>
           <div class="swiper-slide" :style="slides[2]">
-            <!-- <div class="swiper-container" ref="child">
-              <div class="swiper-wrapper">
-                <div class="swiper-slide" style="height:1500px;">
 
-                </div>
-              </div>
-            </div> -->
           </div>
         </div>
       </div>
@@ -67,20 +64,34 @@
 
 <script>
 import dyTransition from './dy-transition.vue'
+import toolList from './tool-list.vue'
+import flexibleContainer from './flexible-container.vue'
 export default {
   name: 'topic-menu',
   data () {
     return {
       index: 0,
+      aIndex: 0,
+      allowchild: false,
+
       fsclass: ['', '']
     }
   },
   components: {
-    dyTransition
+    dyTransition,
+    toolList,
+    flexibleContainer
   },
   computed: {
+    arrowIcon () {
+      const arr = [
+        require('../assets/funimg/ta02.png'),
+        require('../assets/funimg/ta01.png')
+      ]
+      return arr[this.index]
+    },
     slides () {
-      var height = 130
+      var height = 135
       var translateY = 55
       return [{
         height: `${height}px`
@@ -109,11 +120,21 @@ export default {
       }, // 6 search-box
       {
         top: `-${this.vpHeight - (height + this.bottomHeight) + translateY}px`
-      } // 7 focus-container
+      }, // 7 focus-container
+      {
+        progress: 0, transition: 'none', breakPoint: height / (this.vpHeight - height + translateY - this.bottomHeight)
+      } // 8 tool-list
       ]
     }
   },
   methods: {
+    controlSlide () {
+      if (this.swiper.isEnd) {
+        this.swiper.slidePrev()
+      } else {
+        this.swiper.slideNext()
+      }
+    },
     back2step () {
       this.$refs.focusbox.blur()
       setTimeout(() => {
@@ -136,17 +157,17 @@ export default {
       })
       setTimeout(() => {
         this.$refs.focusbox.focus()
-      }, 100)
+      }, 200)
     }
   },
   watch: {
     fullMap (fm) {
       if (fm) {
-        this.index = this.swiper.activeIndex
+        this.aindex = this.swiper.activeIndex
         this.swiper.slideTo(0, 500)
       } else {
         setTimeout(() => {
-          this.swiper.slideTo(this.index, 800)
+          this.swiper.slideTo(this.aindex, 500)
         }, 100)
       }
     },
@@ -161,7 +182,7 @@ export default {
           setTimeout(() => {
             this.swiper3 = this.$swiper('.focus-container', {
               direction: 'vertical',
-              resistanceRatio: 0.8,
+              resistanceRatio: 0.75,
               slidesPerView: 'auto',
               allowSlideNext: false,
               on: {
@@ -169,8 +190,7 @@ export default {
                   this.$refs.focusbox.blur()
                 },
                 touchEnd: () => {
-                  if (this.swiper3.translate > this.deviceHeight / 15) {
-                    console.log(this.swiper3.translate)
+                  if (this.swiper3.translate > this.deviceHeight / 20) {
                     this._goback()
                     this.swiper.slideTo(0, 0)
                     this.fsclass = ['animated faster slideOutDown', 'animated fast delay-300ms slideInUp']
@@ -186,7 +206,9 @@ export default {
         }
       } else {
         setTimeout(() => {
-          this._goback()
+          if (this.totop) {
+            this._goback()
+          }
         }, 50)
       }
     }
@@ -198,18 +220,27 @@ export default {
       resistanceRatio: 0,
       slidesPerView: 'auto',
       on: {
+        sliderMove () {
+          _.slides[3].transform = `translateY(${Math.max(-135, this.translate)}px)`
+          _.slides[8].progress = this.progress
+        },
         transitionStart () {
           _.slides[3].transition = 'all 500ms'
-          _.slides[3].transform = `translateY(${this.activeIndex === 1 ? -130 : 0}px)`
+          _.slides[8].transition = 'all 500ms'
+          _.slides[3].transform = `translateY(${this.activeIndex === 1 ? -135 : 0}px)`
+          _.slides[8].progress = this.progress
           _.$forceUpdate()
           setTimeout(() => {
             _.slides[3].transition = 'none'
+            _.slides[8].transition = 'none'
           }, 500)
+
+          _.index = this.progress === 1 ? 0 : this.activeIndex
         },
         // 方法调用移动不会触发
         transitionEnd () {
           const p = this.progress
-          _.swiper2.allowTouchMove = p === 1
+          _.allowchild = p === 1
           if (p !== 1) {
             if (_.totop) {
               _._goback()
@@ -217,25 +248,15 @@ export default {
           }
         },
         progress (p) {
-          _.$store.commit('btnopacity', (0.3 - p + 0.24) * 5)
+          _.$store.commit('btnopacity', (0.25 - p + 0.24) * 5)
           if (p === 1) {
             _._record({
               type: 'menu/totop',
               value: true
             })
           }
-        },
-        sliderMove () {
-          _.slides[3].transform = `translateY(${Math.max(-130, this.translate)}px)`
         }
       }
-    })
-    this.swiper2 = this.$swiper(this.$refs.child, {
-      direction: 'vertical',
-      nested: true,
-      resistanceRatio: 0,
-      slidesPerView: 'auto',
-      freeMode: true
     })
   }
 }
@@ -247,18 +268,18 @@ export default {
     width: 100%;
     pointer-events: none !important;
   }
+
   #topic-menu>* {
     pointer-events: auto;
   }
+
   #topic-menu>.swiper-container {
     overflow: visible;
     position: absolute;
     width: 100%;
     pointer-events: none
   }
-  .right-top{
-    pointer-events: auto
-  }
+
   .swiper-container .swiper-container {
     height: 100%;
   }
@@ -280,6 +301,7 @@ export default {
     font-weight: 600;
     background: #fff;
     width: 100%;
+    color:#666;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, .08), 0 0 3px rgba(0, 0, 0, .04)
@@ -323,6 +345,14 @@ export default {
   .badge{
     position:absolute;
     top:0;
+    height: 15px;
+    width: 30px;
+    transform: translateX(3px);
+  }
+  .badge>img{
+    width:100%;
+    height:100%;
+    vertical-align: top;
   }
 </style>
 
@@ -334,7 +364,8 @@ export default {
     padding: 0 40px;
     height: 45px;
     line-height: 45px;
-    font-size: 1rem;
+    font-size: .9rem;
+    color:#666;
   }
 
   #topic-menu .el-input__icon {

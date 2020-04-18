@@ -65,7 +65,8 @@ export default {
     /* 设计稿width:375px */
     font-size: 18px;
     letter-spacing: .1rem;
-    color:#666;
+    color:#555;
+    font-weight:600;
   }
 
   #app{

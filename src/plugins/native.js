@@ -9,8 +9,8 @@ export default function () {
     console.log(store.state.stateBar)
   }
   // 地理位置
-  plus.geolocation.getCurrentPosition(p => {
-    store.commit('map/deviceCoord', p)
+  plus.geolocation.watchPosition(p => {
+    store.commit('map/deviceLocation', p)
     console.log(p)
   })
   // 返回按钮事件

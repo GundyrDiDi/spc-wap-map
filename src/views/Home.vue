@@ -20,7 +20,7 @@
         <transition enter-active-class="aaa">
           <div class="right-bottom" v-show="fullMap">
             <el-button circle class="shadow">
-              <img src="../assets/funimg/d1.png" alt="">
+              <img src="../assets/funimg/d1.png" alt="" @click="map_movetoPoint({lonlat:deviceCoord})">
             </el-button>
           </div>
         </transition>
@@ -36,7 +36,7 @@
                   </el-button>
                 </transition>
                 <transition appear enter-active-class="animated fast  rotateIn">
-                  <el-button circle class="shadow">
+                  <el-button circle class="shadow" @click="map_movetoPoint({lonlat:deviceCoord})">
                     <img src="../assets/funimg/d1.png" alt="">
                   </el-button>
                 </transition>
@@ -53,9 +53,7 @@
       direction="rtl"
       size="70%"
     >
-      <div>
-            1111111
-      </div>
+      <theme-panel></theme-panel>
     </swiper-drawer>
   </div>
 </template>
@@ -64,6 +62,7 @@
 import olMap from '../components/ol-map.vue'
 import topicMenu from '../components/topic-menu.vue'
 import swiperDrawer from '../components/swiper-drawer.vue'
+import themePanel from '../components/theme-panel.vue'
 
 export default {
   name: 'Home',
@@ -97,7 +96,8 @@ export default {
   components: {
     olMap,
     topicMenu,
-    swiperDrawer
+    swiperDrawer,
+    themePanel
   },
   async mounted () {
     const {
@@ -205,15 +205,16 @@ export default {
     content: '';
     clear: both;
   }
-  /* .center-bottom .right-top{
-    transform: translateY(-100%);
-  } */
+  .center-bottom .right-top{
+    /* transform: translateY(-100%); */
+    pointer-events: auto;
+  }
   .center-bottom .right-top img, .right-bottom img{
     width: 1.5rem;
     height: 1.5rem;
   }
   .right-bottom>button{
-    transform: translateY(-10px);
+    transform: translateY(-13px);
   }
   .aaa{
     opacity: 0;
@@ -221,7 +222,7 @@ export default {
   }
   @keyframes slideInUpCustom {
     from {
-      transform: translate3d(0, 125px, 0);
+      transform: translate3d(0, 130px, 0);
       visibility: visible;
     }
 
@@ -247,7 +248,7 @@ export default {
 
     to {
       visibility: hidden;
-      transform: translate3d(0, 125px, 0);
+      transform: translate3d(0, 130px, 0);
     }
   }
 </style>

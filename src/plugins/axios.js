@@ -48,10 +48,15 @@ _axios.interceptors.response.use(
   function (response) {
     // Do something with response data
     console.log(Date.now() - time)
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       // 模拟网络延迟
       setTimeout(() => {
-        resolve(response.data)
+        if (response.data.type === false) {
+          reject(new Error('返回数据错误'))
+        }
+        // 返回格式
+        resolve(response.data.data)
+        //
       }, 20)
     })
   },
