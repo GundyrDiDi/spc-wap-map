@@ -30,6 +30,7 @@ if (navigator.platform.includes('Win')) {
     }).$mount('#app')
   })
 }
+console.log(VConsole)
 //
-const v = new VConsole()
-window.v = v
+// const v = new VConsole()
+// window.v = v

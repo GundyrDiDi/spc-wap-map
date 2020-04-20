@@ -17,8 +17,8 @@
               </div>
             </div>
           </div>
-          <div class="swiper-slide" :style="slides[2]">
-            <flexible-container :allow="allowchild">
+          <div class="swiper-slide" :class="hidden&&'hidden'" :style="slides[2]">
+            <flexible-container :allow="allowchild" :allowPrev="false">
               <tool-list v-bind="slides[8]"></tool-list>
             </flexible-container>
           </div>
@@ -33,23 +33,35 @@
               <div class="badge" @click="back2step()">
                 <img :src="arrowIcon" alt="" :class="totop?'':'rotate-reverse'">
               </div>
-              <el-input clearable
+              <el-input :class="isloading&&'loading'"
+                clearable
                 :value="searchWord"
-                @input="$store.commit('searchWord',$event)"
+                @input="$store.commit('searchWord',$event.trim())"
                 ref="focusbox"
+                placeholder="搜索"
               >
+                <i v-show="isloading" slot="suffix" class="el-input__icon el-icon-loading font-color"></i>
                 <i @click.self="back2step()" slot="prefix" class="el-input__icon el-icon-arrow-left"></i>
               </el-input>
             </div>
           </div>
           <div class="swiper-slide" :style="slides[2]">
-
+            <transition leave-active-class="delay-500ms animated slideOutDown">
+              <div v-if="tofocus" class="search-result">
+                <flexible-container v-if="!searchWord" :allowPrev="false">
+                  <history-list></history-list>
+                </flexible-container>
+                <flexible-container v-if="searchWord" :data="resultList">
+                  <result-list></result-list>
+                </flexible-container>
+              </div>
+            </transition>
           </div>
         </div>
       </div>
     </transition>
     <div class="center-bottom flex" id="bottom-buttons" :style="slides[5]">
-      <div v-for="(v,i) in menus" :key="v.name" @click="_record({ type: 'menu/menuIndex', value:i })">
+      <div v-for="(v,i) in menus" :key="v.name" @click="handleMenu(v)">
         <span :class="menuIndex==i&&'font-color'">
           {{v.name}}
           <dy-transition :ob="menuIndex" :i="i" :enter="['slideInLeft','slideInRight']"
@@ -66,6 +78,8 @@
 import dyTransition from './dy-transition.vue'
 import toolList from './tool-list.vue'
 import flexibleContainer from './flexible-container.vue'
+import historyList from './history-list.vue'
+import resultList from './result-list.vue'
 export default {
   name: 'topic-menu',
   data () {
@@ -73,14 +87,16 @@ export default {
       index: 0,
       aIndex: 0,
       allowchild: false,
-
+      hidden: false,
       fsclass: ['', '']
     }
   },
   components: {
     dyTransition,
     toolList,
-    flexibleContainer
+    flexibleContainer,
+    historyList,
+    resultList
   },
   computed: {
     arrowIcon () {
@@ -128,6 +144,10 @@ export default {
     }
   },
   methods: {
+    handleMenu (menu) {
+      console.log(menu)
+      // _record({ type: 'menu/menuIndex', value:i })
+    },
     controlSlide () {
       if (this.swiper.isEnd) {
         this.swiper.slidePrev()
@@ -145,8 +165,10 @@ export default {
       if (!this.swiper.isEnd) {
         await new Promise(resolve => {
           const t = 400
+          this.hidden = true
           this.swiper.slideTo(2, t)
           setTimeout(() => {
+            this.hidden = false
             resolve()
           }, t)
         })
@@ -157,10 +179,21 @@ export default {
       })
       setTimeout(() => {
         this.$refs.focusbox.focus()
-      }, 200)
+      }, 1000)
     }
   },
   watch: {
+    searchWord (sw) {
+      setTimeout(() => {
+        if (sw === this.searchWord) {
+          if (sw) {
+            this._search(sw)
+          } else {
+            this.$store.commit('resultList', [])
+          }
+        }
+      }, 200)
+    },
     fullMap (fm) {
       if (fm) {
         this.aindex = this.swiper.activeIndex
@@ -178,33 +211,33 @@ export default {
     },
     tofocus (f) {
       if (f) {
-        if (!this.swiper3) {
-          setTimeout(() => {
-            this.swiper3 = this.$swiper('.focus-container', {
-              direction: 'vertical',
-              resistanceRatio: 0.75,
-              slidesPerView: 'auto',
-              allowSlideNext: false,
-              on: {
-                setTransition: () => {
-                  this.$refs.focusbox.blur()
-                },
-                touchEnd: () => {
-                  if (this.swiper3.translate > this.deviceHeight / 20) {
-                    this._goback()
-                    this.swiper.slideTo(0, 0)
-                    this.fsclass = ['animated faster slideOutDown', 'animated fast delay-300ms slideInUp']
-                    setTimeout(() => {
-                      this.swiper.slideTo(1)
-                      this.fsclass = ['', '']
-                    }, 300)
-                  }
+        setTimeout(() => {
+          this.swiper3 = this.$swiper('.focus-container', {
+            direction: 'vertical',
+            resistanceRatio: 0.75,
+            slidesPerView: 'auto',
+            allowSlideNext: false,
+            threshold: 20,
+            on: {
+              setTransition: () => {
+                this.$refs.focusbox.blur()
+              },
+              touchEnd: () => {
+                if (this.swiper3.translate > this.deviceHeight / 15) {
+                  this._goback()
+                  this.swiper.slideTo(0, 0)
+                  this.fsclass = ['animated faster slideOutDown', 'animated fast delay-300ms slideInUp']
+                  setTimeout(() => {
+                    this.swiper.slideTo(1)
+                    this.fsclass = ['', '']
+                  }, 300)
                 }
               }
-            })
-          }, 0)
-        }
+            }
+          })
+        }, 0)
       } else {
+        this.$store.commit('searchWord', '')
         setTimeout(() => {
           if (this.totop) {
             this._goback()
@@ -338,9 +371,13 @@ export default {
     color: var(--color);
     top: 10px;
   }
-
   .focus-container .swiper-slide{
     position: relative;
+  }
+  .focus-container .search-result{
+    background:#f2f2f2;
+    height:100%;
+    padding-top:.3rem;
   }
   .badge{
     position:absolute;
@@ -353,6 +390,12 @@ export default {
     width:100%;
     height:100%;
     vertical-align: top;
+  }
+  .hidden>*{
+    display: none;
+  }
+  .font-color{
+    color:var(--color) !important;
   }
 </style>
 
@@ -380,5 +423,7 @@ export default {
   #topic-menu .el-input__suffix {
     right: 10px;
   }
-
+  .loading .el-icon-circle-close{
+    display:none;
+  }
 </style>

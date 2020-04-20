@@ -31,7 +31,6 @@ export default {
     var ms = (/Html5Plus\/.+\s\(.*(Immersed\/(\d+\.?\d*).*)\)/gi).exec(navigator.userAgent)
     if (ms && ms.length >= 3) {
       this.barHeight = parseFloat(ms[2])
-      this.height = window.innerHeight - this.barHeight
     }
     // this.mask=document.getElementsByClassName('v-modal')[0];
     // console.log(this.mask);

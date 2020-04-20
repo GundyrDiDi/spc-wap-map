@@ -30,8 +30,13 @@ const api = new API()
 const proxy = new Proxy(api, {
   get (target, key, receiver) {
     key = key.split('/').pop()
+    let param = ''
+    if (key.includes('?')) {
+      param = key.slice(key.indexOf('?'))
+      key = key.slice(0, key.indexOf('?'))
+    }
     if (key in target && !key.includes('__')) {
-      return `${target.originPath}${target[key]}`
+      return `${target.originPath}${target[key]}${param}`
     } else {
       return new Error('wrong api !')
     }
@@ -47,6 +52,20 @@ const mockdata = {
       data: {
         success: username === 'username'
       }
+    }
+  },
+  search (obj) {
+    // const { word } = JSON.parse(obj.body)
+    return Mock.mock({
+      'data|10': [{
+        point: '@county(true)'
+      }]
+    })
+  },
+  getmapicons: {
+    data: {
+      curIcon: require('../assets/map/curCoord.png'),
+      markIcon: require('../assets/map/curCoord.png')
     }
   },
   gettiles: {
@@ -71,10 +90,10 @@ const mockdata = {
   getellayers: {
     data: [
       { appid: 'xzqy', name: '摄像机', icon: require('../assets/ele/摄像机.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
-      { appid: 'xzqy', name: '公务车', icon: require('../assets/ele/光缆.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
+      { appid: 'xzqy', name: '公务车', icon: require('../assets/funimg/applayer/车.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
       { appid: 'xzqy', name: 'VOC', icon: require('../assets/ele/Voc.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
       { appid: 'xzqy', name: '门禁', icon: require('../assets/ele/门禁.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
-      { appid: 'xzqy', name: '储罐', icon: require('../assets/ele/油罐.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
+      { appid: 'xzqy', name: '储罐', icon: require('../assets/funimg/applayer/储罐.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
       { appid: 'xzqy', name: '雨水', icon: require('../assets/ele/水.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
       { appid: 'xzqy', name: '污水', icon: require('../assets/ele/污水.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
       { appid: 'xzqy', name: '排气筒', icon: require('../assets/ele/排气筒.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },

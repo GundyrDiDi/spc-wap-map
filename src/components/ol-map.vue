@@ -24,7 +24,7 @@ export default {
       handler (c) {
         setTimeout(() => {
           this.map_setCurLocation(c)
-        }, 500)
+        }, 2000)
       },
       immediate: true
     }

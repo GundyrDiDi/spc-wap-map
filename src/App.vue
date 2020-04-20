@@ -6,7 +6,7 @@
     >
         <router-view></router-view>
     </transition>
-        <el-button :style="{position:'absolute',top:0,right:0,zIndex:111}" @click="_goback()">返回</el-button>
+        <el-button :style="{position:'absolute',bottom:0,right:0,zIndex:111}" @click="_goback()">返回</el-button>
   </div>
 </template>
 

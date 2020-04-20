@@ -74,7 +74,7 @@ export default {
     },
     position () {
       const radio = (this.progress - this.breakPoint) / (1 - this.breakPoint)
-      const translate = -130 * (1 - radio)
+      const translate = Math.max(-130, -130 * (1 - radio))
       return {
         transform: `translateY(${translate}px)`,
         transition: this.transition
@@ -97,7 +97,7 @@ export default {
   }
   .layer-container>div{
     flex-basis: 20%;
-    font-size:.7rem;
+    font-size:var(--smallsize);
     height:75px;
   }
   .layer-container aside{
@@ -105,11 +105,13 @@ export default {
   }
   .img-box{
     border:2px solid #fff;
+    background:#4fdd7f;
     border-radius:50%
   }
   .layer-container img{
     height:36px;
     width:36px;
+    border-radius:50%;
   }
   .selected{
     box-shadow:0 0 0 2px var(--color)
@@ -120,7 +122,7 @@ export default {
   }
   .hordivider{
     height: 55px;
-    font-size:.8rem;
+    font-size:var(--normalsize);
     position:relative;
   }
   .hordivider>div{

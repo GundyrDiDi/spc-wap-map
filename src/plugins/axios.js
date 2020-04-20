@@ -55,6 +55,7 @@ _axios.interceptors.response.use(
           reject(new Error('返回数据错误'))
         }
         // 返回格式
+        store.commit('isloading', false)
         resolve(response.data.data)
         //
       }, 20)

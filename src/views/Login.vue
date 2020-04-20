@@ -19,7 +19,7 @@
                 <el-input
                   clearable
                   placeholder="员工账号"
-                  :disabled="isloading"
+                  :disabled="loginloading"
                   :value="username"
                   @input="$store.commit('login/username',$event)"
                 >
@@ -31,7 +31,7 @@
                   clearable
                   type="password"
                   placeholder="密码"
-                  :disabled="isloading"
+                  :disabled="loginloading"
                   :value="password"
                   @input="_commit({type:'login/password',value:$event})"
                 >
@@ -45,7 +45,7 @@
           </el-main>
           <el-footer ref="submit" :class="failTipClass" class="flex-center">
             <transition name="fade" mode="out-in">
-              <el-button type="primary" v-if="!isloading" @click="submit" key="off">
+              <el-button type="primary" v-if="!loginloading" @click="submit" key="off">
                   <span>进入地图</span>
                 <move-arrow class="right-arrows"></move-arrow>
               </el-button>
@@ -81,6 +81,7 @@ export default {
   name: 'login',
   data () {
     return {
+      loginloading: false,
       loadingDuration: 2000,
       loadingDelay: 200,
       failClass: '',
@@ -123,6 +124,7 @@ export default {
     async submit (e) {
       const v = await this.$refs.ruleform.validate().catch(v => v)
       if (v) {
+        this.loginloading = true
         const delay = await Promise.all([
           new Promise(resolve => {
             setTimeout(() => {
@@ -138,7 +140,7 @@ export default {
             }, this.loadingDelay)
             return t
           })])
-        this.$store.commit('isloading', false)
+        this.loginloading = false
         if (!delay[1]) {
           this.fail()
         }
@@ -311,7 +313,7 @@ export default {
     border-top:.5px solid #0499d4;
     bottom:-2.2rem;
     text-align: center;
-    font-size:.6rem;
+    font-size:var(--smallsize);
     padding-top:.2rem;
     color:#0499d4;
   }
@@ -346,7 +348,7 @@ export default {
   #login .el-input__inner {
     height: 2.6rem;
     line-height: 2.6rem;
-    font-size:1rem;
+    font-size:var(--largesize);
     border-top: 1px solid transparent !important;
     border-left: 1px solid transparent !important;
     border-right: 1px solid transparent !important;

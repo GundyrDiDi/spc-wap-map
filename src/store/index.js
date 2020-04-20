@@ -21,7 +21,10 @@ const root = {
     rightdrawer: false,
     _records: [],
     rtlDrawer: false,
-    searchWord: ''
+    searchWord: '',
+    resultList: [],
+    historyList: JSON.parse(window.localStorage.spc_history ? window.localStorage.spc_history : '[]')
+
   },
   getters: {
     vpHeight (state) {
@@ -29,7 +32,15 @@ const root = {
     }
   },
   mutations: {
-
+    _clearHistory (state) {
+      state.historyList = []
+      window.localStorage.spc_history = JSON.stringify(state.historyList)
+    },
+    _setStorage (state, data) {
+      const history = state.historyList
+      history.includes(data) || history.push(data)
+      window.localStorage.spc_history = JSON.stringify(history)
+    }
   },
   actions: {
     _commit (store, { type, value }) {
@@ -55,13 +66,19 @@ const root = {
       if (records.length) {
         return store.commit(...records.pop())
       }
-    }
+    },
     // _manualback(store){
     //   const records = store.state._records
     //   if (records.length) {
     //     records.pop();
     //   }
     // }
+    async _search (store, sw) {
+      store.commit('resultList', await axios.post('/search', { word: sw }))
+    },
+    async _moresearch (store, sw) {
+      store.state.resultList.push(...await axios.post('/search', { word: sw }))
+    }
   },
   modules: {
     login,

@@ -1,6 +1,9 @@
 :root{
   --color:#0499d4;
   --bdcolor:rgba(100,149,237);
+  --smallsize:.7rem;
+  --normalsize:.8rem;
+  --largesize:1rem;
 }
 div{
   box-sizing: border-box;
@@ -128,5 +131,25 @@ img{
 }
 .el-button{
   font-size:1rem;
+}
+.el-message-box{
+  max-width:80vw;
+  padding:none;
+}
+.el-message-box__header{
+  display: none;
+}
+.el-message-box__content{
+  font-size:var(--normalsize);
+  text-align: center;
+  padding:20px;
+}
+.el-message-box__btns{
+  display: flex;
+  flex-wrap: nowrap;
+}
+.el-message-box__btns>button{
+  flex:1;
+  font-size:var(--normalsize)
 }
 

@@ -71,12 +71,13 @@ export default {
     _setCurLocation (state, coord) {
       coord = fromLonLat(coord)
       if (!state.curlocallayer) {
-        state.curlocallayer = loadClass.vector({
-          IR: 10,
-          IFC: '#0499d4',
-          ISC: '#fff',
-          ISW: 4
-        })
+        state.curlocallayer = loadClass.vector(
+          {
+            icon: {
+              url: state.icons.curIcon
+            }
+          }
+        )
         state.curlocallayer.setMap(state.mymap)
         state.curlocation = loadClass.pointFeature(coord, {
           name: 'curlocation'
@@ -106,6 +107,9 @@ export default {
     },
     _addEllayer (store, layer) {
       store.commit('addLayer', { key: 'ellayers', layer })
+    },
+    async loadIcons (store) {
+      store.state.icons = await axios.get('/getmapicons')
     },
     async loadLayers (store) {
       const state = store.state
@@ -168,6 +172,7 @@ export default {
       state.view = view
 
       await store.dispatch('loadLayers')
+      await store.dispatch('loadIcons')
     }
   }
 }

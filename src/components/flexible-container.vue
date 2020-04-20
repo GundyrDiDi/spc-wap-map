@@ -14,25 +14,37 @@ export default {
   watch: {
     allow (a) {
       this.swiper.allowTouchMove = a
+    },
+    data () {
+      this.init()
     }
   },
   mounted () {
-    setTimeout(() => {
-      this.$refs.t.style.height = getComputedStyle(this.$slots.default[0].elm).height
-    }, 500)
-    setTimeout(() => {
-      this.swiper = this.$swiper(this.$refs.flexible, {
-        direction: 'vertical',
-        nested: true,
-        resistanceRatio: this.radio || 0.8,
-        slidesPerView: 'auto',
-        freeMode: true,
-        allowSlidePrev: this.allow === undefined ? true : this.allow,
-        allowTouchMove: this.allow === undefined ? true : this.allow
-      })
-    }, 600)
+    this.init()
   },
-  props: ['direct', 'radio', 'allow']
+  beforeDestroy () {
+    this.swiper.destroy()
+  },
+  methods: {
+    init () {
+      this.swiper && this.swiper.destroy()
+      setTimeout(() => {
+        this.$refs.t.style.height = getComputedStyle(this.$slots.default[0].elm).height
+      }, 300)
+      setTimeout(() => {
+        this.swiper = this.$swiper(this.$refs.flexible, {
+          direction: 'vertical',
+          nested: true,
+          resistanceRatio: this.radio || 0.8,
+          slidesPerView: 'auto',
+          freeMode: true,
+          allowSlidePrev: this.allowPrev === undefined ? true : this.allowPrev,
+          allowTouchMove: this.allow === undefined ? true : this.allow
+        })
+      }, 400)
+    }
+  },
+  props: ['direct', 'radio', 'allow', 'allowPrev', 'data']
 }
 </script>
 

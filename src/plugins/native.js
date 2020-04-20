@@ -25,6 +25,7 @@ export default function () {
       }
     }
   })
+  //
   // 键盘事件
   document.addEventListener('keyboardchange', e => {
     console.log(e)

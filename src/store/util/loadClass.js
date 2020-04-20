@@ -67,10 +67,9 @@ function style (param) {
       })
     }) : param.icon ? new Icon({
       src: param.icon.url,
-      scale: param.icon.scale,
-      rotation: param.icon.rotation,
-      rotateWithView: param.icon.RWV,
-      anchor: param.icon.anchor
+      scale: param.icon.scale || 1,
+      rotation: param.icon.rotation || 0,
+      rotateWithView: param.icon.RWV || false
     }) : undefined,
     text: param.TFC && new Text({
       font: '12px Microsoft JhengHei',
