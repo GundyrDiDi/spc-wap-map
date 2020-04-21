@@ -15,13 +15,18 @@ export default {
     activeLayer: {
       tiles: undefined,
       applayers: undefined,
-      ellayers: []
+      ellayers: {}
     },
-    tiles: [],
-    applayers: [],
-    ellayers: [],
+    tiles: {},
+    applayers: {},
+    ellayers: {},
     fullMap: false,
-    deviceLocation: undefined
+    deviceLocation: undefined,
+    shouldRequest: true,
+    mapExtent: [],
+    zoom: 15,
+    gisData: {},
+    actLocation: undefined
   },
   getters: {
     deviceCoord (state) {
@@ -44,25 +49,24 @@ export default {
           }
           return
         }
+        aclayer.selected = false
         state.mymap.removeLayer(aclayer.layer)
       }
-      state[key].forEach(v => {
-        v.selected = v === layer
-      })
+      layer.selected = true
       state.activeLayer[key] = layer
       state.mymap.addLayer(layer.layer)
     },
     addLayer (state, { key, layer }) {
       const aclayers = state.activeLayer[key]
-      const i = aclayers.indexOf(layer)
-      if (i < 0) {
-        layer.selected = true
-        state.mymap.addLayer(layer.layer)
-        aclayers.push(layer)
-      } else {
+      const i = aclayers[layer.appid]
+      if (i) {
         layer.selected = false
         state.mymap.removeLayer(layer.layer)
-        aclayers.splice(i, 1)
+        delete aclayers[layer.appid]
+      } else {
+        layer.selected = true
+        state.mymap.addLayer(layer.layer)
+        aclayers[layer.appid] = layer
       }
     },
     tileloadend (state, { key, layer }) {
@@ -79,9 +83,7 @@ export default {
           }
         )
         state.curlocallayer.setMap(state.mymap)
-        state.curlocation = loadClass.pointFeature(coord, {
-          name: 'curlocation'
-        })
+        state.curlocation = loadClass.pointFeature(coord)
         state.curlocallayer.getSource().addFeature(state.curlocation)
       } else {
         state.curlocation.getGeometry().setCoordinates(coord)
@@ -104,9 +106,11 @@ export default {
     },
     _switchApplayer (store, layer) {
       store.commit('switchLayer', { key: 'applayers', layer })
+      store.dispatch('requestData')
     },
     _addEllayer (store, layer) {
       store.commit('addLayer', { key: 'ellayers', layer })
+      store.dispatch('requestData')
     },
     async loadIcons (store) {
       store.state.icons = await axios.get('/getmapicons')
@@ -115,13 +119,29 @@ export default {
       const state = store.state
       const keys = {
         tiles: {
-          arg: [state.bingKey],
+          arg: state.bingKey,
           evt: ['switchLayer', 'tileloadend']
         },
         applayers: {
+          arg: function (style, param, feature) {
+            const zoom = state.zoom
+            if (zoom > feature.get('maxzoom') || zoom < feature.get('minzoom')) {
+
+            } else {
+              return style(param.normal)
+            }
+          },
           evt: ['switchLayer']
         },
         ellayers: {
+          arg: function (style, param, feature) {
+            const zoom = state.zoom
+            if (zoom > feature.get('maxzoom') || zoom < feature.get('minzoom')) {
+
+            } else {
+              return style(param.normal)
+            }
+          },
           evt: ['addLayer']
         }
       }
@@ -130,24 +150,26 @@ export default {
         const data = await axios.get('/get' + v)
         if (data.length) {
           data.forEach(l => {
+            state[v][l.appid] = l
             l.layer = loadClass[l.loadType](l.param, arg)
             if (l.selected) {
               store.commit(evt[0], { key: v, layer: l })
             }
           })
         }
-        state[v] = data
       }))
     },
     async _init (store, { el }) {
       const state = store.state
       const view = new View({
         center: fromLonLat([121.3183, 30.7149]),
-        zoom: 15
+        zoom: 15,
+        enableRotation: false
+        // constrainRotation:4
       })
-      // view.on('change', ({ target: view }) => {
-      //   console.log(view.getZoom())
-      // })
+      view.on('change', ({ target: view }) => {
+        // console.log(1);
+      })
       const map = new Map({
         target: el,
         view: view,
@@ -167,12 +189,54 @@ export default {
           state.fullMap = !state.fullMap
         }
       })
+      map.on('moveend', () => {
+        state.mapExtent = view.calculateExtent(map.getSize())
+        state.zoom = view.getZoom()
+        if (state.shouldRequest) {
+          store.dispatch('requestData')
+        }
+      })
       state.el = el
       state.mymap = map
       state.view = view
-
-      await store.dispatch('loadLayers')
+      //
+      await store.dispatch('loadLayers', { map, view })
       await store.dispatch('loadIcons')
+      await store.dispatch('requestData')
+    },
+    async requestData (store) {
+      const state = store.state
+      const { mapExtent: extent, zoom } = state
+      let gisData = await axios.post('/getgisdata', { extent, zoom })
+      gisData = gisData.reduce((acc, v) => {
+        acc[v.appid] = v
+        return acc
+      }, {})
+      console.log(gisData)
+      Object.entries({ ...state.ellayers, ...state.applayers }).forEach(([appid, l]) => {
+        const layer = l.layer
+        const source = layer.getSource()
+        source.clear()
+        const gis = gisData[appid]
+        if (gis) {
+          // 等所有图层清空后添加
+          Promise.resolve().then(() => {
+            const features = gis.gisdatasource.map(v => loadClass.GeoProp(v, gis.loadtemp))
+            features.length && source.addFeatures(features)
+          })
+        }
+      })
+      await store.dispatch('requestAlertData')
+    },
+    async requestAlertData (store) {
+
+    },
+    async _loadLocation (store, item) {
+      store.commit('actLocation', await axios.get('/loadLocation'))
+    },
+    async _getdata () {
+      // console.log(JSON.stringify((await axios.get('/getdata')).objitemlist[1]));
+      // console.log(await axios.get('/getdata'));
     }
   }
 }

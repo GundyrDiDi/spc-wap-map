@@ -355,19 +355,4 @@ export default {
     border-bottom: 1px solid #DCDFE6;
     border-radius:1px;
   }
-  .el-input--prefix .el-input__inner{
-    padding-left: 2rem;
-  }
-  .el-input--suffix .el-input__inner{
-    padding-right: 2rem;
-  }
-  .el-input__icon{
-    line-height: 2.6rem;
-    font-size:1.2rem;
-    color:#0499d4;
-  }
-  .el-input .el-input__clear{
-    line-height: 2.6rem;
-    font-size:1.2rem;
-  }
 </style>

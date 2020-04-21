@@ -1,6 +1,6 @@
 :root{
   --color:#0499d4;
-  --bdcolor:rgba(100,149,237);
+  --bdcolor:rgba(100,149,237,1);
   --smallsize:.7rem;
   --normalsize:.8rem;
   --largesize:1rem;
@@ -132,6 +132,21 @@ img{
 .el-button{
   font-size:1rem;
 }
+.el-input--prefix .el-input__inner{
+    padding-left: 2rem;
+  }
+  .el-input--suffix .el-input__inner{
+    padding-right: 2rem;
+  }
+  .el-input__icon{
+    line-height: 2.6rem;
+    font-size:1.2rem;
+    color:#0499d4;
+  }
+  .el-input .el-input__clear{
+    line-height: 2.6rem;
+    font-size:1.2rem;
+  }
 .el-message-box{
   max-width:80vw;
   padding:none;

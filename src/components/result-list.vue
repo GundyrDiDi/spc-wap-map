@@ -5,7 +5,7 @@
         <i class="el-icon-location-outline"></i>
       </aside>
       <div :class="i<resultList.length-1&&'hordivider'">
-        <div>{{v.point}}</div>
+        <div>{{v.name}}</div>
       </div>
     </div>
     <div v-show="resultList.length" class="more hordivider all" @click="moresearch">
@@ -23,6 +23,7 @@ export default {
   methods: {
     selectItem (v) {
       this._setStorage(v)
+      this.map_loadLocation(v)
     },
     moresearch () {
       this._moresearch(this.searchWord)

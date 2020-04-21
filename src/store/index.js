@@ -16,7 +16,7 @@ const root = {
     deviceHeight: '',
     deviceWidth: '',
     bottomHeight: 50,
-    stateBar: 4,
+    stateBar: 6,
     btnopacity: 1,
     rightdrawer: false,
     _records: [],

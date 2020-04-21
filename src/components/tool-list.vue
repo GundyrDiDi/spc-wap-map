@@ -1,7 +1,7 @@
 <template>
   <div id="tool-list" class="relative">
     <div class="layer-container flex-wrap">
-      <div v-for="(v,i) in ellayers"
+      <div v-for="(v,i) in Object.values(ellayers)"
       class="flex-center flex-column"
       :key="v.name"
       :style="i>=5&&opacity"
@@ -62,6 +62,7 @@ export default {
   methods: {
     pickEl (layer) {
       this.map_addEllayer(layer)
+      this.$forceUpdate()
     }
   },
   computed: {
@@ -81,11 +82,7 @@ export default {
       }
     }
   },
-  watch: {
-
-  },
   async mounted () {
-
   },
   props: ['progress', 'transition', 'breakPoint']
 }

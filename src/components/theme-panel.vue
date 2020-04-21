@@ -38,7 +38,7 @@
         <div v-for="v in applayers" :key="v.name" class="flex-center">
           <img :src="v.icon" alt="">
           <div class="name">{{v.name}}</div>
-          <el-switch @change="map_switchApplayer(v)" :value="v.selected" class="swiper-no-swiping"></el-switch>
+          <el-switch @change="ss(v)" :value="v.selected" class="swiper-no-swiping"></el-switch>
         </div>
       </div>
     </div>
@@ -56,7 +56,10 @@ export default {
     flexibleContainer
   },
   methods: {
-
+    ss (v) {
+      this.map_switchApplayer(v)
+      this.$forceUpdate()
+    }
   }
 }
 </script>

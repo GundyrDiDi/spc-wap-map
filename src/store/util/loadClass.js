@@ -8,7 +8,9 @@ import {
   Vector as VectorSource
 } from 'ol/source'
 import {
-  Point
+  Point,
+  Polygon,
+  MultiPolygon
 } from 'ol/geom'
 import {
   Circle as CircleStyle,
@@ -18,7 +20,9 @@ import {
   Stroke,
   Style
 } from 'ol/style'
+
 import Feature from 'ol/Feature'
+import { fromLonLat } from 'ol/proj'
 // import {
 //   getVectorContext
 // } from 'ol/render'
@@ -32,19 +36,63 @@ function bingmap (imagerySet, key) {
     })
   })
 }
+
 function wtms () {
 
 }
-function vector (param = {}) {
+
+function vector (param = {}, styleFn) {
   return new VectorLayer({
+    zIndex: 1,
     source: new VectorSource(),
-    style: style(param)
+    style: styleFn ? styleFn.bind(null, style, param) : style(param)
   })
 }
+
 function pointFeature (coord = [0, 0], prop = {}) {
-  const point = new Point(coord)
-  prop.geometry = point
-  return new Feature(prop)
+  return new Feature({ ...prop, geometry: new Point(coord) })
+}
+
+function muPolygonFeature (polygons, prop = {}) {
+  const mp = new MultiPolygon([polygons])
+  return new Feature({ ...prop, geometry: mp, center: mp.getInteriorPoints().getCoordinates() })
+}
+
+function polygonFeature (coords, prop = {}) {
+  return new Feature({ ...prop, geometry: new Polygon(coords) })
+}
+function GeoProp (geo, type) {
+  const geotext = geo.geomsttext
+  const output = {
+    id: geo.gisid,
+    name: geo.name,
+    key: geo.data_key,
+    type: geo.appobjname,
+    layer: geo.appobjid,
+    disable: geo.Disenable,
+    state: geo.CallType,
+    showType: geo.ShowTemp,
+    geoType: type,
+    maxzoom: 40,
+    minzoom: 10
+  }
+  if (geo.subgisdatas.length) {
+    // output.relative=geo.subgisdatas.map(v=>GeoProp(v,v.loadtemp))
+  }
+  if (type === 'multipolygon') {
+    output.coords = geotext.match(/(?<=\()[^()]*(?=\))/g).map(polygon => {
+      return polygon.split(', ').map(point => {
+        return fromLonLat(point.split(' ').map(parseFloat))
+      })
+    })
+    return muPolygonFeature(output.coords, output)
+  } else if (type === 'polygon') {
+
+  } else if (type === 'point') {
+    output.coords = fromLonLat(geotext.match(/\((.*)\)$/)[1].split(' ').map(parseFloat))
+    output.center = output.coords
+    return pointFeature(output.coords, output)
+  }
 }
 function style (param) {
   const config = {
@@ -54,7 +102,10 @@ function style (param) {
     }),
     stroke: param.SC && new Stroke({
       color: param.SC,
-      width: param.SW || 2
+      width: param.SW || 2,
+      lineDash: param.lineDash,
+      lineJoin: param.LineJson || 'round',
+      lineCap: param.lineCap || 'round'
     }),
     image: param.IR ? new CircleStyle({
       radius: param.IR,
@@ -95,6 +146,7 @@ function style (param) {
   }
   return new Style(config)
 }
+
 function heatmap (blur = 10, radius = 10) {
   return new HeatmapLayer({
     source: new VectorSource(),
@@ -104,6 +156,9 @@ function heatmap (blur = 10, radius = 10) {
 }
 export default {
   pointFeature,
+  muPolygonFeature,
+  polygonFeature,
+  GeoProp,
   style,
   vector,
   heatmap,

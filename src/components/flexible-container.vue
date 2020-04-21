@@ -11,6 +11,11 @@
 <script>
 export default {
   name: 'flexible-container',
+  data () {
+    return {
+      translateY: 0
+    }
+  },
   watch: {
     allow (a) {
       this.swiper.allowTouchMove = a
@@ -38,8 +43,16 @@ export default {
           resistanceRatio: this.radio || 0.8,
           slidesPerView: 'auto',
           freeMode: true,
-          allowSlidePrev: this.allowPrev === undefined ? true : this.allowPrev,
-          allowTouchMove: this.allow === undefined ? true : this.allow
+          allowTouchMove: this.allow === undefined ? true : this.allow,
+          on: {
+            touchMove (e) {
+              if (this.isBeginning) {
+                this.allowSlidePrev = false
+              } else {
+                this.allowSlidePrev = true
+              }
+            }
+          }
         })
       }, 400)
     }

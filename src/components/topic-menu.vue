@@ -48,7 +48,7 @@
           <div class="swiper-slide" :style="slides[2]">
             <transition leave-active-class="delay-500ms animated slideOutDown">
               <div v-if="tofocus" class="search-result">
-                <flexible-container v-if="!searchWord" :allowPrev="false">
+                <flexible-container v-if="!searchWord">
                   <history-list></history-list>
                 </flexible-container>
                 <flexible-container v-if="searchWord" :data="resultList">
@@ -71,6 +71,7 @@
         </span>
       </div>
     </div>
+    <div :style="modalStyle" class="menu-modal"></div>
   </div>
 </template>
 
@@ -88,7 +89,11 @@ export default {
       aIndex: 0,
       allowchild: false,
       hidden: false,
-      fsclass: ['', '']
+      fsclass: ['', ''],
+      modalStyle: {
+        transition: 'none',
+        opacity: 0
+      }
     }
   },
   components: {
@@ -179,7 +184,7 @@ export default {
       })
       setTimeout(() => {
         this.$refs.focusbox.focus()
-      }, 1000)
+      }, 200)
     }
   },
   watch: {
@@ -217,13 +222,13 @@ export default {
             resistanceRatio: 0.75,
             slidesPerView: 'auto',
             allowSlideNext: false,
-            threshold: 20,
+            threshold: 3,
             on: {
               setTransition: () => {
                 this.$refs.focusbox.blur()
               },
               touchEnd: () => {
-                if (this.swiper3.translate > this.deviceHeight / 15) {
+                if (this.swiper3.translate > this.deviceHeight / 18) {
                   this._goback()
                   this.swiper.slideTo(0, 0)
                   this.fsclass = ['animated faster slideOutDown', 'animated fast delay-300ms slideInUp']
@@ -254,18 +259,22 @@ export default {
       slidesPerView: 'auto',
       on: {
         sliderMove () {
+          _.modalStyle.opacity = this.progress - 0.5
           _.slides[3].transform = `translateY(${Math.max(-135, this.translate)}px)`
           _.slides[8].progress = this.progress
         },
         transitionStart () {
           _.slides[3].transition = 'all 500ms'
           _.slides[8].transition = 'all 500ms'
+          _.modalStyle.transition = 'all 500ms'
           _.slides[3].transform = `translateY(${this.activeIndex === 1 ? -135 : 0}px)`
           _.slides[8].progress = this.progress
+          _.modalStyle.opacity = this.progress - 0.5
           _.$forceUpdate()
           setTimeout(() => {
             _.slides[3].transition = 'none'
             _.slides[8].transition = 'none'
+            _.modalStyle.transition = 'none'
           }, 500)
 
           _.index = this.progress === 1 ? 0 : this.activeIndex
@@ -310,7 +319,8 @@ export default {
     overflow: visible;
     position: absolute;
     width: 100%;
-    pointer-events: none
+    pointer-events: none;
+    z-index:1;
   }
 
   .swiper-container .swiper-container {
@@ -378,6 +388,9 @@ export default {
     background:#f2f2f2;
     height:100%;
     padding-top:.3rem;
+    width: 100%;
+    position: absolute;
+    z-index:10;
   }
   .badge{
     position:absolute;
@@ -396,6 +409,15 @@ export default {
   }
   .font-color{
     color:var(--color) !important;
+  }
+  .menu-modal{
+    position:fixed;
+    top:0;
+    height:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,1);
+    pointer-events: none !important;
   }
 </style>
 

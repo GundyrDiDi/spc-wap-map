@@ -1,10 +1,14 @@
 <template>
   <div class="history-list flex-column">
-    <div v-for="(v,i) in historyList" :key="i" class="history-item flex">
+    <div v-for="(v,i) in historyList"
+    :key="i"
+    class="history-item flex"
+    @click="map_loadLocation(v)"
+    >
       <aside class="flex-center">
         <i class="el-icon-location-outline"></i>
       </aside>
-      <div :class="i<historyList.length-1&&'hordivider'">{{v.point}}</div>
+      <div :class="i<historyList.length-1&&'hordivider'">{{v.name}}</div>
     </div>
     <div v-show="historyList.length" class="clearH hordivider all" @click="clear">
       清空历史纪录
@@ -16,7 +20,7 @@
 export default {
   name: 'history-list',
   mounted () {
-    console.log(this.historyList)
+
   },
   methods: {
     clear () {

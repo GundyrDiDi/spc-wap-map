@@ -35,6 +35,7 @@ export default {
         el: this.$el
       })
     })
+    this.map_getdata()
   }
 }
 

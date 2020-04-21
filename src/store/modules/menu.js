@@ -8,7 +8,8 @@ export default {
     ],
     menuIndex: 0,
     totop: false,
-    tofocus: false
+    tofocus: false,
+    tobottom: false
 
   },
   getters: {
