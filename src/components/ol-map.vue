@@ -1,5 +1,10 @@
 <template>
   <div id="map" :style="containerStyle">
+    <div ref="highlay">
+      <img class="actIcon" :src="icons.actIcon" alt="">
+      <div></div>
+    </div>
+    <div ref="tablelay"></div>
   </div>
 </template>
 
@@ -9,7 +14,14 @@ import 'ol/ol.css'
 export default {
   name: 'Map',
   data () {
-    return {}
+    return {
+      highlay: {
+        positioning: 'bottom-center',
+        className: 'animated fast bounceIn',
+        insertFirst: false
+      },
+      tablelay: {}
+    }
   },
   computed: {
     containerStyle () {
@@ -27,12 +39,28 @@ export default {
         }, 2000)
       },
       immediate: true
+    },
+    actLocation (loc) {
+      if (loc) {
+        this.highlay.setPosition(undefined)
+        setTimeout(() => {
+          this.highlay.setPosition(loc.center)
+        }, 200)
+      } else {
+        this.highlay.setPosition(undefined)
+      }
     }
   },
   async mounted () {
-    requestAnimationFrame(() => {
-      this.map_init({
+    requestAnimationFrame(async () => {
+      await this.map_init({
         el: this.$el
+      })
+      Object.entries(this.$refs).forEach(([k, element]) => {
+        if (element.$el)element = element.$el
+        this.map_createOverlay({ element, ...this[k] }).then(o => {
+          this[k] = o
+        })
       })
     })
     this.map_getdata()
@@ -45,6 +73,7 @@ export default {
   #map {
     position: absolute;
     background: rgb(4, 153, 212);
+    transition: transform .5s;
   }
 
   /* .ol-zoom {
@@ -129,4 +158,21 @@ export default {
   /* canvas{
     transform: rotateX(64deg) rotateZ(50deg);
   } */
+  .actIcon{
+    width:42px;
+    height:42px;
+    margin-bottom:3px;
+    position:relative;
+    z-index:1;
+    /* filter:drop-shadow(0 0 2px rgba(1, 47, 250, 0.37)); */
+    filter:drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3))
+  }
+  .actIcon~div{
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    background: #fff;
+    top: 8px;
+    left: 12px;
+  }
 </style>

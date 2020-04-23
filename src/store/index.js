@@ -15,20 +15,33 @@ const root = {
     leaveclass: '',
     deviceHeight: '',
     deviceWidth: '',
+    bannerHeight: 40,
     bottomHeight: 50,
-    stateBar: 6,
+    truestateBar: 10,
     btnopacity: 1,
     rightdrawer: false,
     _records: [],
     rtlDrawer: false,
     searchWord: '',
     resultList: [],
-    historyList: JSON.parse(window.localStorage.spc_history ? window.localStorage.spc_history : '[]')
-
+    historyList: JSON.parse(window.localStorage.spc_history ? window.localStorage.spc_history : '[]'),
+    proxyLocation: null,
+    dyIcons: {
+      arrow: [
+        require('../assets/funimg/ta02.png'),
+        require('../assets/funimg/ta01.png')
+      ]
+    }
   },
   getters: {
-    vpHeight (state) {
-      return state.deviceHeight - state.stateBar
+    stateBar (state) {
+      return state.truestateBar + 6
+    },
+    vpHeight (state, getters) {
+      return state.deviceHeight - getters.stateBar
+    },
+    topHeight (state) {
+      return state.deviceWidth * 9 / 16
     }
   },
   mutations: {
@@ -38,7 +51,7 @@ const root = {
     },
     _setStorage (state, data) {
       const history = state.historyList
-      history.includes(data) || history.push(data)
+      history.some(v => v.name === data.name) || history.push(data)
       window.localStorage.spc_history = JSON.stringify(history)
     }
   },
@@ -50,14 +63,21 @@ const root = {
       store.commit('enterclass', enter)
       store.commit('leaveclass', leave)
     },
-    _record (store, { type, value }) {
+    _record (store, { type, value, replace }) {
       const state = store.state
       let oldValue = state
       type.split('/').forEach(prop => {
         oldValue = oldValue[prop]
       })
       if (oldValue !== value) {
-        state._records.push([type, oldValue])
+        if (replace) {
+          const last = state._records[state._records.length - 1]
+          if ((!last) || last[0] !== type) {
+            state._records.push([type, oldValue])
+          }
+        } else {
+          state._records.push([type, oldValue])
+        }
         store.commit(type, value)
       }
     },
@@ -78,6 +98,17 @@ const root = {
     },
     async _moresearch (store, sw) {
       store.state.resultList.push(...await axios.post('/search', { word: sw }))
+    },
+    async _leastTime (store, { promise, time = 1000 }) {
+      const output = await Promise.all([
+        new Promise(resolve => {
+          setTimeout(() => {
+            resolve()
+          }, time)
+        }),
+        promise
+      ]).then(arr => arr[1])
+      return output
     }
   },
   modules: {
@@ -159,9 +190,7 @@ function bindMutations (module) {
     ...new Proxy(module.state, {
       get (target, propKey) {
         return (state, payload) => {
-          if (payload !== undefined) {
-            state[propKey] = payload
-          }
+          state[propKey] = payload
         }
       },
       // 过滤 前缀_表示内部数据

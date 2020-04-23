@@ -2,7 +2,7 @@ import Map from 'ol/Map'
 import View from 'ol/View'
 import { defaults, ScaleLine } from 'ol/control'
 import { fromLonLat } from 'ol/proj'
-
+import Overlay from 'ol/Overlay'
 import loadClass from '../util/loadClass'
 
 export default {
@@ -26,7 +26,9 @@ export default {
     mapExtent: [],
     zoom: 15,
     gisData: {},
-    actLocation: undefined
+    actLocation: undefined,
+    tobottom: false,
+    icons: {}
   },
   getters: {
     deviceCoord (state) {
@@ -65,33 +67,19 @@ export default {
         delete aclayers[layer.appid]
       } else {
         layer.selected = true
-        state.mymap.addLayer(layer.layer)
         aclayers[layer.appid] = layer
+        state.mymap.addLayer(layer.layer)
       }
     },
     tileloadend (state, { key, layer }) {
 
     },
-    _setCurLocation (state, coord) {
-      coord = fromLonLat(coord)
-      if (!state.curlocallayer) {
-        state.curlocallayer = loadClass.vector(
-          {
-            icon: {
-              url: state.icons.curIcon
-            }
-          }
-        )
-        state.curlocallayer.setMap(state.mymap)
-        state.curlocation = loadClass.pointFeature(coord)
-        state.curlocallayer.getSource().addFeature(state.curlocation)
-      } else {
-        state.curlocation.getGeometry().setCoordinates(coord)
-      }
-    },
     _movetoPoint ({ view }, { lonlat, coord, zoom, duration = 1000 }) {
       if (lonlat) {
         coord = fromLonLat(lonlat)
+      }
+      if (!coord) {
+        coord = view.getCenter()
       }
       view.animate({
         center: coord,
@@ -101,6 +89,73 @@ export default {
     }
   },
   actions: {
+    _createOverlay (store, config) {
+      const ol = new Overlay(config)
+      store.state.mymap.addOverlay(ol)
+      return ol
+    },
+    _setCurLocation ({ state }, coord) {
+      coord = fromLonLat(coord)
+      if (!state.curlocallayer) {
+        state.curlocallayer = loadClass.vector(
+          {
+            icon: {
+              url: state.icons.curIcon,
+              scale: 0.7
+            }
+          }
+        )
+        state.curlocallayer.setMap(state.mymap)
+        state.curlocation = loadClass.pointFeature(coord, {
+          name: 'curCoord'
+        })
+        state.curlocallayer.getSource().addFeature(state.curlocation)
+      } else {
+        state.curlocation.getGeometry().setCoordinates(coord)
+      }
+    },
+    setActLocation (store, loc) {
+      const state = store.state
+      state.actLocation = loc
+      if (!state.highlight) {
+        state.highlight = loadClass.vector({
+          IR: 5,
+          IFC: 'rgb(64, 124, 235)',
+          ISW: 2,
+          ISC: '#fff',
+          SC: '#000',
+          SW: 4
+        })
+        state.highlight.setMap(state.mymap)
+        state.actFeature = loadClass.pointFeature(loc.center, loc)
+        state.highlight.getSource().addFeature(state.actFeature)
+        requestAnimationFrame(() => {
+          store.commit('_movetoPoint', { coord: loc.center, duration: 600 })
+        })
+      } else {
+        if (loc) {
+          state.actFeature.getGeometry().setCoordinates(loc.center)
+          requestAnimationFrame(() => {
+            store.commit('_movetoPoint', { coord: loc.center, duration: 600 })
+          })
+        } else {
+          state.actFeature.getGeometry().setCoordinates([0, 0])
+        }
+      }
+    },
+    _fitActloc (store, options) {
+      const loc = store.state.actLocation
+      store.commit('_movetoPoint', {
+        coord: loc.center,
+        zoom: loc.zoom,
+        ...options
+      })
+    },
+    _fitPort (store, size) {
+      const { mymap: map, view } = store.state
+      size = size || map.getSize()
+      view.calculateExtent(size)
+    },
     _switchTile (store, tile) {
       store.commit('switchLayer', { key: 'tiles', layer: tile })
     },
@@ -117,58 +172,60 @@ export default {
     },
     async loadLayers (store) {
       const state = store.state
+      const styleFn = function (style, param, feature) {
+        const zoom = state.zoom
+        param = param.normal
+        if (param.Text) {
+          param.TCT = feature.get('name')
+        }
+        if (zoom > feature.get('maxzoom') || zoom < feature.get('minzoom')) {
+
+        } else {
+          return style(param)
+        }
+      }
       const keys = {
         tiles: {
-          arg: state.bingKey,
-          evt: ['switchLayer', 'tileloadend']
+          arg: [state.bingKey],
+          commit: ['switchLayer', 'tileloadend']
         },
         applayers: {
-          arg: function (style, param, feature) {
-            const zoom = state.zoom
-            if (zoom > feature.get('maxzoom') || zoom < feature.get('minzoom')) {
-
-            } else {
-              return style(param.normal)
-            }
-          },
-          evt: ['switchLayer']
+          arg: [styleFn, 1],
+          commit: ['switchLayer']
         },
         ellayers: {
-          arg: function (style, param, feature) {
-            const zoom = state.zoom
-            if (zoom > feature.get('maxzoom') || zoom < feature.get('minzoom')) {
-
-            } else {
-              return style(param.normal)
-            }
-          },
-          evt: ['addLayer']
+          arg: [styleFn, 2],
+          commit: ['addLayer']
         }
       }
       await Promise.all(Object.keys(keys).map(async v => {
-        const { arg, evt } = keys[v]
+        const { arg, commit } = keys[v]
         const data = await axios.get('/get' + v)
         if (data.length) {
           data.forEach(l => {
             state[v][l.appid] = l
-            l.layer = loadClass[l.loadType](l.param, arg)
+            l.layer = loadClass[l.loadType](l.param, ...arg)
             if (l.selected) {
-              store.commit(evt[0], { key: v, layer: l })
+              commit.forEach(c => {
+                store.commit(c, { key: v, layer: l })
+              })
             }
           })
         }
       }))
     },
+    async _preload () {
+
+    },
     async _init (store, { el }) {
       const state = store.state
       const view = new View({
-        center: fromLonLat([121.3183, 30.7149]),
+        center: fromLonLat(store.getters.deviceCoord),
         zoom: 15,
+        minZoom: 12,
+        maxZoom: 20,
         enableRotation: false
         // constrainRotation:4
-      })
-      view.on('change', ({ target: view }) => {
-        // console.log(1);
       })
       const map = new Map({
         target: el,
@@ -178,15 +235,33 @@ export default {
         ])
       })
       //
+      view.on('change', ({ target: view }) => {
+        state.tobottom = !state.tobottom
+      })
       map.on('singleclick', e => {
-        const pixel = e.pixel.map(function (v) {
-          return v - 5
-        })
-        const f = map.forEachFeatureAtPixel(pixel, function (feature) {
+        // const pixel = e.pixel.map(function (v) {
+        //   return v - 5
+        // })
+        const f = map.forEachFeatureAtPixel(e.pixel, function (feature) {
           return feature
+        }, {
+          hitTolerance: 5
+          // layerFilter(layer){
+          //   return true
+          // }
         })
         if (!f) {
-          state.fullMap = !state.fullMap
+          if (state.actLocation) {
+            state.fullMap = false
+            store.dispatch('setActLocation', null)
+          } else {
+            state.fullMap = !state.fullMap
+          }
+        } else {
+          state.fullMap = false
+          if (f.get('name') !== 'curCoord') {
+            store.dispatch('setActLocation', f.getProperties())
+          }
         }
       })
       map.on('moveend', () => {
@@ -200,7 +275,7 @@ export default {
       state.mymap = map
       state.view = view
       //
-      await store.dispatch('loadLayers', { map, view })
+      await store.dispatch('loadLayers')
       await store.dispatch('loadIcons')
       await store.dispatch('requestData')
     },
@@ -212,7 +287,7 @@ export default {
         acc[v.appid] = v
         return acc
       }, {})
-      console.log(gisData)
+      // console.log(gisData)
       Object.entries({ ...state.ellayers, ...state.applayers }).forEach(([appid, l]) => {
         const layer = l.layer
         const source = layer.getSource()
@@ -232,7 +307,8 @@ export default {
 
     },
     async _loadLocation (store, item) {
-      store.commit('actLocation', await axios.get('/loadLocation'))
+      const o = await axios.get('/loadLocation')
+      return o
     },
     async _getdata () {
       // console.log(JSON.stringify((await axios.get('/getdata')).objitemlist[1]));

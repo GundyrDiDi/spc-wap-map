@@ -1,5 +1,5 @@
 <template>
-  <flexible-container>
+  <flexible-container :allowPrev="true">
     <div id="theme-panel">
       <div class="heading">
         主题

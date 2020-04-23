@@ -3,7 +3,7 @@
     <div v-for="(v,i) in historyList"
     :key="i"
     class="history-item flex"
-    @click="map_loadLocation(v)"
+    @click="selectItem(v)"
     >
       <aside class="flex-center">
         <i class="el-icon-location-outline"></i>
@@ -23,6 +23,9 @@ export default {
 
   },
   methods: {
+    selectItem (v) {
+      this.$emit('update', v)
+    },
     clear () {
       this.$confirm('清空历史纪录?', '', {
         confirmButtonText: '立即清空',

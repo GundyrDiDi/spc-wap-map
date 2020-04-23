@@ -5,8 +5,8 @@ export default function () {
   var ms = (/Html5Plus\/.+\s\(.*(Immersed\/(\d+\.?\d*).*)\)/gi).exec(navigator.userAgent)
   console.log(ms)
   if (ms && ms.length >= 3) {
-    store.commit('stateBar', parseFloat(ms[2]) + 5)
-    console.log(store.state.stateBar)
+    store.commit('truestateBar', parseFloat(ms[2]))
+    console.log(store.state.truestateBar)
   }
   // 地理位置
   plus.geolocation.watchPosition(p => {

@@ -45,15 +45,20 @@ export default {
           freeMode: true,
           allowTouchMove: this.allow === undefined ? true : this.allow,
           on: {
-            touchMove (e) {
-              if (this.isBeginning) {
-                this.allowSlidePrev = false
-              } else {
-                this.allowSlidePrev = true
-              }
+            setTransition: () => {
+              this.$emit('slide')
             }
           }
         })
+        if (!this.allowPrev) {
+          this.swiper.on('touchMove', function () {
+            if (this.isBeginning) {
+              this.allowSlidePrev = false
+            } else {
+              this.allowSlidePrev = true
+            }
+          })
+        }
       }, 400)
     }
   },

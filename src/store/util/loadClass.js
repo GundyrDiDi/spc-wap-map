@@ -9,6 +9,7 @@ import {
 } from 'ol/source'
 import {
   Point,
+  LineString,
   Polygon,
   MultiPolygon
 } from 'ol/geom'
@@ -36,16 +37,15 @@ function bingmap (imagerySet, key) {
     })
   })
 }
-
 function wtms () {
 
 }
 
-function vector (param = {}, styleFn) {
+function vector (param = {}, styleFn, z) {
   return new VectorLayer({
-    zIndex: 1,
+    zIndex: z,
     source: new VectorSource(),
-    style: styleFn ? styleFn.bind(null, style, param) : style(param)
+    style: styleFn ? styleFn.bind(null, style, param) : (Array.isArray(param) ? param.map(p => style(p)) : style(param))
   })
 }
 
@@ -53,13 +53,16 @@ function pointFeature (coord = [0, 0], prop = {}) {
   return new Feature({ ...prop, geometry: new Point(coord) })
 }
 
-function muPolygonFeature (polygons, prop = {}) {
-  const mp = new MultiPolygon([polygons])
-  return new Feature({ ...prop, geometry: mp, center: mp.getInteriorPoints().getCoordinates() })
+function lineFeature (coords, prop = {}) {
+  return new Feature({ ...prop, geometry: new LineString(coords) })
 }
 
 function polygonFeature (coords, prop = {}) {
-  return new Feature({ ...prop, geometry: new Polygon(coords) })
+  return new Feature({ ...prop, geometry: new Polygon([coords]) })
+}
+function muPolygonFeature (polygons, prop = {}) {
+  const mp = new MultiPolygon([polygons])
+  return new Feature({ ...prop, geometry: mp, center: mp.getInteriorPoints().getCoordinates()[0] })
 }
 function GeoProp (geo, type) {
   const geotext = geo.geomsttext
@@ -74,7 +77,8 @@ function GeoProp (geo, type) {
     showType: geo.ShowTemp,
     geoType: type,
     maxzoom: 40,
-    minzoom: 10
+    minzoom: 10,
+    zoom: 16
   }
   if (geo.subgisdatas.length) {
     // output.relative=geo.subgisdatas.map(v=>GeoProp(v,v.loadtemp))
@@ -120,14 +124,15 @@ function style (param) {
       src: param.icon.url,
       scale: param.icon.scale || 1,
       rotation: param.icon.rotation || 0,
-      rotateWithView: param.icon.RWV || false
+      rotateWithView: param.icon.RWV || false,
+      anchor: param.icon.ac || [0.5, 0.5]
     }) : undefined,
-    text: param.TFC && new Text({
-      font: '12px Microsoft JhengHei',
-      fill: Fill({
+    text: param.Text ? new Text({
+      font: 'bold 12px Microsoft JhengHei',
+      fill: param.TFC && new Fill({
         color: param.TFC
       }),
-      stroke: new Stroke({
+      stroke: param.TSC && new Stroke({
         color: param.TSC,
         width: param.TSW
       }),
@@ -139,7 +144,7 @@ function style (param) {
         color: param.TBFC
       }),
       text: param.TCT || ''
-    })
+    }) : undefined
   }
   for (const k in config) {
     config[k] || delete config[k]
@@ -156,8 +161,9 @@ function heatmap (blur = 10, radius = 10) {
 }
 export default {
   pointFeature,
-  muPolygonFeature,
+  lineFeature,
   polygonFeature,
+  muPolygonFeature,
   GeoProp,
   style,
   vector,

@@ -6,12 +6,12 @@
       <div id="subport" :style="subportStyle">
         <div class="right-top" :style="[{opacity:btnopacity}]">
           <transition appear enter-active-class="animated fast  zoomIn" leave-active-class="animated fast fadeOutUp">
-            <el-button circle class="shadow" v-show="!fullMap">
+            <el-button circle class="shadow" v-show="(!fullMap)&&(!toexpend)">
               <img src="../assets/funimg/m1.png" alt="" style="transform:scale(1.2)">
             </el-button>
           </transition>
           <transition appear enter-active-class="animated fast zoomIn" leave-active-class="animated fast fadeOutUp">
-            <el-button circle class="shadow" v-show="!fullMap"
+            <el-button circle class="shadow" v-show="(!fullMap)&&(!toexpend)"
               @click="_rtlDrawer=true">
               <img src="../assets/funimg/l2.png" alt="">
             </el-button>
@@ -27,7 +27,7 @@
         <transition appear
         enter-active-class="animated fast slideInUpCustom"
         leave-active-class="animated fast slideOutDownCustom">
-          <topic-menu v-show="!fullMap">
+          <topic-menu v-show="!fullMap" v-if="!proxyLocation">
             <template #default="{position}">
               <div class="right-top swiper-no-swiping" :style="[position,{opacity:btnopacity}]">
                 <transition appear enter-active-class="animated fast fadeIn" leave-active-class="animated fast rotateOut">
@@ -43,6 +43,13 @@
               </div>
             </template>
           </topic-menu>
+        </transition>
+        <transition
+        enter-active-class="animated fast delay-300ms slideInUpLocation"
+        leave-active-class="animated fast slideOutDownLocation"
+        >
+          <location-panel v-if="proxyLocation">
+          </location-panel>
         </transition>
       </div>
     </div>
@@ -63,6 +70,7 @@ import olMap from '../components/ol-map.vue'
 import topicMenu from '../components/topic-menu.vue'
 import swiperDrawer from '../components/swiper-drawer.vue'
 import themePanel from '../components/theme-panel.vue'
+import locationPanel from '../components/location-panel.vue'
 
 export default {
   name: 'Home',
@@ -97,7 +105,8 @@ export default {
     olMap,
     topicMenu,
     swiperDrawer,
-    themePanel
+    themePanel,
+    locationPanel
   },
   async mounted () {
     const {
@@ -126,6 +135,18 @@ export default {
   watch: {
     activeMenu (route) {
       // this.$router.push(route);
+    },
+    actLocation (loc) {
+      if (loc) {
+        this._record({ type: 'proxyLocation', value: loc, replace: true })
+      } else {
+        this._goback()
+      }
+    },
+    proxyLocation (loc) {
+      if (!loc && this.actLocation) {
+        this.$store.dispatch('map/setActLocation', null)
+      }
     }
   }
 }
@@ -249,6 +270,31 @@ export default {
     to {
       visibility: hidden;
       transform: translate3d(0, 130px, 0);
+    }
+  }
+  /* */
+  .slideInUpLocation {
+    animation-name: slideInUpLocation;
+  }
+  @keyframes slideInUpLocation {
+    from {
+      transform: translate3d(0, 180px, 0);
+      visibility: visible;
+    }
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  .slideOutDownLocation {
+    animation-name: slideOutDownLocation;
+  }
+  @keyframes slideOutDownLocation {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      visibility: hidden;
+      transform: translate3d(0, 180px, 0);
     }
   }
 </style>

@@ -23,7 +23,7 @@ export default {
   methods: {
     selectItem (v) {
       this._setStorage(v)
-      this.map_loadLocation(v)
+      this.$emit('update', v)
     },
     moresearch () {
       this._moresearch(this.searchWord)

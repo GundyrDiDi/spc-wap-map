@@ -4,6 +4,8 @@
   --smallsize:.7rem;
   --normalsize:.8rem;
   --largesize:1rem;
+  --hugesize:1.1rem;
+  --mapcolor:rgb(20,92,228)
 }
 div{
   box-sizing: border-box;
@@ -166,5 +168,17 @@ img{
 .el-message-box__btns>button{
   flex:1;
   font-size:var(--normalsize)
+}
+.el-message{
+  display: flex;
+    z-index: 2000;
+    width: 40vw;
+    min-width: 40vw;
+    top: 40% !important;
+    font-weight: 400;
+    background:#fff;
+}
+.el-message__icon.el-icon-info{
+  display:none;
 }
 

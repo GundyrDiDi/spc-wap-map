@@ -18,7 +18,7 @@
             </div>
           </div>
           <div class="swiper-slide" :class="hidden&&'hidden'" :style="slides[2]">
-            <flexible-container :allow="allowchild" :allowPrev="false">
+            <flexible-container :allow="allowchild">
               <tool-list v-bind="slides[8]"></tool-list>
             </flexible-container>
           </div>
@@ -48,11 +48,11 @@
           <div class="swiper-slide" :style="slides[2]">
             <transition leave-active-class="delay-500ms animated slideOutDown">
               <div v-if="tofocus" class="search-result">
-                <flexible-container v-if="!searchWord">
-                  <history-list></history-list>
+                <flexible-container v-if="!searchWord" v-on:slide="$refs.focusbox.blur()">
+                  <history-list v-on:update="updateItem"></history-list>
                 </flexible-container>
-                <flexible-container v-if="searchWord" :data="resultList">
-                  <result-list></result-list>
+                <flexible-container v-if="searchWord" v-on:slide="$refs.focusbox.blur()" :data="resultList">
+                  <result-list v-on:update="updateItem"></result-list>
                 </flexible-container>
               </div>
             </transition>
@@ -92,8 +92,10 @@ export default {
       fsclass: ['', ''],
       modalStyle: {
         transition: 'none',
-        opacity: 0
-      }
+        opacity: 0,
+        height: 0
+      },
+      menuOpacity: 1
     }
   },
   components: {
@@ -105,15 +107,12 @@ export default {
   },
   computed: {
     arrowIcon () {
-      const arr = [
-        require('../assets/funimg/ta02.png'),
-        require('../assets/funimg/ta01.png')
-      ]
-      return arr[this.index]
+      return this.dyIcons.arrow[this.index]
     },
     slides () {
       var height = 135
       var translateY = 55
+      console.log(this.stateBar)
       return [{
         height: `${height}px`
       }, // 0 swiper-contianer
@@ -125,12 +124,12 @@ export default {
       {
         height: this.vpHeight - (height - translateY) - this.bottomHeight + 'px',
         zIndex: 1
-      }, // 2 slide1
+      }, // 2 slide2
       {
         top: `${translateY - 140}px`, transform: 'transform:translateY(0px)', transition: 'none'
       }, // 3 right-top
       {
-        height: `${height + this.bottomHeight}px`
+        height: `${height + this.bottomHeight}px`, opacity: this.menuOpacity
       }, // 4 topic-menu
       {
         height: `${this.bottomHeight}px`
@@ -151,7 +150,7 @@ export default {
   methods: {
     handleMenu (menu) {
       console.log(menu)
-      // _record({ type: 'menu/menuIndex', value:i })
+      // this._record({ type: 'menu/menuIndex', value:i })
     },
     controlSlide () {
       if (this.swiper.isEnd) {
@@ -185,6 +184,21 @@ export default {
       setTimeout(() => {
         this.$refs.focusbox.focus()
       }, 200)
+    },
+    updateItem (item) {
+      this.menuOpacity = 0
+      this._goback()
+      const m = this.$message({
+        dangerouslyUseHTMLString: true,
+        message: '<p><i class="el-icon-location-outline font-color"></i>正在加载...</p>',
+        center: true,
+        duration: 0
+      })
+      this._leastTime({ promise: this.map_loadLocation(item) }).then(v => {
+        this.menuOpacity = 1
+        m.close()
+        this.$store.dispatch('map/setActLocation', v)
+      })
     }
   },
   watch: {
@@ -214,6 +228,13 @@ export default {
         this.swiper.progress === 1 && this.swiper.slideTo(1, 400)
       }
     },
+    tobottom (t) {
+      if (t) {
+        if (this.index) {
+          this.swiper.slideTo(0, 600)
+        }
+      }
+    },
     tofocus (f) {
       if (f) {
         setTimeout(() => {
@@ -233,7 +254,7 @@ export default {
                   this.swiper.slideTo(0, 0)
                   this.fsclass = ['animated faster slideOutDown', 'animated fast delay-300ms slideInUp']
                   setTimeout(() => {
-                    this.swiper.slideTo(1)
+                    this.swiper.slideTo(1, 400)
                     this.fsclass = ['', '']
                   }, 300)
                 }
@@ -253,13 +274,14 @@ export default {
   },
   async mounted () {
     const _ = this
+    this.modalStyle.height = this.deviceHeight + 'px'
     this.swiper = this.$swiper(this.$refs.parent, {
       direction: 'vertical',
       resistanceRatio: 0,
       slidesPerView: 'auto',
       on: {
         sliderMove () {
-          _.modalStyle.opacity = this.progress - 0.5
+          _.modalStyle.opacity = (this.progress - 0.5) * 1.3
           _.slides[3].transform = `translateY(${Math.max(-135, this.translate)}px)`
           _.slides[8].progress = this.progress
         },
@@ -269,7 +291,7 @@ export default {
           _.modalStyle.transition = 'all 500ms'
           _.slides[3].transform = `translateY(${this.activeIndex === 1 ? -135 : 0}px)`
           _.slides[8].progress = this.progress
-          _.modalStyle.opacity = this.progress - 0.5
+          _.modalStyle.opacity = (this.progress - 0.5) * 1.3
           _.$forceUpdate()
           setTimeout(() => {
             _.slides[3].transition = 'none'
@@ -300,6 +322,9 @@ export default {
         }
       }
     })
+  },
+  beforeDestroy () {
+    this.swiper.destroy()
   }
 }
 
@@ -413,9 +438,7 @@ export default {
   .menu-modal{
     position:fixed;
     top:0;
-    height:0;
     width:100%;
-    height:100%;
     background:rgba(0,0,0,1);
     pointer-events: none !important;
   }
