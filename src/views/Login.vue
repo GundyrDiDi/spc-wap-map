@@ -108,6 +108,7 @@ export default {
   mounted () {
     this._nameclass(['', 'slow'])
     this.swiper = this.$swiper(this.$el, {
+      speed: 600,
       direction: 'vertical',
       allowSlidePrev: false
     })

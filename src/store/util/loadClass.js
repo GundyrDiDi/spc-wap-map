@@ -78,7 +78,8 @@ function GeoProp (geo, type) {
     geoType: type,
     maxzoom: 40,
     minzoom: 10,
-    zoom: 16
+    zoom: 16,
+    icon: require('../../assets/funimg/applayer/xzqy.png')
   }
   if (geo.subgisdatas.length) {
     // output.relative=geo.subgisdatas.map(v=>GeoProp(v,v.loadtemp))

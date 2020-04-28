@@ -78,11 +78,8 @@ export default {
       if (lonlat) {
         coord = fromLonLat(lonlat)
       }
-      if (!coord) {
-        coord = view.getCenter()
-      }
       view.animate({
-        center: coord,
+        center: coord || view.getCenter(),
         zoom: zoom || view.getZoom(),
         duration
       })
@@ -151,10 +148,12 @@ export default {
         ...options
       })
     },
+    _getPixelExtent (store, size) {
+      const { view } = store.state
+      return view.calculateExtent(size)
+    },
     _fitPort (store, size) {
-      const { mymap: map, view } = store.state
-      size = size || map.getSize()
-      view.calculateExtent(size)
+      // const { mymap: map, view } = store.state
     },
     _switchTile (store, tile) {
       store.commit('switchLayer', { key: 'tiles', layer: tile })

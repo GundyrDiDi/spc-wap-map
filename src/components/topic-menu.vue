@@ -110,9 +110,8 @@ export default {
       return this.dyIcons.arrow[this.index]
     },
     slides () {
-      var height = 135
-      var translateY = 55
-      console.log(this.stateBar)
+      const height = 135
+      const translateY = 55
       return [{
         height: `${height}px`
       }, // 0 swiper-contianer
@@ -188,17 +187,19 @@ export default {
     updateItem (item) {
       this.menuOpacity = 0
       this._goback()
-      const m = this.$message({
-        dangerouslyUseHTMLString: true,
-        message: '<p><i class="el-icon-location-outline font-color"></i>正在加载...</p>',
-        center: true,
-        duration: 0
-      })
-      this._leastTime({ promise: this.map_loadLocation(item) }).then(v => {
-        this.menuOpacity = 1
-        m.close()
-        this.$store.dispatch('map/setActLocation', v)
-      })
+      setTimeout(() => {
+        const m = this.$message({
+          dangerouslyUseHTMLString: true,
+          message: '<p class="message_loading"><i class="el-icon-location-outline font-color"></i>正在加载...</p>',
+          center: true,
+          duration: 0
+        })
+        this._leastTime({ promise: this.map_loadLocation(item) }).then(v => {
+          this.menuOpacity = 1
+          m.close()
+          this.$store.dispatch('map/setActLocation', v)
+        })
+      }, 100)
     }
   },
   watch: {
@@ -470,5 +471,13 @@ export default {
   }
   .loading .el-icon-circle-close{
     display:none;
+  }
+  .message_loading{
+    font-size:var(--largesize);
+    color:#666;
+  }
+  .message_loading i{
+    margin-right: 5px;
+    font-size: 23px;
   }
 </style>

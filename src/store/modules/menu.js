@@ -20,6 +20,14 @@ export default {
 
   },
   actions: {
-
+    async _getDescription () {
+      return await axios.get('/getDescription')
+    },
+    async _getElementData () {
+      return await axios.get('/getElementData')
+    },
+    async _getElementFactorData () {
+      return await axios.get('/getElementFactorData')
+    }
   }
 }

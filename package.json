@@ -58,7 +58,8 @@
     },
     "rules": {
       "no-new-func": 0,
-      "accessor-pairs": 0
+      "accessor-pairs": 0,
+      "no-return-await":0
     },
     "globals": {
       "api": true,

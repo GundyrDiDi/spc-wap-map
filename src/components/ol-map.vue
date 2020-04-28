@@ -73,7 +73,7 @@ export default {
   #map {
     position: absolute;
     background: rgb(4, 153, 212);
-    transition: transform .5s;
+    transition: transform .3s;
   }
 
   /* .ol-zoom {

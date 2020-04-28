@@ -15,7 +15,7 @@ const root = {
     leaveclass: '',
     deviceHeight: '',
     deviceWidth: '',
-    bannerHeight: 40,
+    bannerHeight: 45,
     bottomHeight: 50,
     truestateBar: 10,
     btnopacity: 1,
@@ -99,7 +99,7 @@ const root = {
     async _moresearch (store, sw) {
       store.state.resultList.push(...await axios.post('/search', { word: sw }))
     },
-    async _leastTime (store, { promise, time = 1000 }) {
+    async _leastTime (store, { promise, time = 1000 } = {}) {
       const output = await Promise.all([
         new Promise(resolve => {
           setTimeout(() => {

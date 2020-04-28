@@ -12,9 +12,7 @@
 export default {
   name: 'flexible-container',
   data () {
-    return {
-      translateY: 0
-    }
+    return {}
   },
   watch: {
     allow (a) {
@@ -35,12 +33,13 @@ export default {
       this.swiper && this.swiper.destroy()
       setTimeout(() => {
         this.$refs.t.style.height = getComputedStyle(this.$slots.default[0].elm).height
+        this.$refs.flexible.style.overflow = this.visible ? 'visible' : 'hidden'
       }, 300)
       setTimeout(() => {
         this.swiper = this.$swiper(this.$refs.flexible, {
           direction: 'vertical',
           nested: true,
-          resistanceRatio: this.radio || 0.8,
+          resistanceRatio: this.radio === undefined ? 0.8 : this.radio,
           slidesPerView: 'auto',
           freeMode: true,
           allowTouchMove: this.allow === undefined ? true : this.allow,
@@ -62,7 +61,7 @@ export default {
       }, 400)
     }
   },
-  props: ['direct', 'radio', 'allow', 'allowPrev', 'data']
+  props: ['direct', 'radio', 'allow', 'allowPrev', 'data', 'visible']
 }
 </script>
 
