@@ -238,9 +238,6 @@ export default {
         state.tobottom = !state.tobottom
       })
       map.on('singleclick', e => {
-        // const pixel = e.pixel.map(function (v) {
-        //   return v - 5
-        // })
         const f = map.forEachFeatureAtPixel(e.pixel, function (feature) {
           return feature
         }, {
@@ -306,8 +303,7 @@ export default {
 
     },
     async _loadLocation (store, item) {
-      const o = await axios.get('/loadLocation')
-      return o
+      return await axios.get('/loadLocation')
     },
     async _getdata () {
       // console.log(JSON.stringify((await axios.get('/getdata')).objitemlist[1]));

@@ -83,14 +83,17 @@ const mockdata = {
         loadType: 'vector',
         param: {
           normal: {
-            FC: 'rgba(100, 148, 237, 0.2)',
+            FC: 'rgba(9,151,247,.3)',
             SC: 'rgba(237, 100, 100, .8)',
             SW: 1,
-            lineDash: [8, 12],
+            lineDash: [4, 8],
             Text: true,
             TFC: '#999',
             TSL: 0.9,
-            TOY: 8
+            TOY: 8,
+            icon: {
+              url: require('../assets/funimg/applayer/xzqy.png')
+            }
           }
         },
         loadFeature: {}

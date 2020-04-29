@@ -49,11 +49,12 @@
                         </div>
                       </div>
                       <loc-detail
+                      v-if="!switching"
                       :style="styles[9]"
                       :loaded.sync="dlLoaded"
                       :lct="lct"
                       :start="isSlided"
-                      @slide="s2.slideTo(2)"
+                      @slide="s2.slideTo(2,500)"
                       ></loc-detail>
                     </div>
                 </div>
@@ -69,7 +70,14 @@
         class="location-modal"
         v-show="toexpend"
         @click.self="_goback"
-      ></div>
+      >
+      <transition leave-active-class="animated fastest slideOutUp">
+      <loc-media
+        v-if="media&&toexpend"
+        :lct="lct"
+      ></loc-media>
+      </transition>
+      </div>
     </transition>
     <transition enter-active-class="animated fastest slideInDown" leave-active-class="animated faster slideOutUp">
       <div
@@ -122,12 +130,14 @@ export default {
       lct: {},
       styles: [],
       isSlided: false,
-      dlLoaded: false
+      dlLoaded: false,
+      media: true
     }
   },
   components: {
     locBrief: () => import('./loc-brief.vue'),
-    locDetail: () => import('./loc-detail.vue')
+    locDetail: () => import('./loc-detail.vue'),
+    locMedia: () => import('./loc-media.vue')
   },
   methods: {
     initSwiper () {
@@ -251,11 +261,11 @@ export default {
         // })
       } else {
         this.savezoom = this.map.zoom
+        this.map_fitActloc({
+          duration: 300
+        })
         const s = (this.deviceHeight - this.topHeight) / 2
         this.map.el.style.transform = `translateY(${-s}px)`
-        // this.map_fitActloc({
-        //   duration: 300
-        // })
       }
     },
     todetail (dl) {
@@ -369,7 +379,7 @@ export default {
     top:0;
     width:100%;
     /* filter:blur(6px); */
-    background:linear-gradient(0deg,transparent 70% ,rgba(0,0,0,.6) 100%);
+    background:linear-gradient(0deg,transparent 60% ,rgba(0,0,0,.6) 100%);
   }
   .location-banner{
     position:fixed;

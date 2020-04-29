@@ -27,7 +27,11 @@
         <transition appear
         enter-active-class="animated fast slideInUpCustom"
         leave-active-class="animated fast slideOutDownCustom">
-          <topic-menu v-show="!fullMap" v-if="!proxyLocation">
+          <topic-menu
+            v-show="!fullMap"
+            v-if="!proxyLocation"
+            @search="searchLoad=$event"
+          >
             <template #default="{position}">
               <div class="right-top swiper-no-swiping" :style="[position,{opacity:btnopacity}]">
                 <transition appear enter-active-class="animated fast fadeIn" leave-active-class="animated fast rotateOut">
@@ -53,6 +57,14 @@
         </transition>
       </div>
     </div>
+    <transition leave-active-class="animated fastest fadeOut">
+    <div v-if="searchLoad" class="overlay flex-center">
+      <lottie-loading
+        type="search"
+        class="lottie"
+      ></lottie-loading>
+    </div>
+    </transition>
     <swiper-drawer
       :visible.sync="_rtlDrawer"
       :show-close="false"
@@ -71,6 +83,7 @@ import topicMenu from '../components/topic-menu.vue'
 import swiperDrawer from '../components/swiper-drawer.vue'
 import themePanel from '../components/theme-panel.vue'
 import locationPanel from '../components/location-panel.vue'
+import lottieLoading from '../components/lottie-loading.vue'
 
 export default {
   name: 'Home',
@@ -78,7 +91,8 @@ export default {
     return {
       enter: false,
       appear: '',
-      appearDuration: 1300
+      appearDuration: 1300,
+      searchLoad: false
     }
   },
   computed: {
@@ -106,7 +120,8 @@ export default {
     topicMenu,
     swiperDrawer,
     themePanel,
-    locationPanel
+    locationPanel,
+    lottieLoading
   },
   async mounted () {
     const {
@@ -240,6 +255,17 @@ export default {
   .aaa{
     opacity: 0;
     animation-delay: .75s;
+  }
+  .overlay{
+    width:inherit;
+    height:inherit;
+    background:rgba(122,122,122,.2);
+    z-index:1000;
+  }
+  .lottie{
+    width: 8rem;
+    height: 8rem;
+    transform:translateY(-50%)
   }
   @keyframes slideInUpCustom {
     from {

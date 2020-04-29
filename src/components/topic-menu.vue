@@ -81,6 +81,7 @@ import toolList from './tool-list.vue'
 import flexibleContainer from './flexible-container.vue'
 import historyList from './history-list.vue'
 import resultList from './result-list.vue'
+
 export default {
   name: 'topic-menu',
   data () {
@@ -188,21 +189,19 @@ export default {
       this.menuOpacity = 0
       this._goback()
       setTimeout(() => {
-        const m = this.$message({
-          dangerouslyUseHTMLString: true,
-          message: '<p class="message_loading"><i class="el-icon-location-outline font-color"></i>正在加载...</p>',
-          center: true,
-          duration: 0
-        })
-        this._leastTime({ promise: this.map_loadLocation(item) }).then(v => {
+        this._leastTime({ promise: this.map_loadLocation(item), time: 1500 }).then(v => {
           this.menuOpacity = 1
-          m.close()
-          this.$store.dispatch('map/setActLocation', v)
+          requestAnimationFrame(() => {
+            this.$store.dispatch('map/setActLocation', v)
+          })
         })
       }, 100)
     }
   },
   watch: {
+    menuOpacity (load) {
+      this.$emit('search', !load)
+    },
     searchWord (sw) {
       setTimeout(() => {
         if (sw === this.searchWord) {
