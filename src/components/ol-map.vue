@@ -1,10 +1,12 @@
 <template>
   <div id="map" :style="containerStyle">
-    <div ref="highlay">
-      <img class="actIcon" :src="icons.actIcon" alt="">
-      <div></div>
-    </div>
-    <div ref="tablelay"></div>
+    <template v-if="!preload">
+      <div ref="highlay">
+        <img class="actIcon" :src="icons.actIcon" alt="">
+        <div></div>
+      </div>
+      <div ref="tablelay"></div>
+    </template>
   </div>
 </template>
 
@@ -27,16 +29,20 @@ export default {
     containerStyle () {
       return {
         height: 1.2 * this.deviceHeight + 'px',
-        width: 1.2 * this.deviceHeight + 'px'
+        width: 1.2 * this.deviceHeight + 'px',
+        pointerEvents: this.preload ? 'none' : 'auto',
+        opacity: this.preload ? 0 : 1
       }
     }
   },
   watch: {
     deviceCoord: {
       handler (c) {
-        setTimeout(() => {
-          this.map_setCurLocation(c)
-        }, 2000)
+        if (!this.preload) {
+          setTimeout(() => {
+            this.map_setCurLocation(c)
+          }, 2000)
+        }
       },
       immediate: true
     },
@@ -53,18 +59,25 @@ export default {
   },
   async mounted () {
     requestAnimationFrame(async () => {
-      await this.map_init({
-        el: this.$el
-      })
-      Object.entries(this.$refs).forEach(([k, element]) => {
-        if (element.$el)element = element.$el
-        this.map_createOverlay({ element, ...this[k] }).then(o => {
-          this[k] = o
+      if (this.preload) {
+        this.map_preload({
+          el: this.$el
         })
-      })
+      } else {
+        await this.map_init({
+          el: this.$el
+        })
+        Object.entries(this.$refs).forEach(([k, element]) => {
+          if (element.$el)element = element.$el
+          this.map_createOverlay({ element, ...this[k] }).then(o => {
+            this[k] = o
+          })
+        })
+      }
     })
     this.map_getdata()
-  }
+  },
+  props: ['preload']
 }
 
 </script>

@@ -142,9 +142,10 @@ export default {
             trigger: 'axis'
           },
           grid: {
-            left: '2%',
-            right: '4%',
-            bottom: '20px',
+            left: '4%',
+            right: '8%',
+            top: '20%',
+            bottom: '1%',
             containLabel: true
           },
           xAxis: {
@@ -261,7 +262,6 @@ export default {
     color: var(--bdcolor);
     margin-left:5px;
   }
-
   [type="date"] {
     position: absolute;
     width: 100%;

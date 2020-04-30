@@ -131,7 +131,7 @@ export default {
       styles: [],
       isSlided: false,
       dlLoaded: false,
-      media: true
+      media: false
     }
   },
   components: {
@@ -155,9 +155,10 @@ export default {
             _.todetail = this.isEnd
           },
           transitionEnd () {
+            _.isSlided = !this.isBeginning
           },
           progress (p) {
-            _.isSlided = !this.isBeginning
+            (!_.isSlided) && (_.isSlided = !this.isBeginning)
             _.todetail = this.isEnd
           }
         }
@@ -186,44 +187,44 @@ export default {
       this.styles = [
         {
           height: `${height + this.bottomHeight}px`
-        }, // location-panel
+        }, // location-panel 0
         {
           height: `${height}px`
-        }, // contianer
+        }, // contianer 1
         {
           height: `${restHeight - height}px`,
           opacity: 1,
           pointerEvents: 'auto',
           background: 'transparent'
-        }, // slide1
+        }, // slide1 2
         {
           height: `${height + this.topHeight - banner}px`
-        }, // slide2
+        }, // slide2 3
         {
           height: `${this.topHeight}px`
-        }, // location-modal
+        }, // location-modal 4
         {
           height: `${banner}px`,
           lineHeight: `${this.bannerHeight}px`,
           paddingTop: `${this.truestateBar}px`
-        }, // location-banner
+        }, // location-banner 5
         {
           height: `${this.bottomHeight}px`
-        }, // bottom-buttons
+        }, // bottom-buttons 6
         {
           position: 'absolute',
           top: `${-restHeight + height}px`,
           height: `${restHeight + this.topHeight - banner}px`,
           width: '100%',
           background: 'transparent'
-        }, // sub-slide
+        }, // sub-slide 7
         {
           height: `${restHeight + this.topHeight - banner}px`,
           overflow: 'visible'
-        }, // child-swiper
+        }, // child-swiper 8
         {
           minHeight: `${height + this.topHeight - banner}px`
-        }
+        } // loc-detail
       ]
     }
   },
@@ -231,7 +232,6 @@ export default {
     actLocation: {
       handler (loc, old) {
         this.dlLoaded = false
-        console.log(loc)
         if (old) {
           this.switching = true
           this._leastTime({ time: 300 }).then(v => {
@@ -254,11 +254,11 @@ export default {
     toexpend (ex) {
       if (!ex) {
         this.swiper.slideTo(0, 300)
+        this.map_movetoPoint({
+          zoom: this.savezoom,
+          duration: 300
+        })
         this.map.el.style.transform = ''
-        // this.map_movetoPoint({
-        //   zoom: this.savezoom,
-        //   duration: 300
-        // })
       } else {
         this.savezoom = this.map.zoom
         this.map_fitActloc({

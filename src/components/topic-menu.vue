@@ -186,22 +186,20 @@ export default {
       }, 200)
     },
     updateItem (item) {
-      this.menuOpacity = 0
-      this._goback()
-      setTimeout(() => {
-        this._leastTime({ promise: this.map_loadLocation(item), time: 1500 }).then(v => {
+      this.$emit('search', true)
+      // this.fsclass = ['animated fasteest delay-300ms slideOutDown', '']
+      this._leastTime({ promise: this.map_loadLocation(item), time: 1500 }).then(v => {
+        this.menuOpacity = 0
+        this._goback()
+        this.$emit('search', false)
+        setTimeout(() => {
+          this.$store.dispatch('map/setActLocation', v)
           this.menuOpacity = 1
-          requestAnimationFrame(() => {
-            this.$store.dispatch('map/setActLocation', v)
-          })
-        })
-      }, 100)
+        }, 50)
+      })
     }
   },
   watch: {
-    menuOpacity (load) {
-      this.$emit('search', !load)
-    },
     searchWord (sw) {
       setTimeout(() => {
         if (sw === this.searchWord) {
@@ -264,11 +262,11 @@ export default {
         }, 0)
       } else {
         this.$store.commit('searchWord', '')
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           if (this.totop) {
             this._goback()
           }
-        }, 50)
+        })
       }
     }
   },

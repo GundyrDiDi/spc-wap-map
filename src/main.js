@@ -8,7 +8,6 @@ import './assets/common.css'
 // import _ from 'lodash'
 import App from './App.vue'
 import router from './router'
-import VConsole from 'vconsole'
 // 绑定store里state,getter,mutation,action
 import { vuexData, store } from './store'
 import handlerNative from './plugins/native'
@@ -31,7 +30,8 @@ if (navigator.platform.includes('Win')) {
     }).$mount('#app')
   })
 }
-console.log(VConsole)
+// import VConsole from 'vconsole'
+// console.log(VConsole)
 //
 // const v = new VConsole()
 // window.v = v

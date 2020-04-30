@@ -1,5 +1,5 @@
 import { store } from '../store'
-export default function () {
+export default async function () {
   const state = store.state
   // 获取状态栏高度
   var ms = (/Html5Plus\/.+\s\(.*(Immersed\/(\d+\.?\d*).*)\)/gi).exec(navigator.userAgent)

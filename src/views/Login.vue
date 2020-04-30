@@ -70,19 +70,20 @@
         class="up-arrows"
         :config="{num:2,direct:'up',duration:1600}"
     ></move-arrow>
+    <ol-map :preload="true"></ol-map>
   </div>
 </template>
 
 <script>
 import lottieLoading from '../components/lottie-loading.vue'
 import moveArrow from '../components/move-arrow.vue'
+import olMap from '../components/ol-map.vue'
 
 export default {
   name: 'login',
   data () {
     return {
       loginloading: false,
-      loadingDuration: 2000,
       loadingDelay: 200,
       failClass: '',
       failTipClass: '',
@@ -103,10 +104,10 @@ export default {
   },
   components: {
     lottieLoading,
-    moveArrow
+    moveArrow,
+    olMap
   },
   mounted () {
-    this._nameclass(['', 'slow'])
     this.swiper = this.$swiper(this.$el, {
       speed: 600,
       direction: 'vertical',
@@ -130,20 +131,25 @@ export default {
           new Promise(resolve => {
             setTimeout(() => {
               resolve(true)
-            }, this.loadingDuration + this.loadingDelay)
-          }), await this.login_submit().then(t => {
-            setTimeout(() => {
-              const oy = this.getOY()
-              t && this.$router.push({
-                name: 'Home',
-                params: { oy, delay: this.loadingDuration }
-              })
             }, this.loadingDelay)
-            return t
-          })])
-        this.loginloading = false
+          }),
+          await this.login_submit()
+        ])
         if (!delay[1]) {
-          this.fail()
+          setTimeout(() => {
+            this.loginloading = false
+            this.fail()
+          }, this.enterTime / 2)
+        } else {
+          this.map_tileload().then(t => {
+            const oy = this.getOY()
+            this.loginloading = false
+            this._nameclass(['', 'slow'])
+            this.$router.push({
+              name: 'Home',
+              params: { oy, delay: this.enterTime }
+            })
+          })
         }
       }
     },

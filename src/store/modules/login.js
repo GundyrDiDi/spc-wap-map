@@ -3,7 +3,7 @@ export default {
   state: {
     username: 'username',
     password: 'password',
-    isLogin: true
+    isLogin: false
   },
   getters: {
     token () {
@@ -18,7 +18,6 @@ export default {
   actions: {
     async _submit (store) {
       const res = await axios.post('/login', store.state)
-      console.log(res)
       if (res.success) {
         store.commit('success')
         return true

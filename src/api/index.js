@@ -54,11 +54,16 @@ const mockdata = {
       }
     }
   },
+  getfavorite: {
+    data: [
+
+    ]
+  },
   search: {
     data: [{ name: '储运部一车间' }, { name: '培训与交流安置中心' }, { name: '金石物流（铁卸）' }, { name: '腈纶部' }, { name: '热电部东区' }, { name: '股份公司机关' }, { name: '化工部西区' }, { name: '储运3车间' }, { name: '金石物流（内河）' }, { name: '涤纶东区/质管中心' }, { name: '精细化工部' }, { name: '塑料部' }, { name: '公用事业部' }, { name: '化工部东区' }, { name: '化工部' }, { name: '环保水务部东区' }, { name: '金地公司' }, { name: '涤纶部' }, { name: '5-6号炼油' }, { name: '金森公司' }, { name: '储运部二车间' }, { name: '炼油部办公区' }, { name: '金菲公司' }, { name: '芳烃部' }, { name: '烯烃部' }]
   },
   loadLocation: {
-    data: { id: '219a81deb8f944f1a1c535a33b29e716', name: '腈纶部', key: '', type: '行政区域', layer: 'XZQYu', disable: false, state: null, showType: 'PolygonShow', geoType: 'multipolygon', maxzoom: 40, minzoom: 10, coords: [[[13504957.385112124, 3595069.4605644937], [13505578.178919615, 3595151.9278172655], [13505519.173704555, 3595532.4819264268], [13505297.010949874, 3595496.21419175], [13505290.514962895, 3595546.0823540865], [13505285.53470621, 3595579.5797668532], [13505264.314482076, 3595711.555410348], [13505214.07884944, 3596051.0716814213], [13505208.882059857, 3596091.3709614994], [13505026.561358647, 3596052.0791618344], [13505029.598112268, 3596031.4666884], [13504764.941497872, 3595987.4886373393], [13504492.110044751, 3595960.2868353217], [13504568.60029143, 3595447.9972970933], [13504998.959428787, 3595512.2212345], [13505009.353007955, 3595404.929665252], [13505022.344981914, 3595294.6167593477], [13505036.636153266, 3595193.371525179], [13504940.495545978, 3595178.2603665944], [13504957.385112124, 3595069.4605644937]]], center: [13504917.11455056, 3595580.4157629963, 736.5714734289795] }
+    data: { id: '9ebd0c0fe46d49d38cb4b4cec27784a7', name: '环保水务部东区', key: '', type: '行政区域', layer: 'XZQYu', disable: false, state: null, showType: 'PolygonShow', geoType: 'multipolygon', maxzoom: 40, minzoom: 10, zoom: 16, coords: [[[[13505208.882059857, 3596091.3709614994], [13505229.29749745, 3595948.215853487], [13505255.266801577, 3595772.703251936], [13505290.514962895, 3595546.0823540865], [13505517.259660669, 3595577.7219065083], [13505434.111027336, 3596126.2862261157], [13505208.882059857, 3596091.3709614994]]]], center: [13505361.97860371, 3595836.184290101, 232.2092455457896] }
   },
   getmapicons: {
     data: {
@@ -90,9 +95,11 @@ const mockdata = {
             Text: true,
             TFC: '#999',
             TSL: 0.9,
-            TOY: 8,
+            TOY: 12,
             icon: {
-              url: require('../assets/funimg/applayer/xzqy.png')
+              url: require('../assets/funimg/applayer/xzqy.png'),
+              scale: 0.6,
+              ac: [0.5, 0.8]
             }
           }
         },
@@ -117,13 +124,14 @@ const mockdata = {
         appid: 'FBQYMJin',
         name: '门禁',
         icon: require('../assets/ele/门禁.png'),
-        selected: false,
+        selected: true,
         loadType: 'vector',
         param: {
           normal: {
-            FC: 'rgba(100, 148, 237, 0.4)',
             icon: {
-              url: require('../assets/ele/门禁.png')
+              url: require('../assets/ele/门禁.png'),
+              scale: 0.6,
+              ac: [0.5, 0.5]
             }
           },
           danger: {
@@ -155,7 +163,7 @@ const mockdata = {
     data: { ZD_YZ: [{ factid: '518c1ca7cd524930be0b5cf33061c57b', factstatu: 'black', thlines: [{ name: '', yAxis: 850.0 }, { name: '', yAxis: 1000.0 }], thranges: [{ gte: 0, lte: 850.0, style: 'black' }, { gt: 850.0, lte: 1000.0, style: 'yellow' }, { gt: 1000.0, style: 'red' }], factdata: { Name: 'VOC', Unit: 'ppb', Value: '0', DateTime: '2020/4/26 11:00:00', BiaoZhun: '1000' } }, { factid: '8ae1cea4ef3f4ed0b330da552afc2ead', factstatu: 'black', thlines: [], thranges: [], factdata: { Name: '温度', Unit: '℃', Value: '24.5125', DateTime: '2020/4/26 11:00:00', BiaoZhun: '' } }, { factid: 'f3a030ae358347ff942e2e671b11abb1', factstatu: 'black', thlines: [], thranges: [], factdata: { Name: '湿度', Unit: 'RH%', Value: '60.3025', DateTime: '2020/4/26 11:00:00', BiaoZhun: '' } }, { factid: 'd2517aa4ae3f4262b6796860fd08da61', factstatu: 'black', thlines: [], thranges: [], factdata: { Name: '气压', Unit: 'kPa', Value: '1021.092', DateTime: '2020/4/26 11:00:00', BiaoZhun: '' } }, { factid: 'f10d127b668645bbb52d87bdc213b80a', factstatu: 'black', thlines: [], thranges: [], factdata: { Name: '风速', Unit: 'm/s', Value: '0.62', DateTime: '2020/4/26 11:00:00', BiaoZhun: '' } }, { factid: '21a53503c7f74ef0a64c54c948fc1077', factstatu: 'black', thlines: [], thranges: [], factdata: { Name: '风向', Unit: '度', Value: '264.2', DateTime: '2020/4/26 11:00:00', BiaoZhun: '' } }], ZD_YZH: [{ factid: '518c1ca7cd524930be0b5cf33061c57b', factstatu: 'black', thlines: [{ name: '', yAxis: 850.0 }, { name: '', yAxis: 1000.0 }], thranges: [{ gte: 0, lte: 850.0, style: 'black' }, { gt: 850.0, lte: 1000.0, style: 'yellow' }, { gt: 1000.0, style: 'red' }], factdata: { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 11:00:00', phd: 'AHB.VOC.A05.VOC' } }, { factid: '8ae1cea4ef3f4ed0b330da552afc2ead', factstatu: 'black', thlines: [], thranges: [], factdata: { name: '温度', unit: '℃', value: 24.512500, datetime: '2020-04-26 11:00:00', phd: 'AHB.VOC.A05.TE' } }, { factid: 'f3a030ae358347ff942e2e671b11abb1', factstatu: 'black', thlines: [], thranges: [], factdata: { name: '湿度', unit: 'RH%', value: 60.302500, datetime: '2020-04-26 11:00:00', phd: 'AHB.VOC.A05.RH' } }, { factid: 'd2517aa4ae3f4262b6796860fd08da61', factstatu: 'black', thlines: [], thranges: [], factdata: { name: '气压', unit: 'kPa', value: 1021.092000, datetime: '2020-04-26 11:00:00', phd: 'AHB.VOC.A05.PE' } }, { factid: 'f10d127b668645bbb52d87bdc213b80a', factstatu: 'black', thlines: [], thranges: [], factdata: { name: '风速', unit: 'm/s', value: 0.620000, datetime: '2020-04-26 11:00:00', phd: 'AHB.VOC.A05.FS' } }, { factid: '21a53503c7f74ef0a64c54c948fc1077', factstatu: 'black', thlines: [], thranges: [], factdata: { name: '风向', unit: '度', value: 264.200000, datetime: '2020-04-26 11:00:00', phd: 'AHB.VOC.A05.FX' } }] }
   },
   getElementFactorData: {
-    data: { ZD_YZH: [{ name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 11:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 10:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 09:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 08:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 07:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 06:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 05:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 04:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 03:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 02:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 01:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 00:00:00', phd: 'AHB.VOC.A05.VOC' }] }
+    data: { ZD_YZH: [{ name: 'VOC', unit: 'ppb', value: 1.000000, datetime: '2020-04-26 11:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 2.000000, datetime: '2020-04-26 10:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 09:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 5.000000, datetime: '2020-04-26 08:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 4.000000, datetime: '2020-04-26 07:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 10.000000, datetime: '2020-04-26 06:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 05:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 04:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 7.000000, datetime: '2020-04-26 03:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 0.000000, datetime: '2020-04-26 02:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 9.000000, datetime: '2020-04-26 01:00:00', phd: 'AHB.VOC.A05.VOC' }, { name: 'VOC', unit: 'ppb', value: 1.000000, datetime: '2020-04-26 00:00:00', phd: 'AHB.VOC.A05.VOC' }] }
   }
 }
 Object.entries(mockdata).forEach(([api, redata]) => {

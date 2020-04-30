@@ -11,6 +11,8 @@ const root = {
   name: '',
   state: {
     isloading: false,
+    enterTime: 2000,
+    enterAnimateTime: 1300,
     enterclass: '',
     leaveclass: '',
     deviceHeight: '',

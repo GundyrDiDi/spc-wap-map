@@ -58,12 +58,12 @@
       </div>
     </div>
     <transition leave-active-class="animated fastest fadeOut">
-    <div v-if="searchLoad" class="overlay flex-center">
-      <lottie-loading
-        type="search"
-        class="lottie"
-      ></lottie-loading>
-    </div>
+      <div v-if="searchLoad" class="overlay flex-center">
+        <lottie-loading
+          type="search"
+          class="lottie"
+        ></lottie-loading>
+      </div>
     </transition>
     <swiper-drawer
       :visible.sync="_rtlDrawer"
@@ -91,7 +91,6 @@ export default {
     return {
       enter: false,
       appear: '',
-      appearDuration: 1300,
       searchLoad: false
     }
   },
@@ -134,13 +133,13 @@ export default {
         this.$refs.map.$el.style.marginTop = `${oy}px`
         setTimeout(() => {
           this.appear = 'zoom'
-          this.$el.style.animation = `enterAnim ${this.appearDuration / 1000}s ease-in-out`
+          this.$el.style.animation = `enterAnim ${this.enterAnimateTime / 1000}s ease-in-out`
           setTimeout(() => {
             this.$refs.map.$el.style.marginTop = 0
             this.$el.style.marginTop = 0
             this.$el.style.animation = ''
             resolve(true)
-          }, this.appearDuration)
+          }, this.enterAnimateTime)
         }, this.$route.params.delay)
       })
     }
@@ -259,7 +258,7 @@ export default {
   .overlay{
     width:inherit;
     height:inherit;
-    background:rgba(122,122,122,.2);
+    background:rgba(255,255,255,.4);
     z-index:1000;
   }
   .lottie{

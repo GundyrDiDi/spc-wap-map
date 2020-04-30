@@ -58,11 +58,21 @@ function lineFeature (coords, prop = {}) {
 }
 
 function polygonFeature (coords, prop = {}) {
-  return new Feature({ ...prop, geometry: new Polygon([coords]) })
+  return new Feature({ ...prop, geometry: new Polygon(coords) })
 }
-function muPolygonFeature (polygons, prop = {}) {
-  const mp = new MultiPolygon([polygons])
+function multipolygonFeature (polygons, prop = {}) {
+  const mp = new MultiPolygon(polygons)
   return new Feature({ ...prop, geometry: mp, center: mp.getInteriorPoints().getCoordinates()[0] })
+}
+function createGeom (coords, type) {
+  type = type.toLowerCase()
+  const map = {
+    point: Point,
+    linestring: LineString,
+    polygon: Polygon,
+    multipolygon: MultiPolygon
+  }
+  return new map[type](coords)
 }
 function GeoProp (geo, type) {
   const geotext = geo.geomsttext
@@ -78,19 +88,20 @@ function GeoProp (geo, type) {
     geoType: type,
     maxzoom: 40,
     minzoom: 10,
-    zoom: 16,
-    icon: require('../../assets/funimg/applayer/xzqy.png')
+    zoom: 16
   }
   if (geo.subgisdatas.length) {
     // output.relative=geo.subgisdatas.map(v=>GeoProp(v,v.loadtemp))
   }
   if (type === 'multipolygon') {
-    output.coords = geotext.match(/(?<=\()[^()]*(?=\))/g).map(polygon => {
+    output.coords = [geotext.match(/(?<=\()[^()]*(?=\))/g).map(polygon => {
       return polygon.split(', ').map(point => {
         return fromLonLat(point.split(' ').map(parseFloat))
       })
-    })
-    return muPolygonFeature(output.coords, output)
+    })]
+    output.center = new MultiPolygon(output.coords).getInteriorPoints().getCoordinates()[0]
+    return pointFeature(output.center, output)
+    // return multipolygonFeature(output.coords, output)
   } else if (type === 'polygon') {
 
   } else if (type === 'point') {
@@ -161,10 +172,11 @@ function heatmap (blur = 10, radius = 10) {
   })
 }
 export default {
+  createGeom,
   pointFeature,
   lineFeature,
   polygonFeature,
-  muPolygonFeature,
+  multipolygonFeature,
   GeoProp,
   style,
   vector,

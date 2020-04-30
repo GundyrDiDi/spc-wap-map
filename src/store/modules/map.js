@@ -2,12 +2,14 @@ import Map from 'ol/Map'
 import View from 'ol/View'
 import { defaults, ScaleLine } from 'ol/control'
 import { fromLonLat } from 'ol/proj'
+import Feature from 'ol/Feature'
 import Overlay from 'ol/Overlay'
 import loadClass from '../util/loadClass'
 
 export default {
   namespaced: true,
   state: {
+    preloaded: false,
     bingKey: 'AoDg4R00J2io1dJw7mTF0iQ1CBNjROkFXSRBcxhgb3qKq4eCbNBYizRtVG_q-fZD',
     el: undefined,
     mymap: '',
@@ -37,6 +39,9 @@ export default {
         return [longitude, latitude]
       }
       return [121.3183, 30.7149]
+    },
+    staticlayer (state) {
+      return { ...state.ellayers, ...state.applayers }
     }
   },
   mutations: {
@@ -70,9 +75,6 @@ export default {
         aclayers[layer.appid] = layer
         state.mymap.addLayer(layer.layer)
       }
-    },
-    tileloadend (state, { key, layer }) {
-
     },
     _movetoPoint ({ view }, { lonlat, coord, zoom, duration = 1000 }) {
       if (lonlat) {
@@ -113,32 +115,34 @@ export default {
     },
     setActLocation (store, loc) {
       const state = store.state
-      state.actLocation = loc
       if (!state.highlight) {
         state.highlight = loadClass.vector({
+          FC: 'rgba(9,151,247,.3)',
+          SC: 'rgba(237, 100, 100, .8)',
+          SW: 1,
+          lineDash: [6, 10],
           IR: 5,
           IFC: 'rgb(64, 124, 235)',
           ISW: 2,
-          ISC: '#fff',
-          SC: '#000',
-          SW: 4
+          ISC: '#fff'
         })
         state.highlight.setMap(state.mymap)
-        state.actFeature = loadClass.pointFeature(loc.center, loc)
+        state.actFeature = new Feature()
         state.highlight.getSource().addFeature(state.actFeature)
+      }
+      // state.highlight.getSource().clear()
+      if (loc) {
+        loc.layer = store.getters.staticlayer[loc.layer]
+        state.actFeature.setGeometry(
+          loadClass.createGeom(loc.coords, loc.geoType)
+        )
         requestAnimationFrame(() => {
           store.commit('_movetoPoint', { coord: loc.center, duration: 600 })
         })
       } else {
-        if (loc) {
-          state.actFeature.getGeometry().setCoordinates(loc.center)
-          requestAnimationFrame(() => {
-            store.commit('_movetoPoint', { coord: loc.center, duration: 600 })
-          })
-        } else {
-          state.actFeature.getGeometry().setCoordinates([0, 0])
-        }
+        state.actFeature.setGeometry(loadClass.createGeom([0, 0], 'point'))
       }
+      state.actLocation = loc
     },
     _fitActloc (store, options) {
       const loc = store.state.actLocation
@@ -186,7 +190,7 @@ export default {
       const keys = {
         tiles: {
           arg: [state.bingKey],
-          commit: ['switchLayer', 'tileloadend']
+          commit: ['switchLayer']
         },
         applayers: {
           arg: [styleFn, 1],
@@ -213,8 +217,61 @@ export default {
         }
       }))
     },
-    async _preload () {
-
+    _tileload (store) {
+      let i = 0
+      return new Promise(resolve => {
+        ++i
+        const timer = setInterval(() => {
+          if (store.state.preloaded) {
+            resolve(true)
+            clearInterval(timer)
+          } else {
+            if (i === 50) {
+              resolve(false)
+              clearInterval(timer)
+            }
+          }
+        }, 100)
+      })
+    },
+    async _preload (store, { el }) {
+      const state = store.state
+      const view = new View({
+        center: fromLonLat(store.getters.deviceCoord),
+        zoom: 15,
+        enableRotation: false
+      })
+      const map = new Map({
+        target: el,
+        view: view
+      })
+      const tiles = {
+        arg: [state.bingKey]
+      }
+      const { arg } = tiles
+      let loading = 0; let loaded = 0
+      const data = await axios.get('/gettiles')
+      if (data.length) {
+        data.forEach(l => {
+          if (l.selected) {
+            const layer = loadClass[l.loadType](l.param, ...arg)
+            const s = layer.getSource()
+            const lis1 = s.on('tileloadstart', function () {
+              ++loading
+            })
+            const lis2 = s.on('tileloadend', function () {
+              ++loaded
+              if (loaded === loading) {
+                s.un('tileloadstart', lis1)
+                s.un('tileloadend', lis2)
+                map.removeLayer(layer)
+                state.preloaded = true
+              }
+            })
+            map.addLayer(layer)
+          }
+        })
+      }
     },
     async _init (store, { el }) {
       const state = store.state
@@ -241,10 +298,12 @@ export default {
         const f = map.forEachFeatureAtPixel(e.pixel, function (feature) {
           return feature
         }, {
-          hitTolerance: 5
-          // layerFilter(layer){
-          //   return true
-          // }
+          hitTolerance: 5,
+          layerFilter (layer) {
+            return [state.highlight, state.curlocallayer].every(l => {
+              return layer !== l
+            })
+          }
         })
         if (!f) {
           if (state.actLocation) {
@@ -255,9 +314,7 @@ export default {
           }
         } else {
           state.fullMap = false
-          if (f.get('name') !== 'curCoord') {
-            store.dispatch('setActLocation', f.getProperties())
-          }
+          store.dispatch('setActLocation', f.getProperties())
         }
       })
       map.on('moveend', () => {
@@ -284,7 +341,7 @@ export default {
         return acc
       }, {})
       // console.log(gisData)
-      Object.entries({ ...state.ellayers, ...state.applayers }).forEach(([appid, l]) => {
+      Object.entries(store.getters.staticlayer).forEach(([appid, l]) => {
         const layer = l.layer
         const source = layer.getSource()
         source.clear()
