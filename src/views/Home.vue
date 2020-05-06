@@ -2,7 +2,6 @@
   <div id="home" :class="appear" class="flex-center">
     <ol-map ref="map"></ol-map>
     <div v-if="enter" id="viewport">
-      <router-view></router-view>
       <div id="subport" :style="subportStyle">
         <div class="right-top" :style="[{opacity:btnopacity}]">
           <transition appear enter-active-class="animated fast  zoomIn" leave-active-class="animated fast fadeOutUp">
@@ -56,6 +55,12 @@
           </location-panel>
         </transition>
       </div>
+      <transition
+        enter-active-class="animated faster slideInRight"
+        leave-active-class="animated faster slideOutRight"
+      >
+        <router-view></router-view>
+      </transition>
     </div>
     <transition leave-active-class="animated fastest fadeOut">
       <div v-if="searchLoad" class="overlay flex-center">
@@ -133,7 +138,7 @@ export default {
         this.$refs.map.$el.style.marginTop = `${oy}px`
         setTimeout(() => {
           this.appear = 'zoom'
-          this.$el.style.animation = `enterAnim ${this.enterAnimateTime / 1000}s ease-in-out`
+          this.$el.style.animation = `enterAnim ${this.enterAnimateTime / 1000}s ease-in`
           setTimeout(() => {
             this.$refs.map.$el.style.marginTop = 0
             this.$el.style.marginTop = 0
@@ -147,8 +152,12 @@ export default {
     this.enter = true
   },
   watch: {
-    activeMenu (route) {
-      // this.$router.push(route);
+    activeMenu ({ route }) {
+      if (route) {
+        this.$router.push('/home/' + route)
+      } else {
+        this.$router.push('/home')
+      }
     },
     actLocation (loc) {
       if (loc) {
@@ -233,7 +242,7 @@ export default {
 
   .center-bottom {
     width: 100%;
-    z-index:1;
+    /* z-index:1; */
   }
 
   .center-bottom:after {

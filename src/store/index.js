@@ -10,11 +10,13 @@ const root = {
   // everyStore中命名modules
   name: '',
   state: {
+    // 过渡
     isloading: false,
     enterTime: 2000,
     enterAnimateTime: 1300,
     enterclass: '',
     leaveclass: '',
+    // 容器
     deviceHeight: '',
     deviceWidth: '',
     bannerHeight: 45,
@@ -22,8 +24,8 @@ const root = {
     truestateBar: 10,
     btnopacity: 1,
     rightdrawer: false,
-    _records: [],
     rtlDrawer: false,
+    _records: [],
     searchWord: '',
     resultList: [],
     historyList: JSON.parse(window.localStorage.spc_history ? window.localStorage.spc_history : '[]'),

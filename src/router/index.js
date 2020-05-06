@@ -4,7 +4,6 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 // lazy load
 import Home from '../views/Home.vue'
-import HomeChildren from './home/children'
 
 Vue.use(VueRouter)
 
@@ -20,7 +19,13 @@ const routes = [{
     }
   },
   // 嵌套路由
-  children: HomeChildren
+  children: [
+    {
+      path: 'user',
+      name: 'User',
+      component: () => import('../views/home/User.vue')
+    }
+  ]
 },
 {
   path: '/',

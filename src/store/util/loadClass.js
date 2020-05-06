@@ -125,10 +125,10 @@ function style (param) {
     }),
     image: param.IR ? new CircleStyle({
       radius: param.IR,
-      fill: new Fill({
+      fill: param.IFC && new Fill({
         color: param.IFC
       }),
-      stroke: new Stroke({
+      stroke: param.ISW && new Stroke({
         color: param.ISC,
         width: param.ISW
       })

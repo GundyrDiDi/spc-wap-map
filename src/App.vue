@@ -78,6 +78,6 @@ export default {
     align-items: center;
   }
   #app .slow{
-    animation-duration: 3.3s;
+    animation-duration: 4s;
   }
 </style>

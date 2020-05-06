@@ -5,6 +5,7 @@
   --normalsize:.8rem;
   --largesize:1rem;
   --hugesize:1.1rem;
+  --bigsize:1.5rem;
   --dangercolor:rgb(218, 25, 11);
   --mapcolor:rgb(20,92,228);
 }
@@ -124,6 +125,9 @@ img{
   width:100%;
   height:10px;
   background:#f2f2f2;
+}
+::-webkit-scrollbar {
+  display: none;
 }
 /* swiper */
 .swiper-container{

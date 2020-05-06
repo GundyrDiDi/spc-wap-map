@@ -88,10 +88,6 @@ const mockdata = {
         loadType: 'vector',
         param: {
           normal: {
-            FC: 'rgba(9,151,247,.3)',
-            SC: 'rgba(237, 100, 100, .8)',
-            SW: 1,
-            lineDash: [4, 8],
             Text: true,
             TFC: '#999',
             TSL: 0.9,
@@ -117,35 +113,36 @@ const mockdata = {
   },
   getellayers: {
     data: [
-      { appid: 'xzqy1', name: '摄像机', icon: require('../assets/ele/摄像机.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
-      { appid: 'xzqy2', name: '公务车', icon: require('../assets/funimg/applayer/车.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
-      { appid: 'xzqy3', name: 'VOC', icon: require('../assets/ele/Voc.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
+      { appid: 'xzqy1', name: '摄像机', icon: require('../assets/funimg/applayer/128/camera.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {}, bgcolor: 'blue' },
+      { appid: 'xzqy2', name: '公务车', icon: require('../assets/funimg/applayer/128/car.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {}, bgcolor: 'blue' },
+      { appid: 'xzqy3', name: 'VOC', icon: require('../assets/funimg/applayer/128/Voc.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {}, bgcolor: 'green' },
       {
         appid: 'FBQYMJin',
         name: '门禁',
-        icon: require('../assets/ele/门禁.png'),
+        icon: require('../assets/funimg/applayer/128/menjin.png'),
         selected: true,
         loadType: 'vector',
         param: {
           normal: {
             icon: {
               url: require('../assets/ele/门禁.png'),
-              scale: 0.6,
-              ac: [0.5, 0.5]
+              ac: [0.5, 0.5],
+              scale: 0.6
             }
           },
           danger: {
             FC: 'rgba(236, 78, 86, 0.4)'
           }
         },
-        loadFeature: {}
+        loadFeature: {},
+        bgcolor: 'green'
       },
-      { appid: 'xzqy4', name: '储罐', icon: require('../assets/funimg/applayer/储罐.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
-      { appid: 'xzqy5', name: '雨水', icon: require('../assets/ele/水.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
-      { appid: 'xzqy6', name: '污水', icon: require('../assets/ele/污水.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
-      { appid: 'xzqy7', name: '排气筒', icon: require('../assets/ele/排气筒.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
-      { appid: 'xzqy8', name: '生产装置', icon: require('../assets/ele/生产装置.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} },
-      { appid: 'xzqy9', name: '生产设备', icon: require('../assets/ele/生产设备.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {} }
+      { appid: 'xzqy4', name: '储罐', icon: require('../assets/funimg/applayer/128/youguan2.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {}, bgcolor: 'yellow' },
+      { appid: 'xzqy5', name: '雨水', icon: require('../assets/funimg/applayer/128/qingxiashui.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {}, bgcolor: 'green' },
+      { appid: 'xzqy6', name: '污水', icon: require('../assets/funimg/applayer/128/wushui.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {}, bgcolor: 'green' },
+      { appid: 'xzqy7', name: '排气筒', icon: require('../assets/funimg/applayer/128/yanchong.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {}, bgcolor: 'green' },
+      { appid: 'xzqy8', name: '生产装置', icon: require('../assets/funimg/applayer/128/proeqt.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {}, bgcolor: 'yellow' },
+      { appid: 'xzqy9', name: '生产设备', icon: require('../assets/funimg/applayer/128/prodev.png'), selected: false, loadType: 'vector', param: {}, loadFeature: {}, bgcolor: 'yellow' }
     ]
   },
   getgisdata: {

@@ -7,7 +7,7 @@
       :style="i>=5&&opacity"
       @click="pickEl(v)"
       >
-      <div :class="v.selected&&'selected'" class="img-box">
+      <div :class="[v.bgcolor,v.selected&&'selected']" class="img-box">
         <img :src="v.icon" alt="">
       </div>
         <aside>{{v.name}}</aside>
@@ -102,8 +102,14 @@ export default {
   }
   .img-box{
     border:2px solid #fff;
-    background:#4fdd7f;
+    background:#328ad5;
     border-radius:50%
+  }
+  .img-box.green{
+    background:#2ad3ac;
+  }
+  .img-box.yellow{
+    background:#ffc94e;
   }
   .layer-container img{
     height:36px;

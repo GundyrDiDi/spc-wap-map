@@ -61,7 +61,7 @@
       </div>
     </transition>
     <div class="center-bottom flex" id="bottom-buttons" :style="slides[5]">
-      <div v-for="(v,i) in menus" :key="v.name" @click="handleMenu(v)">
+      <div v-for="(v,i) in menus" :key="v.name" @click="handleMenu(i)">
         <span :class="menuIndex==i&&'font-color'">
           {{v.name}}
           <dy-transition :ob="menuIndex" :i="i" :enter="['slideInLeft','slideInRight']"
@@ -148,9 +148,10 @@ export default {
     }
   },
   methods: {
-    handleMenu (menu) {
-      console.log(menu)
-      // this._record({ type: 'menu/menuIndex', value:i })
+    handleMenu (i) {
+      if (this.menuIndex !== i) {
+        this.$store.commit('menu/menuIndex', i)
+      }
     },
     controlSlide () {
       if (this.swiper.isEnd) {
@@ -187,14 +188,14 @@ export default {
     },
     updateItem (item) {
       this.$emit('search', true)
-      // this.fsclass = ['animated fasteest delay-300ms slideOutDown', '']
       this._leastTime({ promise: this.map_loadLocation(item), time: 1500 }).then(v => {
         this.menuOpacity = 0
+        this.fsclass = ['animated fasteest delay-100ms slideOutDown', '']
         this._goback()
         this.$emit('search', false)
         setTimeout(() => {
-          this.$store.dispatch('map/setActLocation', v)
           this.menuOpacity = 1
+          this.$store.dispatch('map/setActLocation', v)
         }, 50)
       })
     }

@@ -178,14 +178,45 @@ export default {
       const styleFn = function (style, param, feature) {
         const zoom = state.zoom
         param = param.normal
-        if (param.Text) {
-          param.TCT = feature.get('name')
-        }
         if (zoom > feature.get('maxzoom') || zoom < feature.get('minzoom')) {
 
         } else {
-          return style(param)
+          if (Array.isArray(param)) {
+            return param.map(v => {
+              if (v.Text) {
+                v.TCT = feature.get('name')
+              }
+              return style(v)
+            })
+          } else {
+            if (param.Text) {
+              param.TCT = feature.get('name')
+            }
+            return style(param)
+          }
         }
+        // const styleFn = function (style, param, feature) {
+        //   const zoom = state.zoom
+        //   if (zoom > feature.get('maxzoom') || zoom < feature.get('minzoom')) {
+
+        //   } else {
+        //     param = param.normal
+        //     if(Array.isArray(param)){
+        //       return param.map(v=>{
+        //         if (v.Text) {
+        //           v.TCT = feature.get('name')
+        //         }
+        //         return style[v]
+        //       })
+        //     }else{
+        //       console.log(param);
+        //       if (param.Text) {
+        //         param.TCT = feature.get('name')
+        //       }
+        //       return style[param]
+        //     }
+        //   }
+        // }
       }
       const keys = {
         tiles: {

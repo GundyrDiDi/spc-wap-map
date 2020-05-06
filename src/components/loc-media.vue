@@ -17,7 +17,7 @@ export default {
   },
   mounted () {
     const video = this.$refs.video
-    video.src = require('../assets/spc1.mp4')
+    // video.src = require('../assets/spc1.mp4')
     video.addEventListener('loadedmetadata', data => {
       video.play()
     })

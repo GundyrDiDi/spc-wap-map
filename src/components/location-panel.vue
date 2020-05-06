@@ -170,7 +170,6 @@ export default {
         resistanceRatio: 0,
         slidesPerView: 'auto',
         freeMode: true,
-        freeModeMomentumRatio: 0.7,
         on: {
           progress (p) {
             if (p === 0) {

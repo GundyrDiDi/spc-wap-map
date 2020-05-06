@@ -3,7 +3,7 @@ export default {
   state: {
     menus: [
       { name: '地图', route: '' },
-      { name: '应用', route: 'apply' },
+      { name: '应用', route: '' },
       { name: '我的', route: 'user' }
     ],
     menuIndex: 0,
