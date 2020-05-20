@@ -24,13 +24,11 @@ const config = {
 }
 
 const _axios = axios.create(config)
-let time
 // 请求拦截器
 _axios.interceptors.request.use(
   function (config) {
     // 控制一般请求的store.isloading
     store.commit('isloading', true)
-    time = Date.now()
     // 获得api的url
     config.url = api[config.url]
     // Do something before request is sent
@@ -47,7 +45,6 @@ _axios.interceptors.request.use(
 _axios.interceptors.response.use(
   function (response) {
     // Do something with response data
-    console.log(Date.now() - time)
     return new Promise((resolve, reject) => {
       // 模拟网络延迟
       setTimeout(() => {

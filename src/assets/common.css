@@ -1,7 +1,7 @@
 :root{
   --color:#0499d4;
   --bdcolor:rgba(100,149,237,1);
-  --smallsize:.7rem;
+  --smallsize:.65rem;
   --normalsize:.8rem;
   --largesize:1rem;
   --hugesize:1.1rem;
@@ -14,6 +14,18 @@ div{
 }
 img{
   vertical-align: bottom;
+}
+.wrapper{
+  height:100%;
+  width:100%;
+  display: inherit;
+  justify-content: inherit;
+  align-items: inherit;
+  flex-direction: inherit;
+  flex-wrap: inherit;
+  background: inherit;
+  border:inherit;
+  border-radius:inherit;
 }
 .relative{
   position:relative;
@@ -39,21 +51,13 @@ img{
     display: flex;
     justify-content: center;
 }
+.flex-ter{
+  display: flex;
+  align-items: center;
+}
 .flex-column{
   display: flex;
   flex-direction: column;
-}
-.wrapper{
-  height:100%;
-  width:100%;
-  display: inherit;
-  justify-content: inherit;
-  align-items: inherit;
-  flex-direction: inherit;
-  flex-wrap: inherit;
-  background: inherit;
-  border:inherit;
-  border-radius:inherit;
 }
 .right-top{
   position: absolute;
@@ -74,6 +78,9 @@ img{
 }
 .shadow-top{
   box-shadow: 0 -2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
+}
+.shadow-bottom{
+  box-shadow: 0 2px 4px 1px rgba(0, 0, 0, .2)
 }
 .font-color{
   color:var(--color)
@@ -146,16 +153,22 @@ img{
   height:100%;
   flex-shrink: 0
 }
+.swiper-scrollbar>.swiper-scrollbar-drag{
+  height: 100%;
+  width: 100%;
+  position: relative;
+  background: rgba(0,0,0,.5);
+  border-radius: 10px;
+  left: 0;
+  top: 0;
+}
 /* ElementUI */
 .liti-button{
   box-shadow:0 2px 3px 1px rgba(0,0,0,.2),0 -1px 6px 3px rgba(0,0,0,.1);
 }
-.el-button{
+/* .el-button{
   font-size:1rem;
-}
-.el-input__inner{
-  height:2.6rem;
-}
+} */
 .el-input--prefix .el-input__inner{
     padding-left: 2rem;
   }
@@ -192,16 +205,31 @@ img{
   font-size:var(--normalsize)
 }
 .el-message{
-  display: flex;
+    top:30px !important;
     z-index: 2000;
-    width: 50vw;
-    min-width: 50vw;
-    top: 40% !important;
+    width: 80vw;
+    min-width: 80vw;
     font-weight: 400;
     background:#fff;
-    padding:15px 5px;
+    padding:10px;
+    text-align:center;
 }
-.el-message__icon.el-icon-info{
-  display:none;
+.notify{
+  width:80%;
+}
+.el-notification__title{
+  font-size:var(--normalsize);
+  font-weight:600;
+}
+.el-notification__content{
+  background:#fefefe;
+  padding:3px 10px;
+  font-weight:normal;
+  border-radius:5px;
+  transform: translateX(-10px);
+}
+.el-divider__text{
+  font-size:var(--smallsize);
+  color:#777;
 }
 

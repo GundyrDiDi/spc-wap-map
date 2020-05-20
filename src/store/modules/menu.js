@@ -9,7 +9,8 @@ export default {
     menuIndex: 0,
     totop: false,
     tofocus: false,
-    toexpend: false
+    toexpend: false,
+    sending: false
   },
   getters: {
     activeMenu (state) {

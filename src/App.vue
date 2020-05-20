@@ -6,7 +6,7 @@
     >
         <router-view></router-view>
     </transition>
-        <el-button size="mini" :style="{position:'absolute',top:'30%',right:0,zIndex:111}" @click="_goback()">返回</el-button>
+        <!-- <el-button size="mini" :style="{position:'absolute',top:'30%',right:0,zIndex:111}" @click="_goback()">返回</el-button> -->
   </div>
 </template>
 
@@ -64,7 +64,7 @@ export default {
     font-family: 'Microsoft Yahei';
     /* 设计稿width:375px */
     font-size: 18px;
-    letter-spacing: .1rem;
+    letter-spacing: .05rem;
     color:#555;
     font-weight:600;
   }

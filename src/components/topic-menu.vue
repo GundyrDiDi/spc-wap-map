@@ -12,7 +12,7 @@
               <div class="wrapper" @click="slideUp">
                 <el-input :disabled="true" value="查找地点">
                   <i slot="prefix" class="el-input__icon el-icon-search"></i>
-                  <i @click.stop="1+1" slot="suffix" class="el-input__icon el-icon-camera"></i>
+                  <i @click.stop="1+1" slot="suffix" class="el-input__icon el-icon-microphone"></i>
                 </el-input>
               </div>
             </div>
@@ -187,15 +187,18 @@ export default {
       }, 200)
     },
     updateItem (item) {
-      this.$emit('search', true)
+      this.$store.commit('searchLoad', true)
       this._leastTime({ promise: this.map_loadLocation(item), time: 1500 }).then(v => {
         this.menuOpacity = 0
-        this.fsclass = ['animated fasteest delay-100ms slideOutDown', '']
+        this.fsclass = ['animated faster delay-100ms slideOutDown', '']
         this._goback()
-        this.$emit('search', false)
+        this.$store.commit('searchLoad', false)
         setTimeout(() => {
-          this.menuOpacity = 1
           this.$store.dispatch('map/setActLocation', v)
+          setTimeout(() => {
+            this.menuOpacity = 1
+            this.fsclass = ['', '']
+          }, 500)
         }, 50)
       })
     }
@@ -280,7 +283,7 @@ export default {
       slidesPerView: 'auto',
       on: {
         sliderMove () {
-          _.modalStyle.opacity = (this.progress - 0.5) * 1.3
+          _.modalStyle.opacity = (this.progress - 0.5) * 1
           _.slides[3].transform = `translateY(${Math.max(-135, this.translate)}px)`
           _.slides[8].progress = this.progress
         },
@@ -290,7 +293,7 @@ export default {
           _.modalStyle.transition = 'all 500ms'
           _.slides[3].transform = `translateY(${this.activeIndex === 1 ? -135 : 0}px)`
           _.slides[8].progress = this.progress
-          _.modalStyle.opacity = (this.progress - 0.5) * 1.3
+          _.modalStyle.opacity = (this.progress - 0.5) * 1
           _.$forceUpdate()
           setTimeout(() => {
             _.slides[3].transition = 'none'
@@ -364,7 +367,7 @@ export default {
   }
 
   #bottom-buttons {
-    z-index:2;
+    z-index:3;
     font-weight: 600;
     background: #fff;
     width: 100%;

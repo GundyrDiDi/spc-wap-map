@@ -30,7 +30,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
   .media {
     width: 100%;
     height: 100%;
@@ -43,6 +43,7 @@ export default {
   video {
     width: inherit;
     height: inherit;
+    /* object-fit: fill; */
   }
 
 </style>

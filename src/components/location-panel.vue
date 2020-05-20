@@ -35,15 +35,21 @@
                         <div class="hordivider"></div>
                       </div>
                       <div class="flex bottom-buttons sub-buttons">
-                        <div>
+                        <div @click="tosend">
                           <i class="el-icon-edit-outline"></i>
                           <span>上报</span>
                         </div>
-                        <div>
+                        <div @click="addfavo(lct)">
+                          <transition
+                            enter-active-class="animated fastest zoomIn"
+                            leave-active-class="animated fastest zoomOut"
+                          >
+                            <i v-show="isfavo(lct)" class="fa-star el-icon-star-on"></i>
+                          </transition>
                           <i class="el-icon-star-off"></i>
                           <span>收藏</span>
                         </div>
-                        <div>
+                        <div @click="tosend">
                           <i class="el-icon-message"></i>
                           <span>发送</span>
                         </div>
@@ -98,15 +104,21 @@
     </transition>
     <div class="center-bottom flex bottom-buttons" :style="styles[6]">
       <template v-if="!isSlided">
-        <div >
+        <div @click="tosend">
           <i class="el-icon-edit-outline"></i>
           <span>上报</span>
         </div>
-        <div >
+        <div @click="addfavo(lct)">
+          <transition
+            enter-active-class="animated fastest zoomIn"
+            leave-active-class="animated fastest zoomOut"
+          >
+            <i v-show="isfavo(lct)" class="fa-star el-icon-star-on"></i>
+          </transition>
           <i class="el-icon-star-off"></i>
           <span>收藏</span>
         </div>
-        <div >
+        <div @click="tosend">
           <i class="el-icon-message"></i>
           <span>发送</span>
         </div>
@@ -115,6 +127,53 @@
         <span @click="_goback">显示地图</span>
       </div>
     </div>
+    <transition>
+      <div v-show="sending"
+      :style="sendstyle"
+      class="send-container shadow-top" ref="send">
+        <loc-brief :lct="lct"></loc-brief>
+        <div class="hordivider"></div>
+        <div class="textarea">
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 3}"
+            v-model="sendtext"
+          >
+          </el-input>
+        </div>
+        <div class="hordivider"></div>
+        <div style="margin:.5rem 0 0 0">
+          <el-input v-model.trim="employer" suffix-icon="el-icon-search" placeholder="搜索各部门人员"></el-input>
+          <el-collapse class="users" :value="_userList" :style="userheight">
+            <el-collapse-item class="depart" v-for="v in _userList"
+            :key="v.DepartmentId"
+            :title="v.DepartmentName"
+            >
+              <div
+              v-for="user in v.UserList"
+              class="username"
+              :class="[user.UserOnLine&&'online',user.selected&&'selected']"
+              :key="user.UserId"
+              @click="checkem(user)"
+              >
+                {{user.RealName}}
+              </div>
+            </el-collapse-item>
+          </el-collapse>
+        </div>
+        <div class="grid">
+          <div v-for="v in checklist" :key="v.UserId">{{v.RealName}}</div>
+        </div>
+        <div class="flex-cen">
+          <el-button @click="_goback" class="sendbtn" type="default">
+            返回
+          </el-button>
+          <el-button @click="updatesend" class="sendbtn" type="primary">
+            发送
+          </el-button>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -131,7 +190,13 @@ export default {
       styles: [],
       isSlided: false,
       dlLoaded: false,
-      media: false
+      media: false,
+      sendclass: '',
+      sendstyle: {},
+      sendtext: '',
+      userheight: {},
+      employer: '',
+      checklist: []
     }
   },
   components: {
@@ -139,7 +204,70 @@ export default {
     locDetail: () => import('./loc-detail.vue'),
     locMedia: () => import('./loc-media.vue')
   },
+  computed: {
+    _userList () {
+      const kw = this.employer
+      if (kw) {
+        return this.userList.map(v => {
+          const temp = {
+            ...v,
+            UserList: v.UserList.filter(p => p.DepartmentName.includes(kw) || p.RealName.includes(kw))
+          }
+          return temp
+        }).filter(v => v.UserList.length)
+      } else {
+        return this.userList
+      }
+    }
+  },
   methods: {
+    addfavo (lct) {
+      const { layer, ...rest } = lct
+      rest.layer = layer.appid
+      rest.icon = layer.seticon
+      this._addFavorite(rest)
+      // lct.favo=!lct.favo
+      // this.$forceUpdate()
+    },
+    isfavo (lct) {
+      // console.log(lct);
+      return this.favoList.some(v => v.id === lct.id)
+      // if(lct){
+      // }
+    },
+    updatesend () {
+      this.$store.commit('searchLoad', true)
+      this._leastTime().then(v => {
+        this.$store.commit('searchLoad', false)
+        this.$message({ type: 'success', message: '发送成功', duration: 3000 })
+        this.checklist.forEach(v => {
+          v.selected = false
+        })
+        this.checklist = []
+        setTimeout(() => {
+          this._goback()
+        }, 500)
+      })
+    },
+    checkem (user) {
+      const i = this.checklist.indexOf(user)
+      if (i < 0) {
+        user.selected = true
+        this.checklist.push(user)
+      } else {
+        user.selected = false
+        this.checklist.splice(i, 1)
+      }
+    },
+    async tosend () {
+      this._record({ type: 'menu/sending', value: true })
+      setTimeout(() => {
+        this.sendstyle.transform = this.sendstyle.y
+      }, 30)
+      if (!this.userList.length) {
+        await this._getuserlist()
+      }
+    },
     initSwiper () {
       const _ = this
       this.swiper = this.$swiper(this.$refs.parent, {
@@ -225,9 +353,21 @@ export default {
           minHeight: `${height + this.topHeight - banner}px`
         } // loc-detail
       ]
+      this.sendstyle = {
+        height: this.deviceHeight - this.stateBar + 'px',
+        transform: '',
+        y: `translateY(${this.stateBar + height + this.bottomHeight - this.deviceHeight + 10}px)`,
+        exy: `translateY(${height - restHeight}px)`
+      }
+      this.userheight = { height: this.deviceHeight - this.stateBar - 115 - 250 + 'px' }
     }
   },
   watch: {
+    sending (is) {
+      if (!is) {
+        this.sendstyle.transform = this.toexpend ? this.sendstyle.exy : ''
+      }
+    },
     actLocation: {
       handler (loc, old) {
         this.dlLoaded = false
@@ -253,18 +393,21 @@ export default {
     toexpend (ex) {
       if (!ex) {
         this.swiper.slideTo(0, 300)
-        this.map_movetoPoint({
-          zoom: this.savezoom,
-          duration: 300
-        })
+        // this.map_movetoPoint({
+        //   zoom: this.savezoom,
+        //   duration: 300
+        // })
         this.map.el.style.transform = ''
+        this.sendstyle.transform = ''
       } else {
+        this.swiper.slideTo(1, 300)
         this.savezoom = this.map.zoom
-        this.map_fitActloc({
-          duration: 300
-        })
+        // this.map_fitActloc({
+        //   duration: 300
+        // })
         const s = (this.deviceHeight - this.topHeight) / 2
         this.map.el.style.transform = `translateY(${-s}px)`
+        this.sendstyle.transform = this.sendstyle.exy
       }
     },
     todetail (dl) {
@@ -432,5 +575,92 @@ export default {
     padding-top:.5rem;
     padding-bottom:.5rem;
     box-shadow:none;
+  }
+  .send-container{
+    position: absolute;
+    top:0;
+    left: 0;
+    width: inherit;
+    background: #fff;
+    z-index: 5;
+    transition:all .4s ease-in-out;
+    border-radius:12px 12px 0 0;
+  }
+  .send-container>div{
+    padding-left:1rem;
+    padding-right:1rem;
+  }
+  .textarea{
+    padding:.5rem 0;
+  }
+  .users{
+    overflow:auto;
+    border: 1px solid #ebeef5;
+    border-radius: 5px;
+    margin-top: 10px;
+    padding-bottom:10px;
+  }
+  .depart{
+    padding: 0 1rem;
+    position: relative;
+  }
+  .username{
+    font-size:var(--smallsize);
+    font-weight:normal;
+    text-align: center;
+    color:#aaa;
+    opacity: .7;
+    position:relative;
+  }
+  .username.online{
+    color:#666;
+    opacity: 1;
+    font-weight: 600;
+  }
+  .username.selected{
+    color:var(--bdcolor);
+    font-weight: 600;
+  }
+  .sendbtn{
+    margin:.5rem 1rem;
+    width: 7rem;
+  }
+  .grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-row-gap: 5px;
+    min-height:1rem;
+  }
+  .grid>div{
+    color:var(--bdcolor);
+    font-size:var(--smallsize);
+    text-align: center;
+  }
+  .fa-star{
+    position: absolute;
+    color: gold;
+  }
+</style>
+<style>
+  .depart .el-collapse-item__arrow{
+    position:absolute;
+    right:1rem;
+  }
+  .depart .el-collapse-item__header{
+    flex-wrap: wrap;
+    letter-spacing: normal;
+    white-space: nowrap;
+    font-size:var(--smallsize)
+  }
+  .depart .el-collapse-item__content{
+    padding:3px;
+    padding-bottom:8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-row-gap: 10px;
+    grid-column-gap: 5px;
+  }
+  .send-container .el-icon-search{
+    line-height:40px;
   }
 </style>

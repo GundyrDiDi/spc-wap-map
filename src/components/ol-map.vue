@@ -6,6 +6,19 @@
         <div></div>
       </div>
       <div ref="tablelay"></div>
+      <div ref="measurelay" @click="removelast">
+        <div class="measure flex">
+          <div v-show="mspoints.length==1" class="flex-center">
+            起点
+          </div>
+          <div v-show="mspoints.length>1" class="flex-center">
+            {{distance}}
+          </div>
+          <div>
+            <i class="el-icon-close"></i>
+          </div>
+        </div>
+      </div>
     </template>
   </div>
 </template>
@@ -22,7 +35,15 @@ export default {
         className: 'animated fast bounceIn',
         insertFirst: false
       },
-      tablelay: {}
+      measurelay: {
+        positioning: 'bottom-center',
+        insertFirst: false,
+        offset: [0, -13]
+      },
+      distance: 0,
+      tablelay: {},
+      savecenter: null,
+      savezoom: null
     }
   },
   computed: {
@@ -55,6 +76,66 @@ export default {
       } else {
         this.highlay.setPosition(undefined)
       }
+    },
+    async mspoints (msp) {
+      if (msp.length) {
+        const coord = msp[msp.length - 1]
+        this.measurelay.setPosition(coord)
+        if (msp.length > 1) {
+          const g = msp.line.getGeometry()
+          g.setCoordinates(msp)
+          this.distance = await this.map_getDistance(g)
+        }
+      } else {
+        this.measurelay.setPosition(undefined)
+      }
+    },
+    mapstatus (status, oldstatus) {
+      if (this.savecenter) {
+        if (!this.searchLoad) {
+          this.map_movetoPoint({
+            coord: this.savecenter,
+            zoom: this.savezoom,
+            duration: 500
+          })
+        }
+        this.savecenter = null
+        this.savezoom = null
+      }
+      if (status) {
+        this.savecenter = this.view.getCenter()
+        this.savezoom = this.view.getZoom()
+        this.$store.commit('map/fullMap', true)
+        this.map_clearactlay()
+      }
+      if (status === 'road') {
+        this.map_showRoad()
+      } else if (status === 'mark') {
+        this.map_showMark()
+      } else if (status === 'measure') {
+        this.map_showMeasure()
+      } else if (status === 'surround') {
+        this.map_showMark()
+      } else {
+        if (oldstatus === 'road') this.map_showRoad()
+        if (oldstatus === 'mark') this.map_showMark()
+        if (oldstatus === 'measure') this.map_showMeasure()
+        if (oldstatus === 'surround') this.map_showMark()
+        if (status === 'pointslist') {
+          this.map_addactlay()
+        } else {
+          this.$store.commit('map/fullMap', false)
+          setTimeout(() => {
+            this.map_addactlay()
+          }, 500)
+        }
+      }
+    }
+  },
+  methods: {
+    removelast () {
+      this.measure.getSource().removeFeature(this.mspoints.pop().f)
+      this.mspoints.line.getGeometry().setCoordinates(this.mspoints)
     }
   },
   async mounted () {
@@ -71,11 +152,12 @@ export default {
           if (element.$el)element = element.$el
           this.map_createOverlay({ element, ...this[k] }).then(o => {
             this[k] = o
+            element.style.display = 'block'
           })
         })
       }
+      this.map_getdata()
     })
-    this.map_getdata()
   },
   props: ['preload']
 }
@@ -85,10 +167,24 @@ export default {
 <style scoped>
   #map {
     position: absolute;
-    background: rgb(4, 153, 212);
     transition: transform .3s;
+    background-color: #f2f2f2;
+    background-image:
+                    linear-gradient(
+                            to bottom,
+                            #ddd 1px,
+                            transparent 2px
+                    ),
+                    linear-gradient(
+                            to right,
+                            #ddd 1px,
+                            transparent 2px
+                    );
+    background-size: 5vmin 5vmin;
   }
-
+  #map>div{
+    display: none;
+  }
   /* .ol-zoom {
     top: 15vh;
     left: 33vh;
@@ -177,7 +273,6 @@ export default {
     margin-bottom:3px;
     position:relative;
     z-index:1;
-    /* filter:drop-shadow(0 0 2px rgba(1, 47, 250, 0.37)); */
     filter:drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3))
   }
   .actIcon~div{
@@ -187,5 +282,42 @@ export default {
     background: #fff;
     top: 8px;
     left: 12px;
+  }
+  .measure{
+    background: #fff;
+    border: 2px solid var(--bdcolor);
+    border-radius: 4px;
+    /* transform:translateY(-5px) */
+  }
+  .measure:after,.measure:before{
+    content:'';
+    height:0;
+    width:0;
+    position:absolute;
+  }
+  .measure:before{
+    border:10px solid transparent;
+    border-top-color:var(--bdcolor);
+    bottom:-19.5px;
+    left: calc(50% - 10px);
+  }
+  .measure:after{
+    border:8px solid transparent;
+    border-top-color:#fff;
+    bottom:-13px;
+    left: calc(50% - 8px);
+  }
+  .measure>div{
+    padding:2px 3px;
+  }
+  .measure>div:not(:last-child){
+    padding:2px 6px;
+    font-size: var(--smallsize);
+    border-right:1px solid var(--bdcolor);
+    min-width:50px;
+    letter-spacing:0;
+  }
+  .measure>div:last-child{
+    color:var(--bdcolor)
   }
 </style>

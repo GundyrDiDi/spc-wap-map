@@ -127,10 +127,11 @@ export default {
     async getFactor () {
       this.factorData = await this.menu_getElementFactorData()
       requestAnimationFrame(() => {
-        this.createChart()
+        this.lct && this.createChart()
       })
     },
     createChart () {
+      if (!this.$refs.chart) return
       if (!this.charts) {
         this.charts = this.$echarts(this.$refs.chart)
       } else {
@@ -191,7 +192,6 @@ export default {
       return `${d.getFullYear()}-${m < 10 ? '0' + m : m}-${t < 10 ? '0' + t : t}`
     },
     ss (i) {
-      console.log(this.elementData.ZD_YZ[i])
       this.factor = this.elementData.ZD_YZ[i]
       this.$emit('slide')
     }

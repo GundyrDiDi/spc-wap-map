@@ -17,20 +17,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="heading">
-        事件
-      </div>
-      <div class="body flex">
-        <div class="flex-column flex-center">
-          <div>公务车</div>
-        </div>
-        <div class="flex-column flex-center">
-          <div>卡车</div>
-        </div>
-        <div class="flex-column flex-center">
-          <div>消防车</div>
-        </div>
-      </div> -->
       <div class="heading">
         图层
       </div>

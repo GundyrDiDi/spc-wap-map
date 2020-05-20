@@ -7,7 +7,7 @@
           {{username}}
         </div>
         <div class="right-top">
-          <i class="el-icon-chat-dot-round"></i>
+          <i class="el-icon-chat-dot-round" @click="_record({type:'msgDrawer',value:true})"></i>
           <i class="el-icon-postcard"></i>
           <i class="el-icon-setting"></i>
         </div>
@@ -47,8 +47,10 @@
 
           </div>
         </div>
-        <div class="panel" style="height:1000px">
-
+        <div class="panel">
+          <el-collapse class="panel-item">
+            <el-collapse-item v-for="(v,i) in ellayers" :key="i" :name="i" :title="v.name"></el-collapse-item>
+          </el-collapse>
         </div>
       </div>
     </div>
@@ -193,5 +195,10 @@ export default {
     font-size:var(--normalsize);
     padding:10px 12px;
     box-shadow:0 0 2px 1px rgba(0,0,0,.06);
+  }
+</style>
+<style>
+  .el-collapse-item__header {
+    padding-left:10px;
   }
 </style>

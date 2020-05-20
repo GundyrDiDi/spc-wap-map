@@ -16,26 +16,56 @@ const root = {
     enterAnimateTime: 1300,
     enterclass: '',
     leaveclass: '',
+    searchLoad: false,
     // 容器
     deviceHeight: '',
     deviceWidth: '',
     bannerHeight: 45,
     bottomHeight: 50,
     truestateBar: 10,
+    boardHeight: 0,
+    //
     btnopacity: 1,
     rightdrawer: false,
     rtlDrawer: false,
+    msgDrawer: false,
     _records: [],
     searchWord: '',
     resultList: [],
     historyList: JSON.parse(window.localStorage.spc_history ? window.localStorage.spc_history : '[]'),
+    favoList: JSON.parse(window.localStorage.spc_favorite ? window.localStorage.spc_favorite : '[]'),
+    editing: false,
     proxyLocation: null,
     dyIcons: {
       arrow: [
         require('../assets/funimg/ta02.png'),
         require('../assets/funimg/ta01.png')
       ]
-    }
+    },
+    msgList: [
+      {
+        hasRead: false,
+        time: Date.now() - 2000000,
+        from: 'Chole',
+        head: require('../assets/user.png'),
+        appid: 'sxj',
+        gisid: '8bd166ab2df54fdca8d17e6a3575308d',
+        type: 'warning',
+        text: '无视频信号，如有故障请及时前往现场维修。'
+      },
+      {
+        hasRead: false,
+        time: Date.now() - 1000000,
+        from: 'Chole',
+        head: require('../assets/user.png'),
+        appid: 'sxj',
+        gisid: '8bd166ab2df54fdca8d17e6a3575308d',
+        type: 'warning',
+        text: '无视频信号，如有故障请及时前往现场维修。'
+      }
+    ],
+    userList: [],
+    comfirmExit: false
   },
   getters: {
     stateBar (state) {
@@ -57,6 +87,15 @@ const root = {
       const history = state.historyList
       history.some(v => v.name === data.name) || history.push(data)
       window.localStorage.spc_history = JSON.stringify(history)
+    },
+    _addFavorite (state, data) {
+      let i = -1
+      const favoList = state.favoList
+      favoList.some((v, ii) => {
+        i = ii
+        return v.id === data.id
+      }) ? favoList.splice(i, 1) : favoList.push(data)
+      window.localStorage.spc_favorite = JSON.stringify(favoList)
     }
   },
   actions: {
@@ -97,6 +136,9 @@ const root = {
     //     records.pop();
     //   }
     // }
+    async _getuserlist (store) {
+      store.commit('userList', await axios.post('/getuserlist'))
+    },
     async _search (store, sw) {
       store.commit('resultList', await axios.post('/search', { word: sw }))
     },

@@ -5,7 +5,7 @@
     </div>
     <div class="sub flex">
       <div>
-        <img :src="lct.layer.icon">
+        <img :src="lct.layer.seticon">
         {{lct.type}}
       </div>
       <div class="verdivider"></div>

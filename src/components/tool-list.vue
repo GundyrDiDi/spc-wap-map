@@ -18,21 +18,21 @@
     </div>
     <div class="offen" :style="position">
       <div class="all hordivider flex-center">
-        <div>
+        <div @click="tomeasure">
           <i class="el-icon-video-camera"></i>
           多视频
         </div>
-        <div class="verdivider">
+        <div  @click="tomark" class="verdivider">
           <i class="el-icon-location-outline"></i>
           标记
         </div>
       </div>
       <div class="hordivider flex-center">
-        <div>
+        <div @click="tomeasure">
           <i class="el-icon-coordinate"></i>
           测距
         </div>
-        <div class="verdivider">
+        <div @click="tosurround" class="verdivider">
           <i class="el-icon-office-building"></i>
           附近
         </div>
@@ -41,9 +41,14 @@
         收藏点
       </div>
       <div class="favorate flex-column">
-        <div class="flex-center">
+        <!-- <div class="flex-center">
           <img src="../assets/funimg/applayer/game3.png" alt="">
           <aside>友谊楼</aside>
+          <i class="el-icon-arrow-right"></i>
+        </div> -->
+        <div @click="setloc(v)" v-for="v in favoList" :key="v.id" class="flex-center">
+          <img :src="v.icon" alt="">
+          <aside>{{v.name}}</aside>
           <i class="el-icon-arrow-right"></i>
         </div>
       </div>
@@ -60,9 +65,25 @@ export default {
     }
   },
   methods: {
+    setloc (loc) {
+      const { ...copy } = loc
+      this.$store.dispatch('map/setActLocation', copy)
+    },
     pickEl (layer) {
       this.map_addEllayer(layer)
       this.$forceUpdate()
+    },
+    tomeasure () {
+      this._goback()
+      this._record({ type: 'map/mapstatus', value: 'measure' })
+    },
+    tomark () {
+      this._goback()
+      this._record({ type: 'map/mapstatus', value: 'mark' })
+    },
+    tosurround () {
+      this._goback()
+      this._record({ type: 'map/mapstatus', value: 'surround' })
     }
   },
   computed: {
@@ -83,6 +104,7 @@ export default {
     }
   },
   async mounted () {
+
   },
   props: ['progress', 'transition', 'breakPoint']
 }
@@ -141,7 +163,7 @@ export default {
     padding:0 20px;
   }
   .favorate>div{
-    margin:5px 0;
+    margin:.8rem 0;
   }
   .favorate img{
     width:1.2rem;

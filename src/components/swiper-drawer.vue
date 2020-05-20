@@ -32,8 +32,6 @@ export default {
     if (ms && ms.length >= 3) {
       this.barHeight = parseFloat(ms[2])
     }
-    // this.mask=document.getElementsByClassName('v-modal')[0];
-    // console.log(this.mask);
   },
   methods: {
     handleClose () {
