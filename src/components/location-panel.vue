@@ -645,6 +645,8 @@ export default {
   .depart .el-collapse-item__arrow{
     position:absolute;
     right:1rem;
+    top:50%;
+    transform:translateY(-50%);
   }
   .depart .el-collapse-item__header{
     flex-wrap: wrap;

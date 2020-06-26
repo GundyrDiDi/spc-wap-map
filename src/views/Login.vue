@@ -43,7 +43,7 @@
               </el-form-item>
             </el-form>
           </el-main>
-          <el-footer ref="submit" :class="failTipClass" class="flex-center">
+          <el-footer ref="submit" class="flex-center" :class="failTipClass">
             <transition name="fade" mode="out-in">
               <el-button type="primary" v-if="!loginloading" @click="submit" key="off">
                   <span>进入地图</span>

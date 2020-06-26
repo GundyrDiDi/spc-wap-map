@@ -22,8 +22,12 @@ const config = {
   // }
   // responseType: 'json'
 }
-
 const _axios = axios.create(config)
+
+const _getter=_axios.get
+_axios.get=function(url,params){
+  return _getter(url,params?{params}:undefined)
+}
 // 请求拦截器
 _axios.interceptors.request.use(
   function (config) {

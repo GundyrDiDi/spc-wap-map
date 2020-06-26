@@ -13,7 +13,10 @@ const routes = [{
   component: Home,
   beforeEnter: (to, from, next) => {
     if (store.state.login.isLogin) {
-      next()
+      next(function(){
+        console.log(to);
+        // this.$store.menu.menuIndex=to
+      })
     } else {
       next({ name: 'Login' })
     }
@@ -24,6 +27,11 @@ const routes = [{
       path: 'user',
       name: 'User',
       component: () => import('../views/home/User.vue')
+    },
+    {
+      path: 'application',
+      name: 'Application',
+      component: () => import('../views/home/Application.vue')
     }
   ]
 },

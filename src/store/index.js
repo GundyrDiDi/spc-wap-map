@@ -32,6 +32,7 @@ const root = {
     _records: [],
     searchWord: '',
     resultList: [],
+    resultPage:1,
     historyList: JSON.parse(window.localStorage.spc_history ? window.localStorage.spc_history : '[]'),
     favoList: JSON.parse(window.localStorage.spc_favorite ? window.localStorage.spc_favorite : '[]'),
     editing: false,
@@ -140,7 +141,8 @@ const root = {
       store.commit('userList', await axios.post('/getuserlist'))
     },
     async _search (store, sw) {
-      store.commit('resultList', await axios.post('/search', { word: sw }))
+      store.commit('resultPage',1)
+      store.commit('resultList', await axios.post('/search', { word: sw ,page :1}))
     },
     async _moresearch (store, sw) {
       store.state.resultList.push(...await axios.post('/search', { word: sw }))

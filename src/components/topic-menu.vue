@@ -18,7 +18,7 @@
             </div>
           </div>
           <div class="swiper-slide" :class="hidden&&'hidden'" :style="slides[2]">
-            <flexible-container :allow="allowchild">
+            <flexible-container :allow="allowchild" :data="totop">
               <tool-list v-bind="slides[8]"></tool-list>
             </flexible-container>
           </div>
@@ -155,7 +155,10 @@ export default {
     },
     controlSlide () {
       if (this.swiper.isEnd) {
-        this.swiper.slidePrev()
+        this.allowchild=false
+        requestAnimationFrame(()=>{
+          this.swiper.slidePrev()
+        })
       } else {
         this.swiper.slideNext()
       }
@@ -163,6 +166,7 @@ export default {
     back2step () {
       this.$refs.focusbox.blur()
       setTimeout(() => {
+        this.allowchild=false
         this._goback()
       }, 200)
     },

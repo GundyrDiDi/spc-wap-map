@@ -17,10 +17,19 @@ export default {
   watch: {
     allow (a) {
       this.swiper.allowTouchMove = a
+      if(!a){
+        this.swiper.slideTo(0,800)
+      }
     },
     data () {
-      this.init()
-    }
+      // this.init()
+      setTimeout(() => {
+        this.$refs.t.style.height = getComputedStyle(this.$slots.default[0].elm).height
+        requestAnimationFrame(e=>{
+          this.swiper.updateSlides()
+        })
+      }, 300)
+    },
   },
   mounted () {
     this.init()
@@ -33,6 +42,10 @@ export default {
       this.swiper && this.swiper.destroy()
       setTimeout(() => {
         this.$refs.t.style.height = getComputedStyle(this.$slots.default[0].elm).height
+        // console.log(this.$refs.t.style.height);
+        // setTimeout(()=>{
+        //   console.log(getComputedStyle(this.$slots.default[0].elm).height);
+        // },300)
         this.$refs.flexible.style.overflow = this.visible ? 'visible' : 'hidden'
       }, 300)
       setTimeout(() => {

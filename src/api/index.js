@@ -48,7 +48,7 @@ const proxy = new Proxy(api, {
     } else if (key in target && !key.includes('__')) {
       return `${target.originPath}${target[key]}${param}`
     } else {
-      return new Error('wrong api !')
+      return new Error(`${key} wrong api !`)
     }
   }
 })
@@ -470,6 +470,7 @@ Object.entries(mockdata).forEach(([api, redata]) => {
 })
 api.setOrigin(url).add(Object.keys(mockdata))
 
+//axois.get请求 参数外面包一层{params:data<放真正的参数>}
 // api.cross({
 //   name:'gettiles',
 //   url:'http://10.136.238.197/api/public/Getcurrentthemejson'
