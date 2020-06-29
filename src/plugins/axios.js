@@ -3,7 +3,9 @@
 import Vue from 'vue'
 import axios from 'axios'
 import api from '../api'
-import { store } from '../store'
+import {
+  store
+} from '../store'
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
@@ -24,9 +26,11 @@ const config = {
 }
 const _axios = axios.create(config)
 
-const _getter=_axios.get
-_axios.get=function(url,params){
-  return _getter(url,params?{params}:undefined)
+const _getter = _axios.get
+_axios.get = function (url, params) {
+  return _getter(url, params ? {
+    params
+  } : undefined)
 }
 // 请求拦截器
 _axios.interceptors.request.use(

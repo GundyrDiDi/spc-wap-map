@@ -10,9 +10,9 @@
 </template>
 
 <script>
-  export default {
-    name: 'back-button'
-  }
+export default {
+  name: 'back-button'
+}
 
 </script>
 

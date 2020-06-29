@@ -155,10 +155,10 @@ export default {
     },
     controlSlide () {
       if (this.swiper.isEnd) {
-        this.allowchild=false
-        requestAnimationFrame(()=>{
-          this.swiper.slidePrev()
-        })
+        // this.allowchild = false
+        // requestAnimationFrame(() => {
+        //   this.swiper.slidePrev()
+        // })
       } else {
         this.swiper.slideNext()
       }
@@ -166,7 +166,7 @@ export default {
     back2step () {
       this.$refs.focusbox.blur()
       setTimeout(() => {
-        this.allowchild=false
+        // this.allowchild=false
         this._goback()
       }, 200)
     },

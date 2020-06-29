@@ -17,19 +17,19 @@ export default {
   watch: {
     allow (a) {
       this.swiper.allowTouchMove = a
-      if(!a){
-        this.swiper.slideTo(0,800)
+      if (!a) {
+        this.swiper.slideTo(0, 800)
       }
     },
     data () {
       // this.init()
       setTimeout(() => {
         this.$refs.t.style.height = getComputedStyle(this.$slots.default[0].elm).height
-        requestAnimationFrame(e=>{
+        requestAnimationFrame(e => {
           this.swiper.updateSlides()
         })
       }, 300)
-    },
+    }
   },
   mounted () {
     this.init()
